@@ -168,6 +168,9 @@ img {
     border: 1px solid var(--color-border);
     background-color: var(--color-surface);
     font-size: 1.05rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
     transition: var(--transition-base);
 }
