@@ -898,6 +898,296 @@ img {
     font-size: 1.4rem;
 }
 
+/* Profile Page */
+
+.profile-page {
+    background-color: var(--color-bg);
+}
+
+.profile-main {
+    padding: 3rem 4vw 5rem;
+    display: grid;
+    gap: 2.5rem;
+}
+
+.profile-hero {
+    background: linear-gradient(120deg, rgba(91, 75, 255, 0.08), rgba(255, 126, 102, 0.1));
+    border-radius: 28px;
+    padding: 3rem clamp(1.5rem, 6vw, 4rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-shadow: 0 20px 45px rgba(18, 21, 56, 0.08);
+}
+
+.profile-hero-content {
+    max-width: 540px;
+    display: grid;
+    gap: 1rem;
+}
+
+.profile-hero h1 {
+    margin: 0;
+    font-size: clamp(2.2rem, 4vw, 2.8rem);
+    color: #1a1c2d;
+}
+
+.profile-hero p {
+    margin: 0;
+    color: var(--color-muted);
+    font-weight: 500;
+}
+
+.auth-section {
+    display: grid;
+    grid-template-columns: minmax(0, 640px) minmax(0, 320px);
+    gap: 2rem;
+    align-items: start;
+    justify-content: center;
+}
+
+.auth-card {
+    background-color: var(--color-surface);
+    border-radius: 28px;
+    padding: clamp(2rem, 4vw, 2.75rem);
+    box-shadow: var(--shadow-soft);
+    display: grid;
+    gap: 2rem;
+    justify-self: center;
+}
+
+.auth-card-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.auth-card-header h2 {
+    margin: 0;
+    font-size: 1.8rem;
+}
+
+.auth-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: rgba(91, 75, 255, 0.08);
+    color: var(--color-primary);
+    padding: 0.4rem 0.85rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.auth-form {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.form-field {
+    display: grid;
+    gap: 0.65rem;
+}
+
+.form-field label {
+    font-weight: 600;
+    color: #1a1c2d;
+}
+
+.form-field input {
+    border-radius: 16px;
+    border: 1px solid var(--color-border);
+    padding: 0.85rem 1rem;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-field input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px rgba(91, 75, 255, 0.16);
+}
+
+.password-field {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    border-radius: 16px;
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+}
+
+.password-field input {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.password-field:focus-within {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px rgba(91, 75, 255, 0.16);
+}
+
+.toggle-password {
+    border: none;
+    background: transparent;
+    color: var(--color-muted);
+    padding: 0 1rem;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.toggle-password:hover {
+    color: var(--color-primary);
+}
+
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.checkbox {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+    color: var(--color-muted);
+}
+
+.checkbox input {
+    width: 18px;
+    height: 18px;
+    border-radius: 6px;
+    border: 1px solid var(--color-border);
+    accent-color: var(--color-primary);
+}
+
+.forgot-link {
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+.forgot-link:hover {
+    color: var(--color-primary-dark);
+}
+
+.auth-submit {
+    border: none;
+    border-radius: 16px;
+    padding: 0.95rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 700;
+    background: var(--gradient-primary);
+    color: #fff;
+    cursor: pointer;
+    transition: var(--transition-base);
+    box-shadow: 0 20px 35px rgba(91, 75, 255, 0.25);
+}
+
+.auth-submit:hover {
+    transform: translateY(-2px);
+}
+
+.auth-footer {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-weight: 500;
+}
+
+.link-accent {
+    color: var(--color-secondary-dark);
+    font-weight: 600;
+}
+
+.link-accent:hover {
+    color: var(--color-secondary);
+}
+
+.auth-side {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.auth-side-card,
+.auth-help-card {
+    background-color: var(--color-surface);
+    border-radius: 24px;
+    padding: 2rem;
+    box-shadow: var(--shadow-soft);
+}
+
+.auth-side-card h3 {
+    margin: 0 0 1rem;
+    font-size: 1.3rem;
+}
+
+.auth-side-card ul {
+    display: grid;
+    gap: 0.75rem;
+    color: var(--color-muted);
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+}
+
+.auth-side-card li {
+    display: flex;
+    gap: 0.6rem;
+}
+
+.auth-side-card li::before {
+    content: "✔";
+    color: var(--color-primary);
+    font-weight: 700;
+}
+
+.auth-side-btn {
+    width: 100%;
+    border: none;
+    border-radius: 14px;
+    padding: 0.85rem 1rem;
+    font-weight: 700;
+    background: var(--gradient-secondary);
+    color: #fff;
+    cursor: pointer;
+    transition: var(--transition-base);
+    box-shadow: 0 16px 35px rgba(255, 126, 102, 0.35);
+}
+
+.auth-side-btn:hover {
+    transform: translateY(-2px);
+}
+
+.auth-help-card h4 {
+    margin: 0 0 0.75rem;
+    font-size: 1.1rem;
+}
+
+.auth-help-card p {
+    margin: 0;
+    color: var(--color-muted);
+    font-weight: 500;
+}
+
+.auth-help-card a {
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+.auth-help-card a:hover {
+    color: var(--color-primary-dark);
+}
+
+/* Profile Page */
+
 @media (max-width: 1200px) {
     .header {
         grid-template-columns: 1fr;
@@ -968,6 +1258,19 @@ img {
         grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     }
 
+    .auth-section {
+        grid-template-columns: 1fr;
+    }
+
+    .auth-side {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+
+    .auth-side-card,
+    .auth-help-card {
+        height: 100%;
+    }
+
     .chat-widget {
         right: 1.5rem;
         bottom: 1.5rem;
@@ -1002,6 +1305,18 @@ img {
 
     .chat-widget span {
         display: none;
+    }
+
+    .profile-main {
+        padding: 2.5rem 1.5rem 4rem;
+    }
+
+    .profile-hero {
+        padding: 2.5rem 1.5rem;
+    }
+
+    .auth-card {
+        padding: 1.75rem;
     }
 }
 
