@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>- My Store</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <!-- Top Banner -->
+    <div class="top-banner">
+        Безплатна доставка за поръчки над 150 лв. / 76.69 €
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo-section">
+            <span class="logo-text">My Store</span>
+            <div class="logo-icon" >
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        <div class="search-bar">
+            <input type="text" class="search-input" placeholder="Какво търсиш днес?">
+            <button class="search-button">🔍</button>
+        </div>
+        <div class="header-utils">
+            <div class="language-selector">
+                <span>🇬🇧</span>
+                <span>English</span>
+            </div>
+            <button class="icon-btn">👤</button>
+            <button class="icon-btn">❤️</button>
+            <button class="icon-btn">🛒</button>
+        </div>
+    </header>
+
+    <!-- Navigation Menu -->
+    <nav class="nav-menu">
+        <ul>
+            <li><a href="#">Начало</a></li>
+            <li><a href="#">Продукти</a></li>
+            <li><a href="#">Промоции</a></li>
+            <li><a href="#">Контакти</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <ul>
+                <li><a href="#">Вина</a></li>
+                <li><a href="#">Пенливи вина</a></li>
+                <li><a href="#">Алкохолни напитки</a></li>
+                <li><a href="#">Бира</a></li>
+                <li><a href="#">Вода</a></li>
+                <li><a href="#">Безалкохолни напитки</a></li>
+                <li><a href="#">Кафе, чай и енергийни</a></li>
+                <li><a href="#">Ядки</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Promotional Banners -->
+            <div class="promo-section">
+                <!-- Carousel Banner -->
+                <div class="promo-banner carousel-container">
+                    <div class="carousel-slides" id="carouselSlides">
+                        <!-- Slide 1 -->
+                        <div class="carousel-slide carousel-slide-1">
+                            <div class="carousel-content">
+                                <span class="new-badge">NEW!</span>
+                                <h1 class="carousel-title">ROBBY BUBBLE</h1>
+                                <p class="carousel-subtitle">BLUE & PINK</p>
+                                <div class="price-tags">
+                                    <span class="price-tag">7,99 лв.</span>
+                                    <span class="price-tag">4,09 лв.</span>
+                                </div>
+                            </div>
+                            <button class="promo-button">Поръчай сега</button>
+                        </div>
+
+                        <!-- Slide 2 -->
+                        <div class="carousel-slide carousel-slide-2">
+                            <div class="carousel-content">
+                                <span class="new-badge">HOT!</span>
+                                <h1 class="carousel-title">SPECIAL OFFER</h1>
+                                <p class="carousel-subtitle">RED & YELLOW</p>
+                                <div class="price-tags">
+                                    <span class="price-tag">12,99 лв.</span>
+                                    <span class="price-tag">9,99 лв.</span>
+                                </div>
+                            </div>
+                            <button class="promo-button">Поръчай сега</button>
+                        </div>
+
+                        <!-- Slide 3 -->
+                        <div class="carousel-slide carousel-slide-3">
+                            <div class="carousel-content">
+                                <span class="new-badge">LIMITED!</span>
+                                <h1 class="carousel-title">PREMIUM SELECTION</h1>
+                                <p class="carousel-subtitle">PURPLE & BLUE</p>
+                                <div class="price-tags">
+                                    <span class="price-tag">19,99 лв.</span>
+                                    <span class="price-tag">15,99 лв.</span>
+                                </div>
+                            </div>
+                            <button class="promo-button">Поръчай сега</button>
+                        </div>
+
+                        <!-- Slide 4 -->
+                        <div class="carousel-slide carousel-slide-4">
+                            <div class="carousel-content">
+                                <span class="new-badge">FRESH!</span>
+                                <h1 class="carousel-title">NEW ARRIVALS</h1>
+                                <p class="carousel-subtitle">CYAN & BLUE</p>
+                                <div class="price-tags">
+                                    <span class="price-tag">8,99 лв.</span>
+                                    <span class="price-tag">6,99 лв.</span>
+                                </div>
+                            </div>
+                            <button class="promo-button">Поръчай сега</button>
+                        </div>
+
+                        <!-- Slide 5 -->
+                        <div class="carousel-slide carousel-slide-5">
+                            <div class="carousel-content">
+                                <span class="new-badge">SALE!</span>
+                                <h1 class="carousel-title">SUMMER COLLECTION</h1>
+                                <p class="carousel-subtitle">PINK & YELLOW</p>
+                                <div class="price-tags">
+                                    <span class="price-tag">14,99 лв.</span>
+                                    <span class="price-tag">11,99 лв.</span>
+                                </div>
+                            </div>
+                            <button class="promo-button">Поръчай сега</button>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Buttons -->
+                    <button class="carousel-nav prev" onclick="previousSlide()">‹</button>
+                    <button class="carousel-nav next" onclick="nextSlide()">›</button>
+
+                    <!-- Indicators -->
+                    <div class="carousel-indicators" id="carouselIndicators">
+                        <span class="carousel-indicator active" onclick="goToSlide(0)"></span>
+                        <span class="carousel-indicator" onclick="goToSlide(1)"></span>
+                        <span class="carousel-indicator" onclick="goToSlide(2)"></span>
+                        <span class="carousel-indicator" onclick="goToSlide(3)"></span>
+                        <span class="carousel-indicator" onclick="goToSlide(4)"></span>
+                    </div>
+                </div>
+
+                <!-- Promotions Banner -->
+                <div class="promo-banner promotions-banner">
+                    <div>
+                        <h2 class="promotions-title">ПРОМОЦИИ</h2>
+                        <div class="bottles-container">
+                            <div class="bottle"></div>
+                            <div class="bottle" style="height: 140px;"></div>
+                            <div class="bottle" style="height: 100px;"></div>
+                            <div class="bottle" style="height: 160px;"></div>
+                            <div class="bottle" style="height: 110px;"></div>
+                            <div class="bottle" style="height: 130px;"></div>
+                        </div>
+                        <p class="promotions-description">
+                            Разгледайте нашата секция с налични продукти
+                        </p>
+                    </div>
+                    <button class="promo-button">Виж всички продукти</button>
+                </div>
+            </div>
+
+            <!-- Popular Categories -->
+            <div class="popular-categories">
+                <h2 class="section-title">Популярни категории</h2>
+                <div class="categories-grid">
+                    <div class="category-tile">
+                        <div class="category-icon">🍷</div>
+                        <div class="category-name">Вина</div>
+                    </div>
+                    <div class="category-tile">
+                        <div class="category-icon">🥂</div>
+                        <div class="category-name">Пенливи вина</div>
+                    </div>
+                    <div class="category-tile">
+                        <div class="category-icon">🥃</div>
+                        <div class="category-name">Алкохолни напитки</div>
+                    </div>
+                    <div class="category-tile">
+                        <div class="category-icon">🥜</div>
+                        <div class="category-name">Ядки</div>
+                    </div>
+                    <div class="category-tile">
+                        <div class="category-icon">🍺</div>
+                        <div class="category-name">Бира</div>
+                    </div>
+                    <div class="category-tile">
+                        <div class="category-icon">💧</div>
+                        <div class="category-name">Вода</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Promotions Products Section -->
+            <div class="promotions-section">
+                <h2 class="section-title">Промоции</h2>
+                <div class="products-grid">
+                    <!-- Product Card 1 -->
+                    <div class="product-card">
+                        <div class="discount-badge">
+                            <span class="flag-icon">🇷🇺</span>
+                            <span>-20.00%</span>
+                        </div>
+                        <div class="product-image">
+                            <div class="bottle-image"></div>
+                        </div>
+                        <div class="product-name">Водка Онегин Селект Петербургъ 1832</div>
+                        <div class="product-specs">0.5л, Русия</div>
+                        <div class="price-section">
+                            <span class="original-price">99.77лв.</span>
+                            <span class="discounted-price">79.77лв. / 40.00€</span>
+                        </div>
+                        <div class="product-actions">
+                            <input type="number" class="quantity-input" value="1" min="1">
+                            <button class="add-button">Добави</button>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 2 -->
+                    <div class="product-card">
+                        <div class="discount-badge">
+                            <span class="flag-icon">🇧🇬</span>
+                            <span>-25.00%</span>
+                        </div>
+                        <div class="product-image">
+                            <div class="bottle-image"></div>
+                        </div>
+                        <div class="product-name">Червено Вино Каберне Совиньон, Мерло, Фран Онегин 2022г.</div>
+                        <div class="product-specs">0.75л, България</div>
+                        <div class="price-section">
+                            <span class="original-price">45.99лв.</span>
+                            <span class="discounted-price">34.49лв. / 17.25€</span>
+                        </div>
+                        <div class="product-actions">
+                            <input type="number" class="quantity-input" value="1" min="1">
+                            <button class="add-button">Добави</button>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 3 -->
+                    <div class="product-card">
+                        <div class="discount-badge">
+                            <span class="flag-icon">🇷🇺</span>
+                            <span>-15.00%</span>
+                        </div>
+                        <div class="product-image">
+                            <div class="bottle-image"></div>
+                        </div>
+                        <div class="product-name">Водка Русский Стандарт Платинум</div>
+                        <div class="product-specs">0.7л, Русия</div>
+                        <div class="price-section">
+                            <span class="original-price">89.99лв.</span>
+                            <span class="discounted-price">76.49лв. / 38.25€</span>
+                        </div>
+                        <div class="product-actions">
+                            <input type="number" class="quantity-input" value="1" min="1">
+                            <button class="add-button">Добави</button>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 4 -->
+                    <div class="product-card">
+                        <div class="discount-badge">
+                            <span class="flag-icon">🇧🇬</span>
+                            <span>-30.00%</span>
+                        </div>
+                        <div class="product-image">
+                            <div class="bottle-image"></div>
+                        </div>
+                        <div class="product-name">Бяло Вино Шардоне, Ризлинг Онегин 2023г.</div>
+                        <div class="product-specs">0.75л, България</div>
+                        <div class="price-section">
+                            <span class="original-price">38.99лв.</span>
+                            <span class="discounted-price">27.29лв. / 13.65€</span>
+                        </div>
+                        <div class="product-actions">
+                            <input type="number" class="quantity-input" value="1" min="1">
+                            <button class="add-button">Добави</button>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 5 -->
+                    <div class="product-card">
+                        <div class="discount-badge">
+                            <span class="flag-icon">🇷🇺</span>
+                            <span>-18.00%</span>
+                        </div>
+                        <div class="product-image">
+                            <div class="bottle-image"></div>
+                        </div>
+                        <div class="product-name">Водка Белуга Нобле</div>
+                        <div class="product-specs">0.7л, Русия</div>
+                        <div class="price-section">
+                            <span class="original-price">129.99лв.</span>
+                            <span class="discounted-price">106.59лв. / 53.30€</span>
+                        </div>
+                        <div class="product-actions">
+                            <input type="number" class="quantity-input" value="1" min="1">
+                            <button class="add-button">Добави</button>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 6 -->
+                    <div class="product-card">
+                        <div class="discount-badge">
+                            <span class="flag-icon">🇧🇬</span>
+                            <span>-22.00%</span>
+                        </div>
+                        <div class="product-image">
+                            <div class="bottle-image"></div>
+                        </div>
+                        <div class="product-name">Розе Вино Онегин 2022г.</div>
+                        <div class="product-specs">0.75л, България</div>
+                        <div class="price-section">
+                            <span class="original-price">42.99лв.</span>
+                            <span class="discounted-price">33.53лв. / 16.77€</span>
+                        </div>
+                        <div class="product-actions">
+                            <input type="number" class="quantity-input" value="1" min="1">
+                            <button class="add-button">Добави</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Newsletter Banner -->
+            <div class="newsletter-banner">
+                <div class="newsletter-image">
+                    <div class="couple-illustration">
+                        <div class="person person-woman">
+                            <div class="person-head"></div>
+                            <div class="person-body"></div>
+                            <div class="person-phone"></div>
+                        </div>
+                        <div class="person person-man">
+                            <div class="person-head"></div>
+                            <div class="person-body"></div>
+                            <div class="person-phone"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="newsletter-content">
+                    <h2 class="newsletter-headline">Остави ни e-mail и ще те почерпим!</h2>
+                    <p class="newsletter-description">
+                        Запиши се за нашия бюлетин, за да получаваш първи информация за нови продукти, промоции и отстъпки.
+                    </p>
+                    <form class="newsletter-form" onsubmit="event.preventDefault(); return false;">
+                        <input 
+                            type="email" 
+                            class="newsletter-email" 
+                            placeholder="s1on@abv.bg"
+                            required
+                        >
+                        <button type="submit" class="newsletter-button">Запиши се</button>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <!-- Left Column -->
+            <div class="footer-column">
+                <div class="footer-logo">
+                    <span class="footer-logo-text">MY STORE</span>
+                    <div class="footer-logo-icon">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+                <p>България, гр. София</p>
+                <p>+359 876758565</p>
+            </div>
+
+            <!-- Middle Column -->
+            <div class="footer-column">
+                <h3>За нас</h3>
+                <ul>
+                    <li><a href="#">Контакти</a></li>
+                    <li><a href="#">Профил</a></li>
+                    <li><a href="#">Регистрация</a></li>
+                    <li><a href="#">Моите поръчки</a></li>
+                    <li><a href="#">Списък с желания</a></li>
+                </ul>
+                <h3 style="margin-top: 30px;">Информация</h3>
+                <ul>
+                    <li><a href="#">Доставка</a></li>
+                    <li><a href="#">Лични данни</a></li>
+                    <li><a href="#">Общи условия</a></li>
+                </ul>
+            </div>
+
+            <!-- Right Column -->
+            <div class="footer-column">
+                <h3>Категории</h3>
+                <ul>
+                    <li><a href="#">Алкохолни напитки</a></li>
+                    <li><a href="#">Други хранителни продукти</a></li>
+                    <li><a href="#">Нехранителни продукти</a></li>
+                    <li><a href="#">Минерална вода</a></li>
+                    <li><a href="#">Като за подарък</a></li>
+                    <li><a href="#">Предварителна поръчка</a></li>
+                    <li><a href="#">Промоции</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Payment Methods -->
+        <div class="payment-methods">
+            <h4>Начин на плащане</h4>
+            <div class="payment-icons">
+                <i class="fa">&#xf1f0;</i>
+                <i class="fa">&#xf1f1;</i>
+            </div>
+        </div>
+
+        <!-- Copyright -->
+        <div class="copyright">
+            <p>© 2025 My Store. Всички права запазени.</p>
+        </div>
+    </footer>
+
+    <!-- Floating Chat Widget -->
+    <div class="chat-widget">
+        <div class="chat-icon">💬</div>
+        <span>СВЪРЖЕТЕ СЕ С НАС</span>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const totalSlides = 5;
+        let carouselInterval;
+
+        function updateCarousel() {
+            const slides = document.getElementById('carouselSlides');
+            const indicators = document.querySelectorAll('.carousel-indicator');
+            
+            slides.style.transform = `translateX(-${currentSlide * 100}%)`;
+            
+            indicators.forEach((indicator, index) => {
+                if (index === currentSlide) {
+                    indicator.classList.add('active');
+                } else {
+                    indicator.classList.remove('active');
+                }
+            });
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateCarousel();
+            resetInterval();
+        }
+
+        function previousSlide() {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            updateCarousel();
+            resetInterval();
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateCarousel();
+            resetInterval();
+        }
+
+        function resetInterval() {
+            clearInterval(carouselInterval);
+            carouselInterval = setInterval(nextSlide, 5000);
+        }
+
+        // Initialize carousel
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCarousel();
+            carouselInterval = setInterval(nextSlide, 5000);
+        });
+    </script>
+</body>
+</html>
