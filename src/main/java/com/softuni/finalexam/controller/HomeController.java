@@ -17,4 +17,9 @@ public class HomeController {
         return "profile";
     }
 
+    @GetMapping("/cart")
+    public String cart() {
+        return "cart";
+    }
+
 }
