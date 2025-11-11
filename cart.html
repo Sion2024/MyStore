@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Количка - My Store</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .cart-page-wrapper {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            padding: 3rem 1.5rem;
+        }
+
+        .cart-launcher {
+            padding: 1rem 2.5rem;
+            border-radius: 999px;
+            border: none;
+            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 18px 40px rgba(37, 99, 235, 0.35);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .cart-launcher:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 22px 48px rgba(37, 99, 235, 0.45);
+        }
+
+        .cart-drawer {
+            position: fixed;
+            top: 0;
+            right: -420px;
+            width: 360px;
+            max-width: 90vw;
+            height: 100vh;
+            background: #ffffff;
+            box-shadow: -24px 0 48px rgba(15, 23, 42, 0.12);
+            padding: 2rem 1.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            transition: right 0.3s ease;
+            z-index: 1001;
+        }
+
+        .cart-drawer.open {
+            right: 0;
+        }
+
+        .cart-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.35);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        .cart-overlay.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .cart-drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-drawer-header h2 {
+            font-size: 1.4rem;
+            margin: 0;
+            color: #111827;
+        }
+
+        .cart-close-btn {
+            background: none;
+            border: none;
+            font-size: 1.75rem;
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        .cart-items {
+            flex: 1;
+            overflow-y: auto;
+            display: grid;
+            gap: 1.25rem;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .cart-item h3 {
+            margin: 0 0 0.35rem;
+            font-size: 1rem;
+            color: #1f2937;
+        }
+
+        .cart-item span {
+            display: block;
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        .cart-item strong {
+            font-size: 1rem;
+            color: #111827;
+        }
+
+        .cart-summary {
+            display: grid;
+            gap: 0.75rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .cart-summary-row {
+            display: flex;
+            justify-content: space-between;
+            color: #374151;
+            font-size: 0.95rem;
+        }
+
+        .checkout-btn {
+            padding: 0.85rem 1.25rem;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(135deg, #10b981 0%, #22c55e 100%);
+            color: #ffffff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .checkout-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 36px rgba(34, 197, 94, 0.45);
+        }
+
+        .checkout-btn:disabled {
+            background: #d1d5db;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 1.5rem;
+            color: #6b7280;
+            background: #f9fafb;
+            border-radius: 16px;
+        }
+    </style>
+</head>
+<body>
+<div class="cart-page-wrapper">
+    <h1>Количката ви</h1>
+    <p>Натиснете бутона по-долу, за да видите текущите си продукти и да финализирате поръчката.</p>
+    <button id="openCartButton" class="cart-launcher">Виж количката</button>
+</div>
+
+<div id="cartOverlay" class="cart-overlay"></div>
+
+<aside id="cartDrawer" class="cart-drawer" aria-hidden="true">
+    <div class="cart-drawer-header">
+        <h2>Вашата количка</h2>
+        <button id="closeCartButton" class="cart-close-btn" aria-label="Затвори количката">&times;</button>
+    </div>
+
+    <div class="cart-items">
+        <div th:if="${#lists.isEmpty(cartItems)}" class="empty-cart">
+            Все още няма добавени продукти.
+        </div>
+
+        <div th:each="item : ${cartItems}" class="cart-item">
+            <div>
+                <h3 th:text="${item.product.name}">Име на продукт</h3>
+                <span th:text="'Количество: ' + ${item.quantity}">Количество</span>
+                <span th:text="'Единична цена: ' + ${item.product.price} + ' лв.'">Цена</span>
+            </div>
+            <strong th:text="${item.totalPrice} + ' лв.'">79.99 лв.</strong>
+        </div>
+    </div>
+
+    <div class="cart-summary" th:if="${not #lists.isEmpty(cartItems)}">
+        <div class="cart-summary-row">
+            <span>Общо артикули:</span>
+            <span th:text="${cartItems.size()}">3</span>
+        </div>
+        <div class="cart-summary-row">
+            <span>Междинна сума:</span>
+            <span th:text="${cartSubtotal} + ' лв.'">0.00 лв.</span>
+        </div>
+        <button class="checkout-btn" th:href="@{/checkout}" th:if="${cartItems.size() > 0}">Продължи</button>
+    </div>
+</aside>
+
+<script>
+    (function () {
+        const drawer = document.getElementById('cartDrawer');
+        const overlay = document.getElementById('cartOverlay');
+        const openBtn = document.getElementById('openCartButton');
+        const closeBtn = document.getElementById('closeCartButton');
+
+        function openCart() {
+            drawer.classList.add('open');
+            overlay.classList.add('visible');
+            drawer.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeCart() {
+            drawer.classList.remove('open');
+            overlay.classList.remove('visible');
+            drawer.setAttribute('aria-hidden', 'true');
+        }
+
+        openBtn.addEventListener('click', openCart);
+        closeBtn.addEventListener('click', closeCart);
+        overlay.addEventListener('click', closeCart);
+
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape' && drawer.classList.contains('open')) {
+                closeCart();
+            }
+        });
+    })();
+</script>
+</body>
+</html>
+ 
