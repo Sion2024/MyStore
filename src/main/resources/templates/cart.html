@@ -4,82 +4,183 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Количка - My Store</title>
-    <link rel="stylesheet" th:href="@{/css/cart.css}">
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/cart.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
-<body>
-<div class="cart-page-wrapper">
-    <h1>Количката ви</h1>
-    <p>Натиснете бутона по-долу, за да видите текущите си продукти и да финализирате поръчката.</p>
-    <button id="openCartButton" class="cart-launcher">Виж количката</button>
-</div>
-
-<div id="cartOverlay" class="cart-overlay"></div>
-
-<aside id="cartDrawer" class="cart-drawer" aria-hidden="true">
-    <div class="cart-drawer-header">
-        <h2>Вашата количка</h2>
-        <button id="closeCartButton" class="cart-close-btn" aria-label="Затвори количката">&times;</button>
+<body class="cart-page-body">
+    <div class="top-banner">
+        Безплатна доставка за поръчки над 150 лв. / 76.69 €
     </div>
 
-    <div class="cart-items">
-        <div th:if="${#lists.isEmpty(cartItems)}" class="empty-cart">
-            Все още няма добавени продукти.
-        </div>
-
-        <div th:each="item : ${cartItems}" class="cart-item">
-            <div>
-                <h3 th:text="${item.product.name}">Име на продукт</h3>
-                <span th:text="'Количество: ' + ${item.quantity}">Количество</span>
-                <span th:text="'Единична цена: ' + ${item.product.price} + ' лв.'">Цена</span>
+    <header class="header">
+        <div class="logo-section">
+            <span class="logo-text">My Store</span>
+            <div class="logo-icon">
+                <span></span>
+                <span></span>
+                <span></span>
             </div>
-            <strong th:text="${item.totalPrice} + ' лв.'">79.99 лв.</strong>
         </div>
+        <div class="search-bar">
+            <input type="text" class="search-input" placeholder="Какво търсиш днес?">
+            <button class="search-button">🔍</button>
+        </div>
+        <div class="header-utils">
+            <div class="language-selector">
+                <span>🇬🇧</span>
+                <span>English</span>
+            </div>
+            <a class="icon-btn" th:href="@{/profile}" aria-label="Профил">
+                👤
+            </a>
+            <a class="icon-btn" th:href="@{/wishlist-view}" aria-label="Любими">
+                ❤️
+            </a>
+            <a class="icon-btn" th:href="@{/cart}" aria-label="Количка">
+                🛒
+            </a>
+        </div>
+    </header>
+
+    <nav class="nav-menu">
+        <ul>
+            <li><a th:href="@{/}">Начало</a></li>
+            <li><a href="#">Продукти</a></li>
+            <li><a href="#">Промоции</a></li>
+            <li><a href="#">Контакти</a></li>
+        </ul>
+    </nav>
+
+    <main class="cart-main">
+        <div class="cart-container">
+            <h1 class="cart-title">Количката ви</h1>
+            
+            <div class="cart-layout" th:if="${cartItems != null and !#lists.isEmpty(cartItems)}">
+                <div class="cart-items-section">
+                    <div class="cart-items-list">
+                        <div th:each="item : ${cartItems}" class="cart-item-card">
+                            <div class="cart-item-image">
+                                <div class="product-image-placeholder"></div>
+                            </div>
+                            <div class="cart-item-details">
+                                <div class="cart-item-header">
+                                    <h2 class="cart-item-name" th:text="${item.product.name}">Име на продукт</h2>
+                                    <button class="remove-item-btn" aria-label="Премахни продукт">×</button>
+                                </div>
+                                <p class="cart-item-specs" th:if="${item.product.category != null}">
+                                    <span th:text="${item.product.category.name}">Категория</span>
+                                </p>
+                                <div class="cart-item-controls">
+                                    <div class="quantity-control">
+                                        <button class="quantity-btn" type="button" aria-label="Намали количество">−</button>
+                                        <input type="number" class="quantity-input" th:value="${item.quantity}" min="1" readonly>
+                                        <button class="quantity-btn" type="button" aria-label="Увеличи количество">+</button>
+                                    </div>
+                                    <div class="cart-item-price">
+                                        <span class="price-current" th:text="${item.totalPrice} + ' лв.'">79.99 лв.</span>
+                                        <span class="price-unit" th:text="'Единична цена: ' + ${item.product.price} + ' лв.'">99.99 лв.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <aside class="cart-summary-sidebar">
+                    <div class="cart-summary-card">
+                        <h3 class="summary-title">Резюме на поръчката</h3>
+                        <div class="summary-details">
+                            <div class="summary-row">
+                                <span>Брой артикули:</span>
+                                <strong th:text="${cartItems.size()}">3</strong>
+                            </div>
+                            <div class="summary-row">
+                                <span>Междинна сума:</span>
+                                <strong th:text="${cartSubtotal} + ' лв.'">0.00 лв.</strong>
+                            </div>
+                            <div class="summary-row summary-row-total">
+                                <span>Общо:</span>
+                                <strong class="total-price" th:text="${cartSubtotal} + ' лв.'">0.00 лв.</strong>
+                            </div>
+                        </div>
+                        <a th:href="@{/checkout}" class="checkout-button">
+                            Продължи към плащане
+                        </a>
+                        <a th:href="@{/}" class="continue-shopping">
+                            Продължи пазаруването
+                        </a>
+                    </div>
+                </aside>
+            </div>
+
+            <div class="empty-cart-state" th:if="${cartItems == null or #lists.isEmpty(cartItems)}">
+                <div class="empty-cart-icon">🛒</div>
+                <h2 class="empty-cart-title">Вашата количка е празна</h2>
+                <p class="empty-cart-message">Добавете продукти в количката, за да продължите с поръчката.</p>
+                <a th:href="@{/}" class="shop-now-button">Започни пазаруване</a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-column">
+                <div class="footer-logo">
+                    <span class="footer-logo-text">MY STORE</span>
+                    <div class="footer-logo-icon">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+                <p>България, гр. София</p>
+                <p>+359 876758565</p>
+            </div>
+            <div class="footer-column">
+                <h3>За нас</h3>
+                <ul>
+                    <li><a href="#">Контакти</a></li>
+                    <li><a href="#">Профил</a></li>
+                    <li><a href="#">Регистрация</a></li>
+                    <li><a href="#">Моите поръчки</a></li>
+                    <li><a href="#">Списък с желания</a></li>
+                </ul>
+                <h3 style="margin-top: 30px;">Информация</h3>
+                <ul>
+                    <li><a href="#">Доставка</a></li>
+                    <li><a href="#">Лични данни</a></li>
+                    <li><a href="#">Общи условия</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Категории</h3>
+                <ul>
+                    <li><a href="#">Алкохолни напитки</a></li>
+                    <li><a href="#">Други хранителни продукти</a></li>
+                    <li><a href="#">Нехранителни продукти</a></li>
+                    <li><a href="#">Минерална вода</a></li>
+                    <li><a href="#">Като за подарък</a></li>
+                    <li><a href="#">Предварителна поръчка</a></li>
+                    <li><a href="#">Промоции</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="payment-methods">
+            <h4>Начин на плащане</h4>
+            <div class="payment-icons">
+                <i class="fa">&#xf1f0;</i>
+                <i class="fa">&#xf1f1;</i>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>© 2025 My Store. Всички права запазени.</p>
+        </div>
+    </footer>
+
+    <div class="chat-widget">
+        <div class="chat-icon">💬</div>
+        <span>СВЪРЖЕТЕ СЕ С НАС</span>
     </div>
-
-    <div class="cart-summary" th:if="${not #lists.isEmpty(cartItems)}">
-        <div class="cart-summary-row">
-            <span>Общо артикули:</span>
-            <span th:text="${cartItems.size()}">3</span>
-        </div>
-        <div class="cart-summary-row">
-            <span>Междинна сума:</span>
-            <span th:text="${cartSubtotal} + ' лв.'">0.00 лв.</span>
-        </div>
-        <button class="checkout-btn" th:href="@{/checkout}" th:if="${cartItems.size() > 0}">Продължи</button>
-    </div>
-</aside>
-
-<script>
-    (function () {
-        const drawer = document.getElementById('cartDrawer');
-        const overlay = document.getElementById('cartOverlay');
-        const openBtn = document.getElementById('openCartButton');
-        const closeBtn = document.getElementById('closeCartButton');
-
-        function openCart() {
-            drawer.classList.add('open');
-            overlay.classList.add('visible');
-            drawer.setAttribute('aria-hidden', 'false');
-        }
-
-        function closeCart() {
-            drawer.classList.remove('open');
-            overlay.classList.remove('visible');
-            drawer.setAttribute('aria-hidden', 'true');
-        }
-
-        openBtn.addEventListener('click', openCart);
-        closeBtn.addEventListener('click', closeCart);
-        overlay.addEventListener('click', closeCart);
-
-        document.addEventListener('keydown', function (event) {
-            if (event.key === 'Escape' && drawer.classList.contains('open')) {
-                closeCart();
-            }
-        });
-    })();
-</script>
 </body>
 </html>
- 
