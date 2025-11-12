@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавяне на профил - My Store</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/profile-add.css}">
+</head>
+<body class="profile-add-page">
+<div class="top-banner">
+    Безплатна доставка за поръчки над 150 лв. / 76.69 €
+</div>
+
+<header class="header">
+    <div class="logo-section">
+        <span class="logo-text">My Store</span>
+        <div class="logo-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+    <div class="search-bar">
+        <input type="text" class="search-input" placeholder="Какво търсиш днес?">
+        <button class="search-button">🔍</button>
+    </div>
+    <div class="header-utils">
+        <div class="language-selector">
+            <span>🇬🇧</span>
+            <span>English</span>
+        </div>
+        <a class="icon-btn" th:href="@{/profile}" aria-label="Профил">
+            👤
+        </a>
+        <button class="icon-btn" aria-label="Любими">
+            ❤️
+        </button>
+        <a class="icon-btn" th:href="@{/cart}" aria-label="Количка">
+            🛒
+        </a>
+    </div>
+</header>
+
+<nav class="nav-menu">
+    <ul>
+        <li><a th:href="@{/}">Начало</a></li>
+        <li><a href="#">Продукти</a></li>
+        <li><a href="#">Промоции</a></li>
+        <li><a href="#">Контакти</a></li>
+    </ul>
+</nav>
+
+<main class="profile-add-main">
+    <section class="profile-card">
+        <h1 class="profile-card-title">Регистрация и вход</h1>
+        <form class="profile-form" th:action="@{/profile/add}" method="post">
+            <div class="form-row">
+                <label for="firstName">Име</label>
+                <input id="firstName" name="firstName" type="text" placeholder="Мария" required>
+            </div>
+            <div class="form-row">
+                <label for="password">Парола</label>
+                <input id="password" name="password" type="password" placeholder="Създайте парола" required>
+            </div>
+            <div class="form-row">
+                <label for="email">E-mail</label>
+                <input id="email" name="email" type="email" placeholder="example@email.com" required>
+            </div>
+            <div class="form-row">
+                <label for="role">Роля</label>
+                <input id="role" name="role" type="text" placeholder="User" required>
+            </div>
+
+            <div class="form-row">
+                <button type="submit" class="submit-btn">Регистрация</button>
+            </div>
+        </form>
+        <div class="form-footer">
+            <span>Вече имате профил?</span>
+            <a href="#" class="link-accent">Влезте тук</a>
+        </div>
+    </section>
+
+    <aside class="profile-promo">
+        <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80"
+             alt="Щастливи клиенти" class="promo-image">
+        <div class="promo-caption">
+            <h2>Остави ни e-mail и ще те почерпим!</h2>
+            <p>Получавай оферти и промоции преди всички останали.</p>
+        </div>
+    </aside>
+</main>
+
+<footer class="footer">
+    <div class="footer-content">
+        <div class="footer-column">
+            <div class="footer-logo">
+                <span class="footer-logo-text">MY STORE</span>
+                <div class="footer-logo-icon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            <p>България, гр. София</p>
+            <p>+359 876758565</p>
+        </div>
+        <div class="footer-column">
+            <h3>За нас</h3>
+            <ul>
+                <li><a href="#">Контакти</a></li>
+                <li><a href="#">Профил</a></li>
+                <li><a href="#">Регистрация</a></li>
+                <li><a href="#">Моите поръчки</a></li>
+                <li><a href="#">Списък с желания</a></li>
+            </ul>
+            <h3 style="margin-top: 30px;">Информация</h3>
+            <ul>
+                <li><a href="#">Доставка</a></li>
+                <li><a href="#">Лични данни</a></li>
+                <li><a href="#">Общи условия</a></li>
+            </ul>
+        </div>
+        <div class="footer-column">
+            <h3>Категории</h3>
+            <ul>
+                <li><a href="#">Алкохолни напитки</a></li>
+                <li><a href="#">Други хранителни продукти</a></li>
+                <li><a href="#">Нехранителни продукти</a></li>
+                <li><a href="#">Минерална вода</a></li>
+                <li><a href="#">Като за подарък</a></li>
+                <li><a href="#">Предварителна поръчка</a></li>
+                <li><a href="#">Промоции</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="payment-methods">
+        <h4>Начин на плащане</h4>
+        <div class="payment-icons">
+            <i class="fa">&#xf1f0;</i>
+            <i class="fa">&#xf1f1;</i>
+        </div>
+    </div>
+    <div class="copyright">
+        <p>© 2025 My Store. Всички права запазени.</p>
+    </div>
+</footer>
+
+<div class="chat-widget">
+    <div class="chat-icon">💬</div>
+    <span>СВЪРЖЕТЕ СЕ С НАС</span>
+</div>
+</body>
+</html>
+

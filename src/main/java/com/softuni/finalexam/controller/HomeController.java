@@ -22,4 +22,9 @@ public class HomeController {
         return "cart";
     }
 
+    @GetMapping("/profile-add")
+    public String profileAdd() {
+        return "profile-add";
+    }
+
 }

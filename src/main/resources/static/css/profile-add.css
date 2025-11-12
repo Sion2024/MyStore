@@ -1,0 +1,151 @@
+.profile-add-main {
+    display: grid;
+    grid-template-columns: minmax(0, 520px);
+    gap: 2.5rem;
+    margin: 3rem auto 4rem;
+    padding: 0 2rem;
+    width: min(640px, 100%);
+    justify-content: center;
+}
+
+.profile-card {
+    background: var(--color-surface);
+    border-radius: 18px;
+    padding: 2.75rem;
+    box-shadow: var(--shadow-soft);
+    display: grid;
+    gap: 1.5rem;
+}
+
+.profile-card-title {
+    margin: 0;
+    font-size: 1.85rem;
+}
+
+.profile-form {
+    display: grid;
+    gap: 1.25rem;
+}
+
+.form-row {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.form-row label {
+    font-size: 0.95rem;
+    color: var(--color-muted);
+    font-weight: 600;
+}
+
+.form-row input[type="text"],
+.form-row input[type="email"],
+.form-row input[type="password"],
+.form-row input[type="tel"] {
+    border-radius: 10px;
+    border: 1px solid var(--color-border);
+    padding: 0.75rem 0.9rem;
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-row input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(91, 75, 255, 0.15);
+}
+
+.form-row-checkbox {
+    align-items: center;
+}
+
+.form-row-checkbox label {
+    font-weight: 500;
+    color: #4b5563;
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+}
+
+.form-row-checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-top: 0.2rem;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 0.9rem;
+    border: none;
+    border-radius: 12px;
+    background: var(--gradient-primary);
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.submit-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 18px 30px rgba(91, 75, 255, 0.25);
+}
+
+.form-footer {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    color: #4b5563;
+}
+
+.link-accent {
+    color: var(--color-primary);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.link-accent:hover {
+    text-decoration: underline;
+}
+
+.profile-promo {
+    background: var(--color-surface);
+    border-radius: 18px;
+    box-shadow: var(--shadow-soft);
+    overflow: hidden;
+    display: grid;
+    gap: 1.5rem;
+    align-content: start;
+    justify-self: center;
+    width: min(520px, 100%);
+}
+
+.promo-image {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+}
+
+.promo-caption {
+    padding: 0 1.75rem 2rem;
+    display: grid;
+    gap: 0.75rem;
+}
+
+.promo-caption h2 {
+    margin: 0;
+    font-size: 1.45rem;
+    color: #1f2937;
+}
+
+.promo-caption p {
+    margin: 0;
+    color: #4b5563;
+}
+
+@media (max-width: 640px) {
+    .profile-card {
+        padding: 2rem;
+    }
+}
+
