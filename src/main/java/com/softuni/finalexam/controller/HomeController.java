@@ -18,13 +18,20 @@ public class HomeController {
     }
 
     @GetMapping("/cart")
-    public String cart() {
+    public String showCart() {
         return "cart";
     }
 
     @GetMapping("/profile-add")
-    public String profileAdd() {
+    public String showProfileAdd() {
         return "profile-add";
     }
+
+    @GetMapping("/wishlist-view")
+    public String showWishlistView() {
+        return "wishlist-view";
+    }
+
+
 
 }

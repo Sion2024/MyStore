@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Моят профил - My Store</title>
+    <title>Списък Любими My Store</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/wishlist-view.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
-<body class="profile-page">
+<body class="wishlist-page">
     <div class="top-banner">
         Безплатна доставка за поръчки над 150 лв. / 76.69 €
     </div>
@@ -51,68 +52,52 @@
         </ul>
     </nav>
 
-    <main class="profile-main">
-        <div class="profile-hero">
-            <div class="profile-hero-content">
-                <h1>Вход в магазина</h1>
-                <p>Влез в профила си, за да завършиш поръчката си и да следиш историята си.</p>
+    <main class="wishlist-main">
+        <div class="wishlist-container">
+            <h1 class="wishlist-title">Списък Любими</h1>
+            
+            <div class="wishlist-products">
+                <div class="wishlist-product-placeholder">
+                    <div class="product-label">продукт</div>
+                </div>
+                <div class="wishlist-product-placeholder">
+                    <div class="product-label">продукт</div>
+                </div>
+                <div class="wishlist-product-placeholder">
+                    <div class="product-label">продукт</div>
+                </div>
             </div>
         </div>
+    </main>
 
-        <section class="auth-section">
-            <div class="auth-card">
-                <div class="auth-card-header">
-                    <h2>Вход в магазина</h2>
-                    <div class="auth-status">
-                        <span class="auth-status-icon">🔒</span>
-                        <span class="auth-status-text">Сигурна връзка</span>
-                    </div>
+    <div class="newsletter-banner-wishlist">
+        <div class="newsletter-image-wishlist">
+            <div class="couple-illustration-wishlist">
+                <div class="person-wishlist person-woman-wishlist">
+                    <div class="person-head-wishlist"></div>
+                    <div class="person-body-wishlist person-body-woman"></div>
+                    <div class="person-phone-wishlist"></div>
                 </div>
-                <form class="auth-form" th:action="@{/login}" method="post">
-                    <div class="form-field">
-                        <label for="email">E-mail</label>
-                        <input id="email" name="username" type="email" placeholder="s1on@abv.bg" required>
-                    </div>
-                    <div class="form-field">
-                        <label for="password">Парола</label>
-                        <div class="password-field">
-                            <input id="password" name="password" type="password" placeholder="Въведи парола" required>
-                            <button type="button" class="toggle-password" aria-label="Показване на парола">👁</button>
-                        </div>
-                    </div>
-                    <div class="form-options">
-                        <label class="checkbox">
-                            <input type="checkbox" name="remember-me">
-                            <span>Запомни ме</span>
-                        </label>
-                        <a href="#" class="forgot-link">Забравена парола?</a>
-                    </div>
-                    <button type="submit" class="auth-submit">Вход</button>
-                </form>
-                <div class="auth-footer">
-                    <span>Нямаш профил?</span>
-                    <a th:href="@{/profile-add}" class="link-accent">Създай го сега</a>
+                <div class="person-wishlist person-man-wishlist">
+                    <div class="person-head-wishlist"></div>
+                    <div class="person-body-wishlist person-body-man"></div>
+                    <div class="person-phone-wishlist"></div>
                 </div>
             </div>
-
-            <aside class="auth-side">
-                <div class="auth-side-card">
-                    <h3>Предимства на профила</h3>
-                    <ul>
-                        <li>Бърза поръчка и проследяване</li>
-                        <li>История на покупките</li>
-                        <li>Списък с любими продукти</li>
-                        <li>Персонализирани предложения</li>
-                    </ul>
-                    <button class="auth-side-btn">Регистрирай се</button>
-                </div>
-                <div class="auth-help-card">
-                    <h4>Нужда от помощ?</h4>
-                    <p>Обади се на <a href="tel:+359876758565">+359 876758565</a> или ни пиши на <a href="mailto:info@mystore.bg">info@mystore.bg</a>.</p>
-                </div>
-            </aside>
-        </section>
-    </main>
+        </div>
+        <div class="newsletter-content-wishlist">
+            <h2 class="newsletter-headline-wishlist">Остави ни e-mail и ще те почерпим!</h2>
+            <form class="newsletter-form-wishlist" onsubmit="event.preventDefault(); return false;">
+                <input
+                    type="email"
+                    class="newsletter-email-wishlist"
+                    placeholder="your.mail@example.com"
+                    required
+                >
+                <button type="submit" class="newsletter-button-wishlist">Абонирай се</button>
+            </form>
+        </div>
+    </div>
 
     <footer class="footer">
         <div class="footer-content">
@@ -149,7 +134,7 @@
                 <ul>
                     <li><a href="#">Алкохолни напитки</a></li>
                     <li><a href="#">Други хранителни продукти</a></li>
-                    <li><a href="#">Нехранителни продукти</а></li>
+                    <li><a href="#">Нехранителни продукти</a></li>
                     <li><a href="#">Минерална вода</a></li>
                     <li><a href="#">Като за подарък</a></li>
                     <li><a href="#">Предварителна поръчка</a></li>
@@ -175,4 +160,3 @@
     </div>
 </body>
 </html>
- 

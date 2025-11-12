@@ -15,7 +15,7 @@
 <header class="header">
     <div class="logo-section">
         <span class="logo-text">My Store</span>
-        <div class="logo-icon">
+        <div th:href="@{/home}" class="logo-icon">
             <span></span>
             <span></span>
             <span></span>
@@ -33,9 +33,9 @@
         <a class="icon-btn" th:href="@{/profile}" aria-label="Профил">
             👤
         </a>
-        <button class="icon-btn" aria-label="Любими">
+        <a class="icon-btn" th:href="@{/wishlist-view}" aria-label="Любими">
             ❤️
-        </button>
+        </a>
         <a class="icon-btn" th:href="@{/cart}" aria-label="Количка">
             🛒
         </a>
@@ -78,7 +78,7 @@
         </form>
         <div class="form-footer">
             <span>Вече имате профил?</span>
-            <a href="#" class="link-accent">Влезте тук</a>
+            <a th:href="@{/profile}" class="link-accent">Влезте тук</a>
         </div>
     </section>
 
