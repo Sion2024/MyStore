@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Контакти - My Store</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/contacts.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <!-- Top Banner -->
+    <div class="top-banner">
+        Безплатна доставка за поръчки над 150 лв. / 76.69 €
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo-section">
+            <span class="logo-text">My Store</span>
+            <div class="logo-icon">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        <div class="search-bar">
+            <input type="text" class="search-input" placeholder="Какво търсиш днес?">
+            <button class="search-button">🔍</button>
+        </div>
+        <div class="header-utils">
+            <div class="language-selector">
+                <span>🇬🇧</span>
+                <span>English</span>
+            </div>
+            <a class="icon-btn" th:href="@{/profile}" aria-label="Профил">
+                👤
+            </a>
+            <a class="icon-btn" th:href="@{/wishlist-view}" aria-label="Любими">
+                ❤️
+            </a>
+            <a class="icon-btn" th:href="@{/cart}" aria-label="Количка">
+                🛒
+            </a>
+        </div>
+    </header>
+
+    <!-- Navigation Menu -->
+    <nav class="nav-menu">
+        <ul>
+            <li><a th:href="@{/}">Начало</a></li>
+            <li><a href="#">Продукти</a></li>
+            <li><a href="#">Промоции</a></li>
+            <li><a th:href="@{/contacts}" class="active">Контакти</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="contacts-main">
+        <div class="contacts-hero">
+            <h1>Контакти</h1>
+            <p>Свържете се с нас по всяко време</p>
+        </div>
+
+        <!-- Map Section -->
+        <section class="map-section">
+            <div class="map-container">
+                <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2933.5!2d23.3219!3d42.6975!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDLCsDQxJzUxLjAiTiAyM8KwMTknMTguOCJF!5e0!3m2!1sen!2sbg!4v1234567890"
+                    width="100%" 
+                    height="450" 
+                    style="border:0; border-radius: 20px;" 
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+        </section>
+
+        <!-- Contact Information Section -->
+        <section class="contact-info-section">
+            <div class="contact-info-grid">
+                <div class="contact-info-column">
+                    <div class="contact-item">
+                        <div class="contact-icon">📞</div>
+                        <h3>Телефон</h3>
+                        <p><a href="tel:+359876758565">+359 876758565</a></p>
+                        <p><a href="tel:+359876758566">+359 876758566</a></p>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">✉️</div>
+                        <h3>Email</h3>
+                        <p><a href="mailto:info@mystore.bg">info@mystore.bg</a></p>
+                        <p><a href="mailto:sales@mystore.bg">sales@mystore.bg</a></p>
+                    </div>
+                </div>
+                <div class="contact-info-column">
+                    <div class="contact-item">
+                        <div class="contact-icon">📍</div>
+                        <h3>Адрес</h3>
+                        <p>България, гр. София</p>
+                        <p>ул. Примерна 123</p>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">🕒</div>
+                        <h3>Работно време</h3>
+                        <p>Понеделник - Петък: 08:00 - 17:00 ч.</p>
+                        <p>Събота: 09:00 - 14:00 ч.</p>
+                        <p>Неделя: Почивен ден</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Inquiry Form Section -->
+        <section class="inquiry-form-section">
+            <div class="form-container">
+                <h2>Форма за запитване</h2>
+                <form class="inquiry-form" th:action="@{/contacts}" method="post">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name">Име *</label>
+                            <input type="text" id="name" name="name" required placeholder="Въведете вашето име">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Телефон *</label>
+                            <input type="tel" id="phone" name="phone" required placeholder="+359 888 888 888">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" required placeholder="example@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Съобщение *</label>
+                        <textarea id="message" name="message" rows="6" required placeholder="Напишете вашето съобщение тук..."></textarea>
+                    </div>
+                    <div class="form-group recaptcha-group">
+                        <div class="recaptcha-container">
+                            <input type="checkbox" id="recaptcha" name="recaptcha" required>
+                            <label for="recaptcha" class="recaptcha-label">
+                                <span class="recaptcha-icon">🤖</span>
+                                <span>Аз не съм робот</span>
+                            </label>
+                        </div>
+                    </div>
+                    <button type="submit" class="submit-button">Изпрати</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-column">
+                <div class="footer-logo">
+                    <span class="footer-logo-text">MY STORE</span>
+                    <div class="footer-logo-icon">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+                <p>България, гр. София</p>
+                <p>+359 876758565</p>
+            </div>
+            <div class="footer-column">
+                <h3>За нас</h3>
+                <ul>
+                    <li><a th:href="@{/contacts}">Контакти</a></li>
+                    <li><a th:href="@{/profile}">Профил</a></li>
+                    <li><a th:href="@{/profile-add}">Регистрация</a></li>
+                    <li><a href="#">Моите поръчки</a></li>
+                    <li><a th:href="@{/wishlist-view}">Списък с желания</a></li>
+                </ul>
+                <h3 style="margin-top: 30px;">Информация</h3>
+                <ul>
+                    <li><a href="#">Доставка</a></li>
+                    <li><a href="#">Лични данни</a></li>
+                    <li><a href="#">Общи условия</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Категории</h3>
+                <ul>
+                    <li><a href="#">Алкохолни напитки</a></li>
+                    <li><a href="#">Други хранителни продукти</a></li>
+                    <li><a href="#">Нехранителни продукти</a></li>
+                    <li><a href="#">Минерална вода</a></li>
+                    <li><a href="#">Като за подарък</a></li>
+                    <li><a href="#">Предварителна поръчка</a></li>
+                    <li><a href="#">Промоции</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="payment-methods">
+            <h4>Начин на плащане</h4>
+            <div class="payment-icons">
+                <i class="fa">&#xf1f0;</i>
+                <i class="fa">&#xf1f1;</i>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>© 2025 My Store. Всички права запазени.</p>
+        </div>
+    </footer>
+
+    <!-- Floating Chat Widget -->
+    <div class="chat-widget">
+        <div class="chat-icon">💬</div>
+        <span>СВЪРЖЕТЕ СЕ С НАС</span>
+    </div>
+</body>
+</html>
+

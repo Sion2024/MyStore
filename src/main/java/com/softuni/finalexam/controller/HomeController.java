@@ -2,6 +2,8 @@ package com.softuni.finalexam.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 @Controller
@@ -32,6 +34,19 @@ public class HomeController {
         return "wishlist-view";
     }
 
+    @GetMapping("/contacts")
+    public String showContacts() {
+        return "contacts";
+    }
 
+    @PostMapping("/contacts")
+    public String handleContactForm(@RequestParam String name,
+                                     @RequestParam String phone,
+                                     @RequestParam String email,
+                                     @RequestParam String message) {
+        // Handle form submission here
+        // You can add email sending logic or save to database
+        return "redirect:/contacts?success=true";
+    }
 
 }
