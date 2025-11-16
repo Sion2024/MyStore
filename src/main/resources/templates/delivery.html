@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Доставка - My Store</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/delivery.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <!-- Top Banner -->
+    <div class="top-banner">
+        Безплатна доставка за поръчки над 150 лв. / 76.69 €
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo-section">
+            <span class="logo-text">My Store</span>
+            <div class="logo-icon">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        <div class="search-bar">
+            <input type="text" class="search-input" placeholder="Какво търсиш днес?">
+            <button class="search-button">🔍</button>
+        </div>
+        <div class="header-utils">
+            <div class="language-selector">
+                <span>🇬🇧</span>
+                <span>English</span>
+            </div>
+            <a class="icon-btn" th:href="@{/profile}" aria-label="Профил">
+                👤
+            </a>
+            <a class="icon-btn" th:href="@{/wishlist-view}" aria-label="Любими">
+                ❤️
+            </a>
+            <a class="icon-btn" th:href="@{/cart}" aria-label="Количка">
+                🛒
+            </a>
+        </div>
+    </header>
+
+    <!-- Navigation Menu -->
+    <nav class="nav-menu">
+        <ul>
+            <li><a th:href="@{/}">Начало</a></li>
+            <li><a href="#">Продукти</a></li>
+            <li><a href="#">Промоции</a></li>
+            <li><a th:href="@{/contacts}">Контакти</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="delivery-main">
+        <!-- Breadcrumbs -->
+        <div class="breadcrumbs">
+            <a th:href="@{/}">Начало</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current">Доставка</span>
+        </div>
+
+        <!-- Page Title -->
+        <h1 class="delivery-title">Доставка</h1>
+
+        <!-- Content Section -->
+        <section class="delivery-content">
+            <div class="content-text">
+                <p>
+                    Ние предлагаме удобна и надеждна доставка до вашия дом или офис. 
+                    Нашата цел е да осигурим бърза и качествена услуга, която да отговори 
+                    на всички ваши нужди и очаквания.
+                </p>
+                <p>
+                    Доставката се извършва в рамките на работните дни от понеделник до петък 
+                    и в събота. Стремим се всички поръчки да бъдат доставени в най-кратки срокове, 
+                    като гарантираме внимание към всеки детайл.
+                </p>
+            </div>
+
+            <!-- Delivery Table -->
+            <div class="delivery-table-container">
+                <table class="delivery-table">
+                    <thead>
+                        <tr>
+                            <th>Сума</th>
+                            <th>Доставка</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0.00 лв. - 5.00 лв.</td>
+                            <td>0.00 лв. / 5.00 лв.</td>
+                        </tr>
+                        <tr>
+                            <td>5.00 лв. - 10.00 лв.</td>
+                            <td>0.00 лв. / 7.00 лв.</td>
+                        </tr>
+                        <tr>
+                            <td>10.00 лв. - 20.00 лв.</td>
+                            <td>0.00 лв. / 10.00 лв.</td>
+                        </tr>
+                        <tr>
+                            <td>20.00 лв. - 40.00 лв.</td>
+                            <td>0.00 лв. / 15.00 лв.</td>
+                        </tr>
+                        <tr>
+                            <td>40.00 лв. - 170.00 лв.</td>
+                            <td>0.00 лв. / 17.00 лв.</td>
+                        </tr>
+                        <tr>
+                            <td>над 170.00 лв.</td>
+                            <td>0.00 лв. (безплатна доставка)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Delivery Information -->
+            <div class="delivery-info">
+                <h2>Важна информация</h2>
+                <ul class="delivery-list">
+                    <li>Доставката се извършва в рамките на София и областите</li>
+                    <li>Минималната стойност на поръчка е 20.00 лв.</li>
+                    <li>За поръчки над 150.00 лв. доставката е безплатна</li>
+                    <li>Срокът за доставка е 2-3 работни дни от момента на потвърждение на поръчката</li>
+                    <li>При наличност на продуктите, доставката може да се извърши в същия ден</li>
+                    <li>Възможна е и лична покупка от наш офис с предварителна уговорка</li>
+                    <li>При въпроси относно доставката, моля свържете се с нас по телефон или имейл</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Newsletter Banner Section -->
+        <section class="delivery-newsletter">
+            <div class="newsletter-banner-delivery">
+                <div class="newsletter-content-delivery">
+                    <h2 class="newsletter-headline-delivery">Остави ни e-mail и ще те почерпим!</h2>
+                    <p class="newsletter-description-delivery">
+                        Запиши се за нашия бюлетин, за да получаваш първи информация за нови продукти, 
+                        промоции и отстъпки, както и важни новини относно доставките.
+                    </p>
+                    <form class="newsletter-form-delivery" onsubmit="event.preventDefault(); return false;">
+                        <input 
+                            type="email" 
+                            class="newsletter-email-delivery" 
+                            placeholder="tvoj@email.bg"
+                            required
+                        >
+                        <button type="submit" class="newsletter-button-delivery">Запиши се</button>
+                    </form>
+                </div>
+                <div class="newsletter-image-delivery">
+                    <div class="couple-illustration-delivery">
+                        <div class="person person-woman-delivery">
+                            <div class="person-head-delivery"></div>
+                            <div class="person-body-delivery person-body-purple"></div>
+                            <div class="person-phone-delivery"></div>
+                        </div>
+                        <div class="person person-man-delivery">
+                            <div class="person-head-delivery"></div>
+                            <div class="person-body-delivery person-body-orange"></div>
+                            <div class="person-phone-delivery"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-column">
+                <div class="footer-logo">
+                    <span class="footer-logo-text">MY STORE</span>
+                    <div class="footer-logo-icon">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+                <p>България, гр. София</p>
+                <p>+359 876758565</p>
+            </div>
+            <div class="footer-column">
+                <h3>За нас</h3>
+                <ul>
+                    <li><a th:href="@{/contacts}">Контакти</a></li>
+                    <li><a th:href="@{/profile}">Профил</a></li>
+                    <li><a th:href="@{/profile-add}">Регистрация</a></li>
+                    <li><a href="#">Моите поръчки</a></li>
+                    <li><a th:href="@{/wishlist-view}">Списък с желания</a></li>
+                </ul>
+                <h3 style="margin-top: 30px;">Информация</h3>
+                <ul>
+                    <li><a th:href="@{/delivery}">Доставка</a></li>
+                    <li><a href="#">Лични данни</a></li>
+                    <li><a href="#">Общи условия</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Категории</h3>
+                <ul>
+                    <li><a href="#">Алкохолни напитки</a></li>
+                    <li><a href="#">Други хранителни продукти</a></li>
+                    <li><a href="#">Нехранителни продукти</a></li>
+                    <li><a href="#">Минерална вода</a></li>
+                    <li><a href="#">Като за подарък</a></li>
+                    <li><a href="#">Предварителна поръчка</a></li>
+                    <li><a href="#">Промоции</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="payment-methods">
+            <h4>Начин на плащане</h4>
+            <div class="payment-icons">
+                <i class="fa">&#xf1f0;</i>
+                <i class="fa">&#xf1f1;</i>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>© 2025 My Store. Всички права запазени.</p>
+        </div>
+    </footer>
+
+    <!-- Floating Chat Widget -->
+    <div class="chat-widget">
+        <div class="chat-icon">💬</div>
+        <span>СВЪРЖЕТЕ СЕ С НАС</span>
+    </div>
+</body>
+</html>
+
+

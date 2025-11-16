@@ -44,9 +44,13 @@ public class HomeController {
                                      @RequestParam String phone,
                                      @RequestParam String email,
                                      @RequestParam String message) {
-        // Handle form submission here
-        // You can add email sending logic or save to database
+
         return "redirect:/contacts?success=true";
+    }
+
+    @GetMapping("/delivery")
+    public String showDelivery() {
+        return "delivery";
     }
 
 }
