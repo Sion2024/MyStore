@@ -1,33 +1,34 @@
 package com.softuni.finalexam.controller;
 
+import com.softuni.finalexam.models.entity.Product;
+import com.softuni.finalexam.repository.ProductRepository;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 
 @Controller
 public class HomeController {
 
+    private final ProductRepository productRepository;
+
+    public HomeController(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
+
     @GetMapping("/")
-    public String home() {
+    public String home(Model model) {
+        // Get all products to display on home page
+        List<Product> products = productRepository.findAll();
+        model.addAttribute("products", products);
         return "home";
     }
 
-    @GetMapping("/profile")
-    public String profile() {
-        return "profile";
-    }
-
-    @GetMapping("/cart")
-    public String showCart() {
-        return "cart";
-    }
-
-    @GetMapping("/profile-add")
-    public String showProfileAdd() {
-        return "profile-add";
-    }
+    // Cart is now handled by CartController
 
     @GetMapping("/wishlist-view")
     public String showWishlistView() {

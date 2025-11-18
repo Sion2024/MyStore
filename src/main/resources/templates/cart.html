@@ -31,8 +31,13 @@
                 <span>🇬🇧</span>
                 <span>English</span>
             </div>
-            <a class="icon-btn" th:href="@{/profile}" aria-label="Профил">
-                👤
+            <a class="icon-btn" th:href="@{/profile}" aria-label="Профил" 
+               th:classappend="${session.userId != null ? 'logged-in' : ''}"
+               style="position: relative;">
+                <span th:if="${session.userId != null}" style="color: #28a745;">✅</span>
+                <span th:if="${session.userId == null}">👤</span>
+                <span th:if="${session.userId != null}" 
+                      style="position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: #28a745; border-radius: 50%; border: 2px solid white;"></span>
             </a>
             <a class="icon-btn" th:href="@{/wishlist-view}" aria-label="Любими">
                 ❤️
@@ -46,7 +51,7 @@
     <nav class="nav-menu">
         <ul>
             <li><a th:href="@{/}">Начало</a></li>
-            <li><a href="#">Продукти</a></li>
+            <li><a th:href="@{/products}">Продукти</a></li>
             <li><a href="#">Промоции</a></li>
             <li><a href="#">Контакти</a></li>
         </ul>
@@ -55,6 +60,14 @@
     <main class="cart-main">
         <div class="cart-container">
             <h1 class="cart-title">Количката ви</h1>
+            
+            <!-- Success/Error Messages -->
+            <div th:if="${success}" style="padding: 1rem; background: #d4edda; color: #155724; border-radius: 4px; margin-bottom: 1rem;">
+                <span th:text="${success}"></span>
+            </div>
+            <div th:if="${error}" style="padding: 1rem; background: #f8d7da; color: #721c24; border-radius: 4px; margin-bottom: 1rem;">
+                <span th:text="${error}"></span>
+            </div>
             
             <div class="cart-layout" th:if="${cartItems != null and !#lists.isEmpty(cartItems)}">
                 <div class="cart-items-section">
@@ -66,16 +79,34 @@
                             <div class="cart-item-details">
                                 <div class="cart-item-header">
                                     <h2 class="cart-item-name" th:text="${item.product.name}">Име на продукт</h2>
-                                    <button class="remove-item-btn" aria-label="Премахни продукт">×</button>
+                                    <form th:action="@{/cart/remove}" method="post" style="display: inline;">
+                                        <input type="hidden" name="productId" th:value="${item.product.id}">
+                                        <button type="submit" class="remove-item-btn" aria-label="Премахни продукт" 
+                                                style="background: none; border: none; font-size: 2rem; cursor: pointer; color: #dc3545;">×</button>
+                                    </form>
                                 </div>
                                 <p class="cart-item-specs" th:if="${item.product.category != null}">
                                     <span th:text="${item.product.category.name}">Категория</span>
                                 </p>
                                 <div class="cart-item-controls">
                                     <div class="quantity-control">
-                                        <button class="quantity-btn" type="button" aria-label="Намали количество">−</button>
-                                        <input type="number" class="quantity-input" th:value="${item.quantity}" min="1" readonly>
-                                        <button class="quantity-btn" type="button" aria-label="Увеличи количество">+</button>
+                                        <form th:action="@{/cart/update}" method="post" style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <input type="hidden" name="productId" th:value="${item.product.id}">
+                                            <button type="submit" name="quantity" th:value="${item.quantity - 1}" 
+                                                    class="quantity-btn" 
+                                                    th:disabled="${item.quantity <= 1}"
+                                                    style="width: 35px; height: 35px; background: #f0f0f0; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; font-size: 1.2rem;"
+                                                    aria-label="Намали количество">−</button>
+                                            <input type="number" name="quantity" class="quantity-input" th:value="${item.quantity}" min="1" 
+                                                   th:max="${item.product.stock}" 
+                                                   onchange="this.form.submit();"
+                                                   style="width: 60px; text-align: center; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                                            <button type="submit" name="quantity" th:value="${item.quantity + 1}" 
+                                                    class="quantity-btn"
+                                                    th:disabled="${item.quantity >= item.product.stock}"
+                                                    style="width: 35px; height: 35px; background: #f0f0f0; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; font-size: 1.2rem;"
+                                                    aria-label="Увеличи количество">+</button>
+                                        </form>
                                     </div>
                                     <div class="cart-item-price">
                                         <span class="price-current" th:text="${item.totalPrice} + ' лв.'">79.99 лв.</span>
@@ -104,7 +135,7 @@
                                 <strong class="total-price" th:text="${cartSubtotal} + ' лв.'">0.00 лв.</strong>
                             </div>
                         </div>
-                        <a th:href="@{/checkout}" class="checkout-button">
+                        <a th:href="@{/checkout(total=${cartSubtotal})}" class="checkout-button" th:if="${cartSubtotal > 0}">
                             Продължи към плащане
                         </a>
                         <a th:href="@{/}" class="continue-shopping">

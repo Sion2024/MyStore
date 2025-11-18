@@ -13,14 +13,24 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class SessionCheckInterceptor implements HandlerInterceptor {
 
-    public static final Set<String> UNAUTHENTICATED_ENDPOINTS = Set.of("/login", "/register", "/");
+    public static final Set<String> UNAUTHENTICATED_ENDPOINTS = Set.of("/login", "/register", "/", "/profile", "/profile/add", "/profile-add", "/products", "/cart", "/cart/add");
+    public static final Set<String> UNAUTHENTICATED_PATH_PREFIXES = Set.of("/products/", "/cart/");
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
+        String servletPath = request.getServletPath();
+        
         // потребителя иска да достъпи разрешена страница
-        if (UNAUTHENTICATED_ENDPOINTS.contains(request.getServletPath())){
+        if (UNAUTHENTICATED_ENDPOINTS.contains(servletPath)){
             return true;
+        }
+        
+        // Check path prefixes (e.g., /products/{id}, /cart/add)
+        for (String prefix : UNAUTHENTICATED_PATH_PREFIXES) {
+            if (servletPath.startsWith(prefix)) {
+                return true;
+            }
         }
 
         HttpSession session = request.getSession(false);

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добави продукт - My Store</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="top-banner">
+        Безплатна доставка за поръчки над 150 лв. / 76.69 €
+    </div>
+
+    <header class="header">
+        <div class="logo-section">
+            <a th:href="@{/}" style="text-decoration: none; color: inherit;">
+                <span class="logo-text">My Store</span>
+                <div class="logo-icon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </a>
+        </div>
+        <div class="header-utils">
+            <a class="icon-btn" th:href="@{/profile}" aria-label="Профил" 
+               th:classappend="${session.userId != null ? 'logged-in' : ''}"
+               style="position: relative;">
+                <span th:if="${session.userId != null}" style="color: #28a745;">✅</span>
+                <span th:if="${session.userId == null}">👤</span>
+                <span th:if="${session.userId != null}" 
+                      style="position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: #28a745; border-radius: 50%; border: 2px solid white;"></span>
+            </a>
+            <a class="icon-btn" th:href="@{/cart}" aria-label="Количка">🛒</a>
+        </div>
+    </header>
+
+    <nav class="nav-menu">
+        <ul>
+            <li><a th:href="@{/}">Начало</a></li>
+            <li><a th:href="@{/products}">Продукти</a></li>
+            <li><a th:href="@{/admin/products}">Админ панел</a></li>
+        </ul>
+    </nav>
+
+    <main style="max-width: 800px; margin: 2rem auto; padding: 0 1rem;">
+        <div style="display: flex; align-items: center; margin-bottom: 2rem;">
+            <a th:href="@{/admin/products}" style="color: #007bff; text-decoration: none; margin-right: 1rem;">← Назад</a>
+            <h1 style="font-size: 2rem; color: #333; margin: 0;">Добави нов продукт</h1>
+        </div>
+
+        <!-- Success/Error Messages -->
+        <div th:if="${success}" style="padding: 1rem; background: #d4edda; color: #155724; border-radius: 4px; margin-bottom: 1rem;">
+            <span th:text="${success}"></span>
+        </div>
+        <div th:if="${error}" style="padding: 1rem; background: #f8d7da; color: #721c24; border-radius: 4px; margin-bottom: 1rem;">
+            <span th:text="${error}"></span>
+        </div>
+
+        <!-- Create Product Form -->
+        <div style="background: white; padding: 2rem; border-radius: 8px; border: 1px solid #ddd;">
+            <form th:action="@{/admin/products}" method="post">
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Име на продукт *</label>
+                    <input type="text" name="name" required 
+                           style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Описание *</label>
+                    <textarea name="description" required rows="4"
+                              style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; resize: vertical;"></textarea>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Цена (лв.) *</label>
+                        <input type="number" name="price" step="0.01" min="0" required 
+                               style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
+                    </div>
+
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Наличност (бр.) *</label>
+                        <input type="number" name="stock" min="0" required 
+                               style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Категория</label>
+                    <select name="categoryId"
+                            style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
+                        <option value="">Без категория</option>
+                        <option th:each="category : ${categories}" 
+                                th:value="${category.id}" 
+                                th:text="${category.name}">Категория</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; gap: 1rem;">
+                    <button type="submit" 
+                            style="flex: 1; padding: 0.75rem; background: #28a745; color: white; border: none; border-radius: 4px; font-size: 1rem; font-weight: bold; cursor: pointer;">
+                        Създай продукт
+                    </button>
+                    <a th:href="@{/admin/products}" 
+                       style="flex: 1; padding: 0.75rem; background: #6c757d; color: white; text-decoration: none; border-radius: 4px; font-size: 1rem; text-align: center; display: flex; align-items: center; justify-content: center;">
+                        Отказ
+                    </a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="footer" style="margin-top: 4rem; padding: 2rem; background: #f8f9fa; text-align: center;">
+        <p>&copy; 2025 My Store. All rights reserved.</p>
+    </footer>
+</body>
+</html>
+

@@ -35,8 +35,13 @@
                 <span>🇬🇧</span>
                 <span>English</span>
             </div>
-            <a class="icon-btn" th:href="@{/profile}" aria-label="Профил">
-                👤
+            <a class="icon-btn" th:href="@{/profile}" aria-label="Профил" 
+               th:classappend="${session.userId != null ? 'logged-in' : ''}"
+               style="position: relative;">
+                <span th:if="${session.userId != null}" style="color: #28a745;">✅</span>
+                <span th:if="${session.userId == null}">👤</span>
+                <span th:if="${session.userId != null}" 
+                      style="position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: #28a745; border-radius: 50%; border: 2px solid white;"></span>
             </a>
             <a class="icon-btn" th:href="@{/wishlist-view}" aria-label="Любими">
                 ❤️
@@ -51,7 +56,7 @@
     <nav class="nav-menu">
         <ul>
             <li><a th:href="@{/}">Начало</a></li>
-            <li><a href="#">Продукти</a></li>
+            <li><a th:href="@{/products}">Продукти</a></li>
             <li><a href="#">Промоции</a></li>
             <li><a th:href="@{/contacts}">Контакти</a></li>
         </ul>
@@ -218,133 +223,52 @@
 
             <!-- Promotions Products Section -->
             <div class="promotions-section">
-                <h2 class="section-title">Промоции</h2>
-                <div class="products-grid">
-                    <!-- Product Card 1 -->
-                    <div class="product-card">
-                        <div class="discount-badge">
-                            <span class="flag-icon">🇷🇺</span>
-                            <span>-20.00%</span>
+                <h2 class="section-title">Нашите Продукти</h2>
+                <div class="products-grid" th:if="${products != null and !#lists.isEmpty(products)}">
+                    <!-- Product Card - Dynamic from Database -->
+                    <div class="product-card" th:each="product : ${products}">
+                        <div class="discount-badge" th:if="${product.stock > 0}">
+                            <span class="flag-icon">🥃</span>
+                            <span th:if="${product.category != null}" th:text="${product.category.name}">Категория</span>
                         </div>
                         <div class="product-image">
                             <div class="bottle-image"></div>
                         </div>
-                        <div class="product-name">Водка Онегин Селект Петербургъ 1832</div>
-                        <div class="product-specs">0.5л, Русия</div>
-                        <div class="price-section">
-                            <span class="original-price">99.77лв.</span>
-                            <span class="discounted-price">79.77лв. / 40.00€</span>
+                        <div class="product-name" th:text="${product.name}">Име на продукт</div>
+                        <div class="product-specs" th:if="${product.description != null and !product.description.isEmpty()}" 
+                             th:text="${#strings.abbreviate(product.description, 50)}">Описание</div>
+                        <div class="product-specs" th:if="${product.category != null}">
+                            <span th:text="${product.category.name}">Категория</span>
+                            <span th:if="${product.stock != null}"> | Наличност: <span th:text="${product.stock}">0</span> бр.</span>
                         </div>
-                        <div class="product-actions">
-                            <input type="number" class="quantity-input" value="1" min="1">
-                            <button class="add-button">Добави</button>
+                        <div class="price-section">
+                            <span class="discounted-price" th:text="${product.price} + ' лв.'">0.00 лв.</span>
+                        </div>
+                        <div class="product-actions" style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                            <a th:href="@{/products/{id}(id=${product.id})}" 
+                               th:if="${product.stock > 0}"
+                               style="flex: 1; text-align: center; padding: 0.75rem; background: #007bff; color: white; text-decoration: none; border-radius: 4px;">
+                                Детайли
+                            </a>
+                            <form th:if="${product.stock > 0}" th:action="@{/cart/add}" method="post" style="flex: 1;">
+                                <input type="hidden" name="productId" th:value="${product.id}">
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" 
+                                        style="width: 100%; padding: 0.75rem; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                                    Добави
+                                </button>
+                            </form>
+                            <button disabled th:if="${product.stock == 0}" 
+                                    style="width: 100%; padding: 0.75rem; background: #ccc; color: #666; border: none; border-radius: 4px; cursor: not-allowed;">
+                                Няма наличност
+                            </button>
                         </div>
                     </div>
-
-                    <!-- Product Card 2 -->
-                    <div class="product-card">
-                        <div class="discount-badge">
-                            <span class="flag-icon">🇧🇬</span>
-                            <span>-25.00%</span>
-                        </div>
-                        <div class="product-image">
-                            <div class="bottle-image"></div>
-                        </div>
-                        <div class="product-name">Червено Вино Каберне Совиньон, Мерло, Фран Онегин 2022г.</div>
-                        <div class="product-specs">0.75л, България</div>
-                        <div class="price-section">
-                            <span class="original-price">45.99лв.</span>
-                            <span class="discounted-price">34.49лв. / 17.25€</span>
-                        </div>
-                        <div class="product-actions">
-                            <input type="number" class="quantity-input" value="1" min="1">
-                            <button class="add-button">Добави</button>
-                        </div>
-                    </div>
-
-                    <!-- Product Card 3 -->
-                    <div class="product-card">
-                        <div class="discount-badge">
-                            <span class="flag-icon">🇷🇺</span>
-                            <span>-15.00%</span>
-                        </div>
-                        <div class="product-image">
-                            <div class="bottle-image"></div>
-                        </div>
-                        <div class="product-name">Водка Русский Стандарт Платинум</div>
-                        <div class="product-specs">0.7л, Русия</div>
-                        <div class="price-section">
-                            <span class="original-price">89.99лв.</span>
-                            <span class="discounted-price">76.49лв. / 38.25€</span>
-                        </div>
-                        <div class="product-actions">
-                            <input type="number" class="quantity-input" value="1" min="1">
-                            <button class="add-button">Добави</button>
-                        </div>
-                    </div>
-
-                    <!-- Product Card 4 -->
-                    <div class="product-card">
-                        <div class="discount-badge">
-                            <span class="flag-icon">🇧🇬</span>
-                            <span>-30.00%</span>
-                        </div>
-                        <div class="product-image">
-                            <div class="bottle-image"></div>
-                        </div>
-                        <div class="product-name">Бяло Вино Шардоне, Ризлинг Онегин 2023г.</div>
-                        <div class="product-specs">0.75л, България</div>
-                        <div class="price-section">
-                            <span class="original-price">38.99лв.</span>
-                            <span class="discounted-price">27.29лв. / 13.65€</span>
-                        </div>
-                        <div class="product-actions">
-                            <input type="number" class="quantity-input" value="1" min="1">
-                            <button class="add-button">Добави</button>
-                        </div>
-                    </div>
-
-                    <!-- Product Card 5 -->
-                    <div class="product-card">
-                        <div class="discount-badge">
-                            <span class="flag-icon">🇷🇺</span>
-                            <span>-18.00%</span>
-                        </div>
-                        <div class="product-image">
-                            <div class="bottle-image"></div>
-                        </div>
-                        <div class="product-name">Водка Белуга Нобле</div>
-                        <div class="product-specs">0.7л, Русия</div>
-                        <div class="price-section">
-                            <span class="original-price">129.99лв.</span>
-                            <span class="discounted-price">106.59лв. / 53.30€</span>
-                        </div>
-                        <div class="product-actions">
-                            <input type="number" class="quantity-input" value="1" min="1">
-                            <button class="add-button">Добави</button>
-                        </div>
-                    </div>
-
-                    <!-- Product Card 6 -->
-                    <div class="product-card">
-                        <div class="discount-badge">
-                            <span class="flag-icon">🇧🇬</span>
-                            <span>-22.00%</span>
-                        </div>
-                        <div class="product-image">
-                            <div class="bottle-image"></div>
-                        </div>
-                        <div class="product-name">Розе Вино Онегин 2022г.</div>
-                        <div class="product-specs">0.75л, България</div>
-                        <div class="price-section">
-                            <span class="original-price">42.99лв.</span>
-                            <span class="discounted-price">33.53лв. / 16.77€</span>
-                        </div>
-                        <div class="product-actions">
-                            <input type="number" class="quantity-input" value="1" min="1">
-                            <button class="add-button">Добави</button>
-                        </div>
-                    </div>
+                </div>
+                <!-- Empty State -->
+                <div class="empty-products" th:if="${products == null or #lists.isEmpty(products)}">
+                    <p>Няма налични продукти в момента.</p>
+                    <p>Моля, проверете по-късно.</p>
                 </div>
             </div>
 

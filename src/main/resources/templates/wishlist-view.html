@@ -31,8 +31,13 @@
                 <span>🇬🇧</span>
                 <span>English</span>
             </div>
-            <a class="icon-btn" th:href="@{/profile}" aria-label="Профил">
-                👤
+            <a class="icon-btn" th:href="@{/profile}" aria-label="Профил" 
+               th:classappend="${session.userId != null ? 'logged-in' : ''}"
+               style="position: relative;">
+                <span th:if="${session.userId != null}" style="color: #28a745;">✅</span>
+                <span th:if="${session.userId == null}">👤</span>
+                <span th:if="${session.userId != null}" 
+                      style="position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: #28a745; border-radius: 50%; border: 2px solid white;"></span>
             </a>
             <a class="icon-btn" th:href="@{/wishlist-view}" aria-label="Любими">
                 ❤️

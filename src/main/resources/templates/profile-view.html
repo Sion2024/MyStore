@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Моят профил - My Store</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <div class="top-banner">
+        Безплатна доставка за поръчки над 150 лв. / 76.69 €
+    </div>
+
+    <header class="header">
+        <div class="logo-section">
+            <a th:href="@{/}" style="text-decoration: none; color: inherit;">
+                <span class="logo-text">My Store</span>
+                <div class="logo-icon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </a>
+        </div>
+        <div class="search-bar">
+            <input type="text" class="search-input" placeholder="Какво търсиш днес?">
+            <button class="search-button">🔍</button>
+        </div>
+        <div class="header-utils">
+            <div class="language-selector">
+                <span>🇬🇧</span>
+                <span>English</span>
+            </div>
+            <a class="icon-btn" th:href="@{/profile}" aria-label="Профил" 
+               th:classappend="${session.userId != null ? 'logged-in' : ''}"
+               style="position: relative;">
+                <span th:if="${session.userId != null}" style="color: #28a745;">✅</span>
+                <span th:if="${session.userId == null}">👤</span>
+                <span th:if="${session.userId != null}" 
+                      style="position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: #28a745; border-radius: 50%; border: 2px solid white;"></span>
+            </a>
+            <a class="icon-btn" th:href="@{/wishlist-view}" aria-label="Любими">❤️</a>
+            <a class="icon-btn" th:href="@{/cart}" aria-label="Количка">🛒</a>
+        </div>
+    </header>
+
+    <nav class="nav-menu">
+        <ul>
+            <li><a th:href="@{/}">Начало</a></li>
+            <li><a th:href="@{/products}">Продукти</a></li>
+            <li><a href="#">Промоции</a></li>
+            <li><a th:href="@{/contacts}">Контакти</a></li>
+        </ul>
+    </nav>
+
+    <main style="max-width: 1200px; margin: 2rem auto; padding: 0 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <h1 style="font-size: 2rem; color: #333; margin: 0;">Моят профил</h1>
+            <form th:action="@{/logout}" method="post" style="display: inline;">
+                <button type="submit" style="padding: 0.75rem 1.5rem; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                    Изход
+                </button>
+            </form>
+        </div>
+
+        <!-- User Information Card -->
+        <div style="background: white; padding: 2rem; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 2rem;">
+            <h2 style="margin-top: 0; color: #333;">Информация за профила</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+                <div>
+                    <p style="margin: 0.5rem 0; color: #666;"><strong>Име:</strong></p>
+                    <p style="margin: 0; font-size: 1.125rem;" th:text="${user.name}">Име на потребител</p>
+                </div>
+                <div>
+                    <p style="margin: 0.5rem 0; color: #666;"><strong>E-mail:</strong></p>
+                    <p style="margin: 0; font-size: 1.125rem;" th:text="${user.email}">email@example.com</p>
+                </div>
+                <div>
+                    <p style="margin: 0.5rem 0; color: #666;"><strong>Роля:</strong></p>
+                    <p style="margin: 0; font-size: 1.125rem;" th:text="${user.role}">USER</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Purchase History Section -->
+        <div style="background: white; padding: 2rem; border-radius: 8px; border: 1px solid #ddd;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 style="margin: 0; color: #333;">История на покупките</h2>
+                <a th:href="@{/orders}" style="color: #007bff; text-decoration: none; font-weight: bold;">
+                    Виж всички поръчки →
+                </a>
+            </div>
+
+            <!-- Orders List -->
+            <div th:if="${orders != null and !#lists.isEmpty(orders)}">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead style="background: #f8f9fa;">
+                        <tr>
+                            <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #ddd;">Номер на поръчка</th>
+                            <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #ddd;">Дата</th>
+                            <th style="padding: 1rem; text-align: right; border-bottom: 2px solid #ddd;">Сума</th>
+                            <th style="padding: 1rem; text-align: center; border-bottom: 2px solid #ddd;">Статус</th>
+                            <th style="padding: 1rem; text-align: center; border-bottom: 2px solid #ddd;">Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="order : ${orders}" style="border-bottom: 1px solid #eee;">
+                            <td style="padding: 1rem;">
+                                <a th:href="@{/orders/{id}(id=${order.id})}" 
+                                   style="color: #007bff; text-decoration: none; font-weight: bold;"
+                                   th:text="${#strings.substring(order.id.toString(), 0, 8)}">ID</a>
+                            </td>
+                            <td style="padding: 1rem;">
+                                <span th:text="${order.date != null ? #temporals.format(order.date, 'dd.MM.yyyy HH:mm') : 'N/A'}">Дата</span>
+                            </td>
+                            <td style="padding: 1rem; text-align: right; font-weight: bold; color: #28a745;">
+                                <span th:text="${order.total} + ' лв.'">0.00 лв.</span>
+                            </td>
+                            <td style="padding: 1rem; text-align: center;">
+                                <span th:if="${order.status != null}" th:switch="${order.status}" 
+                                      style="padding: 0.5rem 1rem; border-radius: 4px; font-size: 0.875rem; font-weight: bold;">
+                                    <span th:case="APPROVED" style="background: #ffc107; color: #000;">Одобрена</span>
+                                    <span th:case="IN_TRANSIT" style="background: #17a2b8; color: #fff;">В доставка</span>
+                                    <span th:case="DELIVERED" style="background: #28a745; color: #fff;">Доставена</span>
+                                    <span th:case="*" th:text="${order.status}">Статус</span>
+                                </span>
+                                <span th:if="${order.status == null}" 
+                                      style="padding: 0.5rem 1rem; border-radius: 4px; font-size: 0.875rem; font-weight: bold; background: #6c757d; color: #fff;">
+                                    Неизвестен
+                                </span>
+                            </td>
+                            <td style="padding: 1rem; text-align: center;">
+                                <a th:href="@{/orders/{id}(id=${order.id})}" 
+                                   style="padding: 0.5rem 1rem; background: #007bff; color: white; text-decoration: none; border-radius: 4px; font-size: 0.875rem;">
+                                    Преглед
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty State -->
+            <div th:if="${orders == null or #lists.isEmpty(orders)}" 
+                 style="text-align: center; padding: 4rem 2rem;">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">📦</div>
+                <h3 style="color: #666; margin-bottom: 0.5rem;">Все още нямате поръчки</h3>
+                <p style="color: #999; margin-bottom: 1.5rem;">Започнете да пазарувате, за да видите историята си на покупките тук.</p>
+                <a th:href="@{/products}" 
+                   style="display: inline-block; padding: 0.75rem 2rem; background: #28a745; color: white; text-decoration: none; border-radius: 4px; font-weight: bold;">
+                    Започни пазаруване
+                </a>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 2rem;">
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; text-align: center;">
+                <p style="margin: 0; font-size: 2rem; font-weight: bold; color: #28a745;" 
+                   th:text="${totalOrders != null ? totalOrders : 0}">0</p>
+                <p style="margin: 0.5rem 0 0 0; color: #666;">Общо поръчки</p>
+            </div>
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; text-align: center;">
+                <p style="margin: 0; font-size: 2rem; font-weight: bold; color: #17a2b8;" 
+                   th:text="${inTransitOrders != null ? inTransitOrders : 0}">0</p>
+                <p style="margin: 0.5rem 0 0 0; color: #666;">В доставка</p>
+            </div>
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; text-align: center;">
+                <p style="margin: 0; font-size: 2rem; font-weight: bold; color: #28a745;" 
+                   th:text="${deliveredOrders != null ? deliveredOrders : 0}">0</p>
+                <p style="margin: 0.5rem 0 0 0; color: #666;">Доставени</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer" style="margin-top: 4rem; padding: 2rem; background: #f8f9fa; text-align: center;">
+        <p>&copy; 2025 My Store. All rights reserved.</p>
+    </footer>
+</body>
+</html>
+

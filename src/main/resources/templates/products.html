@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Продукти - My Store</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <div class="top-banner">
+        Безплатна доставка за поръчки над 150 лв. / 76.69 €
+    </div>
+
+    <header class="header">
+        <div class="logo-section">
+            <a th:href="@{/}" style="text-decoration: none; color: inherit;">
+                <span class="logo-text">My Store</span>
+                <div class="logo-icon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </a>
+        </div>
+        <div class="search-bar">
+            <form th:action="@{/products}" method="get" style="display: flex; width: 100%;">
+                <input type="text" name="search" class="search-input" placeholder="Какво търсиш днес?" 
+                       th:value="${searchQuery}">
+                <button type="submit" class="search-button">🔍</button>
+            </form>
+        </div>
+        <div class="header-utils">
+            <div class="language-selector">
+                <span>🇬🇧</span>
+                <span>English</span>
+            </div>
+            <a class="icon-btn" th:href="@{/profile}" aria-label="Профил" 
+               th:classappend="${session.userId != null ? 'logged-in' : ''}"
+               style="position: relative;">
+                <span th:if="${session.userId != null}" style="color: #28a745;">✅</span>
+                <span th:if="${session.userId == null}">👤</span>
+                <span th:if="${session.userId != null}" 
+                      style="position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: #28a745; border-radius: 50%; border: 2px solid white;"></span>
+            </a>
+            <a class="icon-btn" th:href="@{/wishlist-view}" aria-label="Любими">❤️</a>
+            <a class="icon-btn" th:href="@{/cart}" aria-label="Количка">🛒</a>
+        </div>
+    </header>
+
+    <nav class="nav-menu">
+        <ul>
+            <li><a th:href="@{/}">Начало</a></li>
+            <li><a th:href="@{/products}">Продукти</a></li>
+            <li><a href="#">Промоции</a></li>
+            <li><a th:href="@{/contacts}">Контакти</a></li>
+        </ul>
+    </nav>
+
+    <main style="max-width: 1200px; margin: 2rem auto; padding: 0 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <h1 style="font-size: 2rem; color: #333;">Продукти</h1>
+            <div th:if="${searchQuery != null and !searchQuery.isEmpty()}">
+                <p>Резултати за: "<span th:text="${searchQuery}"></span>"</p>
+            </div>
+        </div>
+
+        <!-- Categories Filter -->
+        <div th:if="${categories != null and !#lists.isEmpty(categories)}" style="margin-bottom: 2rem;">
+            <h3>Филтрирай по категория:</h3>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem;">
+                <a th:href="@{/products}" 
+                   style="padding: 0.5rem 1rem; background: #e9ecef; border-radius: 4px; text-decoration: none; color: #333;">
+                    Всички
+                </a>
+                <a th:each="category : ${categories}" 
+                   th:href="@{/products(categoryId=${category.id})}"
+                   th:style="${selectedCategory != null and selectedCategory == category.id} ? 'background: #007bff; color: white;' : 'background: #e9ecef; color: #333;'"
+                   style="padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none;">
+                    <span th:text="${category.name}">Категория</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="products-grid" th:if="${products != null and !#lists.isEmpty(products)}" 
+             style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 2rem;">
+            <div class="product-card" th:each="product : ${products}" 
+                 style="border: 1px solid #ddd; border-radius: 8px; padding: 1rem; background: white; transition: transform 0.2s;">
+                <div class="discount-badge" th:if="${product.stock > 0 and product.category != null}">
+                    <span class="flag-icon">🥃</span>
+                    <span th:text="${product.category.name}">Категория</span>
+                </div>
+                <div class="product-image" style="text-align: center; padding: 1rem;">
+                    <div style="font-size: 4rem;">🥃</div>
+                </div>
+                <div class="product-name" th:text="${product.name}" 
+                     style="font-weight: bold; margin: 0.5rem 0; min-height: 3rem;">Име на продукт</div>
+                <div class="product-specs" th:if="${product.description != null}" 
+                     style="color: #666; font-size: 0.875rem; margin: 0.5rem 0; min-height: 3rem;">
+                    <span th:text="${#strings.abbreviate(product.description, 80)}">Описание</span>
+                </div>
+                <div style="margin: 0.5rem 0;">
+                    <span th:if="${product.stock > 0}" style="color: #28a745; font-size: 0.875rem;">
+                        Наличност: <span th:text="${product.stock}">0</span> бр.
+                    </span>
+                    <span th:if="${product.stock == 0}" style="color: #dc3545; font-size: 0.875rem;">
+                        Няма наличност
+                    </span>
+                </div>
+                <div class="price-section" style="margin: 1rem 0;">
+                    <span style="font-size: 1.5rem; font-weight: bold; color: #28a745;" 
+                          th:text="${product.price} + ' лв.'">0.00 лв.</span>
+                </div>
+                <div class="product-actions" style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                    <a th:href="@{/products/{id}(id=${product.id})}" 
+                       th:if="${product.stock > 0}"
+                       style="flex: 1; text-align: center; padding: 0.75rem; background: #007bff; color: white; text-decoration: none; border-radius: 4px;">
+                        Детайли
+                    </a>
+                    <form th:if="${product.stock > 0}" th:action="@{/cart/add}" method="post" style="flex: 1;">
+                        <input type="hidden" name="productId" th:value="${product.id}">
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" 
+                                style="width: 100%; padding: 0.75rem; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            Добави
+                        </button>
+                    </form>
+                    <button disabled th:if="${product.stock == 0}" 
+                            style="width: 100%; padding: 0.75rem; background: #ccc; color: #666; border: none; border-radius: 4px; cursor: not-allowed;">
+                        Няма наличност
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div th:if="${products == null or #lists.isEmpty(products)}" 
+             style="text-align: center; padding: 4rem 2rem; background: #f8f9fa; border-radius: 8px;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">📦</div>
+            <h2>Няма налични продукти</h2>
+            <p th:if="${searchQuery != null and !searchQuery.isEmpty()}">
+                Няма резултати за "<span th:text="${searchQuery}"></span>"
+            </p>
+            <p th:if="${searchQuery == null or searchQuery.isEmpty()}">
+                В момента няма налични продукти.
+            </p>
+            <a th:href="@{/products}" style="display: inline-block; margin-top: 1rem; padding: 0.75rem 2rem; background: #007bff; color: white; text-decoration: none; border-radius: 4px;">
+                Виж всички продукти
+            </a>
+        </div>
+    </main>
+
+    <footer class="footer" style="margin-top: 4rem; padding: 2rem; background: #f8f9fa; text-align: center;">
+        <p>&copy; 2025 My Store. All rights reserved.</p>
+    </footer>
+</body>
+</html>
+
