@@ -33,4 +33,14 @@ public class OrderItem {
     @Column
     private BigDecimal price;
 
+    /**
+     * Calculate total price for this order item (price * quantity)
+     */
+    public BigDecimal getTotalPrice() {
+        if (price == null) {
+            return BigDecimal.ZERO;
+        }
+        return price.multiply(BigDecimal.valueOf(quantity));
+    }
+
 }

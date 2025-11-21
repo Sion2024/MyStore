@@ -115,10 +115,10 @@
                                     <span th:text="${item.quantity}">1</span>
                                 </td>
                                 <td style="padding: 1rem; text-align: right;">
-                                    <span th:text="${item.price} + ' лв.'">0.00 лв.</span>
+                                    <span th:text="|${item.price} лв.|">0.00 лв.</span>
                                 </td>
                                 <td style="padding: 1rem; text-align: right; font-weight: bold;">
-                                    <span th:text="${item.price.multiply(java.math.BigDecimal.valueOf(item.quantity))} + ' лв.'">0.00 лв.</span>
+                                    <span th:text="|${item.totalPrice} лв.|">0.00 лв.</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -148,14 +148,14 @@
                     <div style="text-align: right;">
                         <p style="margin: 0.5rem 0; font-size: 1.5rem;">
                             <strong>Обща сума:</strong> 
-                            <span style="color: #28a745;" th:text="${order.total} + ' лв.'">0.00 лв.</span>
+                            <span style="color: #28a745;" th:text="|${order.total} лв.|">0.00 лв.</span>
                         </p>
                     </div>
                 </div>
             </div>
 
             <!-- Admin Actions (if admin) -->
-            <div th:if="${#httpServletRequest.session != null and #httpServletRequest.session.getAttribute('userRole') == 'ADMIN'}" 
+            <div th:if="${isAdmin}" 
                  style="background: #fff3cd; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border: 1px solid #ffc107;">
                 <h3 style="margin-top: 0;">Админ действия</h3>
                 <div th:if="${order.status.name() == 'APPROVED'}">

@@ -178,6 +178,7 @@ public class OrderController {
 
         model.addAttribute("order", order);
         model.addAttribute("orderItems", orderItems);
+        model.addAttribute("isAdmin", isAdmin);
         return "order-details";
     }
 
