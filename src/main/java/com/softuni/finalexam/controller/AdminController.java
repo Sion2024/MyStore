@@ -28,6 +28,7 @@ public class AdminController {
     @GetMapping("/orders")
     public String showAdminOrders(HttpSession session, Model model) {
         // Check if user is admin
+        /// //////
         Object userRoleObj = session.getAttribute("userRole");
         if (userRoleObj == null || !"ADMIN".equals(userRoleObj.toString())) {
             log.warn("Unauthorized access attempt to admin orders");

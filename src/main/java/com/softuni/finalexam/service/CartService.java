@@ -48,6 +48,7 @@ public class CartService {
         }
 
         List<CartItemDto> cartItems = getCartItems(session);
+        /// ///
 
         // Check if product already exists in cart
         Optional<CartItemDto> existingItem = cartItems.stream()
