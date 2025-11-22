@@ -118,10 +118,13 @@
         </section>
 
 
-        <section class="inquiry-form-section">
+        <section  class="inquiry-form-section">
             <div class="form-container">
                 <h2>Форма за запитване</h2>
-                <form class="inquiry-form" th:action="@{/contacts}" method="post">
+                <form action="https://api.web3forms.com/submit" class="inquiry-form" method="POST">
+
+                    <input type="hidden" name="access_key" value="4f9e4bfc-a4bc-453b-9337-c1e7318af2c0">
+
                     <div class="form-row">
                         <div class="form-group">
                             <label for="name">Име *</label>
