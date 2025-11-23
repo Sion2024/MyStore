@@ -27,18 +27,16 @@
             <input type="text" class="search-input" placeholder="Какво търсиш днес?">
             <button class="search-button">🔍</button>
         </div>
-        <div class="header-utils">
+        <div class="header-utils" style="margin-left: auto;">
             <div class="language-selector">
                 <span>🇬🇧</span>
                 <span>English</span>
             </div>
-            <a class="icon-btn" th:href="@{/profile}" aria-label="Профил" 
+            <a class="icon-btn" th:href="@{/profile}" aria-label="Профил"
                th:classappend="${session.userId != null ? 'logged-in' : ''}"
                style="position: relative;">
-                <span th:if="${session.userId != null}" style="color: #28a745;">✅</span>
+                <span th:if="${session.userId != null}">✅</span>
                 <span th:if="${session.userId == null}">👤</span>
-                <span th:if="${session.userId != null}" 
-                      style="position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: #28a745; border-radius: 50%; border: 2px solid white;"></span>
             </a>
             <a class="icon-btn" th:href="@{/wishlist-view}" aria-label="Любими">❤️</a>
             <a class="icon-btn" th:href="@{/cart}" aria-label="Количка">🛒</a>
@@ -50,7 +48,11 @@
             <li><a th:href="@{/}">Начало</a></li>
             <li><a th:href="@{/products}">Продукти</a></li>
             <li><a href="#">Промоции</a></li>
+            <li><a th:href="@{/admin/users}" th:if="${session.userRole == 'ADMIN'}">Потребители</a></li>
             <li><a th:href="@{/contacts}">Контакти</a></li>
+            <li th:if="${session.userRole == 'ADMIN'}" class="admin-nav-item">
+                <a th:href="@{/admin/orders}" style="color: #ff6b6b; font-weight: bold;">⚙️ Админ панел</a>
+            </li>
         </ul>
     </nav>
 
@@ -68,7 +70,11 @@
             <div class="product-details-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;">
                 <div class="product-image-section">
                     <div class="product-main-image" style="background: #f5f5f5; border-radius: 8px; padding: 2rem; text-align: center; min-height: 400px; display: flex; align-items: center; justify-content: center;">
-                        <div class="bottle-image" style="font-size: 8rem;">🥃</div>
+                        <img th:if="${product.imageUrl != null and !product.imageUrl.isEmpty()}" 
+                             th:src="${product.imageUrl}" 
+                             th:alt="${product.name}"
+                             style="max-width: 100%; max-height: 500px; object-fit: contain; border-radius: 4px;">
+                        <div th:if="${product.imageUrl == null or product.imageUrl.isEmpty()}" class="bottle-image" style="font-size: 8rem;">🥃</div>
                     </div>
                 </div>
 

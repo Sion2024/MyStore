@@ -27,18 +27,16 @@
             <input type="text" class="search-input" placeholder="Какво търсиш днес?">
             <button class="search-button">🔍</button>
         </div>
-        <div class="header-utils">
+        <div class="header-utils" style="margin-left: auto;">
             <div class="language-selector">
                 <span>🇬🇧</span>
                 <span>English</span>
             </div>
-            <a class="icon-btn" th:href="@{/profile}" aria-label="Профил" 
+            <a class="icon-btn" th:href="@{/profile}" aria-label="Профил"
                th:classappend="${session.userId != null ? 'logged-in' : ''}"
                style="position: relative;">
-                <span th:if="${session.userId != null}" style="color: #28a745;">✅</span>
+                <span th:if="${session.userId != null}">✅</span>
                 <span th:if="${session.userId == null}">👤</span>
-                <span th:if="${session.userId != null}" 
-                      style="position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: #28a745; border-radius: 50%; border: 2px solid white;"></span>
             </a>
             <a class="icon-btn" th:href="@{/wishlist-view}" aria-label="Любими">❤️</a>
             <a class="icon-btn" th:href="@{/cart}" aria-label="Количка">🛒</a>

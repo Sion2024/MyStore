@@ -41,12 +41,20 @@ public class OrderController {
 
     /**
      * Display checkout page
+     * Admins cannot access checkout - they can only view orders
      */
     @GetMapping("/checkout")
     public String showCheckout(HttpSession session, Model model) {
         Object userIdObj = session.getAttribute("userId");
         if (userIdObj == null) {
             return "redirect:/profile";
+        }
+
+        // Check if user is admin - admins cannot make orders
+        Object userRoleObj = session.getAttribute("userRole");
+        if (userRoleObj != null && "ADMIN".equals(userRoleObj.toString())) {
+            log.warn("Admin attempted to access checkout page");
+            return "redirect:/admin/orders?error=Admins cannot create orders";
         }
 
         UUID userId = UUID.fromString(userIdObj.toString());
@@ -72,6 +80,7 @@ public class OrderController {
 
     /**
      * Handle order creation (checkout)
+     * Admins cannot create orders - they can only view orders
      */
     @PostMapping("/orders/create")
     public String createOrder(
@@ -87,6 +96,14 @@ public class OrderController {
             Object userIdObj = session.getAttribute("userId");
             if (userIdObj == null) {
                 return "redirect:/profile";
+            }
+
+            // Check if user is admin - admins cannot create orders
+            Object userRoleObj = session.getAttribute("userRole");
+            if (userRoleObj != null && "ADMIN".equals(userRoleObj.toString())) {
+                log.warn("Admin attempted to create an order");
+                redirectAttributes.addFlashAttribute("error", "Admins cannot create orders. Please use a regular user account.");
+                return "redirect:/admin/orders";
             }
 
             UUID userId = UUID.fromString(userIdObj.toString());

@@ -22,15 +22,14 @@
                 </div>
             </a>
         </div>
-        <div class="header-utils">
-            <a class="icon-btn" th:href="@{/profile}" aria-label="Профил" 
+        <div class="header-utils" style="margin-left: auto;">
+            <a class="icon-btn" th:href="@{/profile}" aria-label="Профил"
                th:classappend="${session.userId != null ? 'logged-in' : ''}"
                style="position: relative;">
-                <span th:if="${session.userId != null}" style="color: #28a745;">✅</span>
+                <span th:if="${session.userId != null}">✅</span>
                 <span th:if="${session.userId == null}">👤</span>
-                <span th:if="${session.userId != null}" 
-                      style="position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: #28a745; border-radius: 50%; border: 2px solid white;"></span>
             </a>
+            <a class="icon-btn" th:href="@{/wishlist-view}" aria-label="Любими">❤️</a>
             <a class="icon-btn" th:href="@{/cart}" aria-label="Количка">🛒</a>
         </div>
     </header>
@@ -39,8 +38,7 @@
         <ul>
             <li><a th:href="@{/}">Начало</a></li>
             <li><a th:href="@{/products}">Продукти</a></li>
-            <li><a th:href="@{/admin/products}">Продукти (Админ)</a></li>
-            <li><a th:href="@{/admin/orders}">Поръчки (Админ)</a></li>
+            <li><a th:href="@{/admin/users}">Потребители</a></li>
         </ul>
     </nav>
 
@@ -78,10 +76,16 @@
                                th:text="${#strings.substring(order.id.toString(), 0, 8)}">ID</a>
                         </td>
                         <td style="padding: 1rem;">
-                            <span th:text="${order.user != null ? order.user.name : 'N/A'}">Потребител</span>
-                            <br>
-                            <span style="font-size: 0.875rem; color: #666;" 
-                                  th:text="${order.user != null ? order.user.email : ''}">email</span>
+                            <div style="font-weight: bold; color: #333; margin-bottom: 0.25rem;">
+                                <span th:text="${order.user != null ? order.user.name : 'N/A'}">Потребител</span>
+                            </div>
+                            <div style="font-size: 0.875rem; color: #666;">
+                                <span th:text="${order.user != null ? order.user.email : 'N/A'}">email</span>
+                            </div>
+                            <div th:if="${order.user != null and order.user.role != null}" 
+                                 style="font-size: 0.75rem; color: #999; margin-top: 0.25rem;">
+                                <span>Роля: </span><span th:text="${order.user.role}">USER</span>
+                            </div>
                         </td>
                         <td style="padding: 1rem;">
                             <span th:text="${order.date != null ? #temporals.format(order.date, 'dd.MM.yyyy HH:mm') : 'N/A'}">Дата</span>

@@ -32,7 +32,7 @@ public class UserService {
      * Register a new user and send welcome email via notification service
      */
     @Transactional
-    public User registerUser(String firstName, String email, String password, String role, boolean newsletterEnabled) {
+    public User registerUser(String firstName, String email, String password, boolean newsletterEnabled) {
         // Check if user already exists
         Optional<User> existingUser = userRepository.findByEmail(email);
         if (existingUser.isPresent()) {
@@ -47,7 +47,7 @@ public class UserService {
                 .name(firstName)
                 .email(email)
                 .password(hashedPassword)
-                .role(role != null && !role.isEmpty() ? role : "USER")
+                .role("USER")
                 .build();
 
         User savedUser = userRepository.save(user);

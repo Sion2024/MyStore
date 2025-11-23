@@ -45,12 +45,11 @@ public class UserController {
             @RequestParam String firstName,
             @RequestParam String email,
             @RequestParam String password,
-            @RequestParam(required = false, defaultValue = "USER") String role,
             @RequestParam(required = false, defaultValue = "false") boolean newsletterEnabled,
             RedirectAttributes redirectAttributes) {
 
         try {
-            User user = userService.registerUser(firstName, email, password, role, newsletterEnabled);
+            User user = userService.registerUser(firstName, email, password, newsletterEnabled);
             
             redirectAttributes.addFlashAttribute("success", "Registration successful! Please login.");
             log.info("User registered successfully: {}", email);

@@ -22,7 +22,7 @@
                 </div>
             </a>
         </div>
-        <div class="header-utils">
+        <div class="header-utils" style="margin-left: auto;">
             <a class="icon-btn" th:href="@{/profile}" aria-label="Профил" 
                th:classappend="${session.userId != null ? 'logged-in' : ''}"
                style="position: relative;">
@@ -31,7 +31,6 @@
                 <span th:if="${session.userId != null}" 
                       style="position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: #28a745; border-radius: 50%; border: 2px solid white;"></span>
             </a>
-            <a class="icon-btn" th:href="@{/cart}" aria-label="Количка">🛒</a>
         </div>
     </header>
 
@@ -39,13 +38,13 @@
         <ul>
             <li><a th:href="@{/}">Начало</a></li>
             <li><a th:href="@{/products}">Продукти</a></li>
-            <li><a th:href="@{/admin/products}">Админ панел</a></li>
+            <li><a th:href="@{/admin/orders}">Админ панел</a></li>
         </ul>
     </nav>
 
     <main style="max-width: 800px; margin: 2rem auto; padding: 0 1rem;">
         <div style="display: flex; align-items: center; margin-bottom: 2rem;">
-            <a th:href="@{/admin/products}" style="color: #007bff; text-decoration: none; margin-right: 1rem;">← Назад</a>
+            <a th:href="@{/products}" style="color: #007bff; text-decoration: none; margin-right: 1rem;">← Назад</a>
             <h1 style="font-size: 2rem; color: #333; margin: 0;">Добави нов продукт</h1>
         </div>
 
@@ -59,7 +58,7 @@
 
         <!-- Create Product Form -->
         <div style="background: white; padding: 2rem; border-radius: 8px; border: 1px solid #ddd;">
-            <form th:action="@{/admin/products}" method="post">
+            <form th:action="@{/products/create}" method="post">
                 <div style="margin-bottom: 1.5rem;">
                     <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Име на продукт *</label>
                     <input type="text" name="name" required 
@@ -97,12 +96,20 @@
                     </select>
                 </div>
 
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">URL на изображение</label>
+                    <input type="url" name="imageUrl" 
+                           placeholder="https://example.com/image.jpg"
+                           style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
+                    <small style="color: #666; font-size: 0.875rem;">Оставете празно за използване на изображение по подразбиране</small>
+                </div>
+
                 <div style="display: flex; gap: 1rem;">
                     <button type="submit" 
                             style="flex: 1; padding: 0.75rem; background: #28a745; color: white; border: none; border-radius: 4px; font-size: 1rem; font-weight: bold; cursor: pointer;">
                         Създай продукт
                     </button>
-                    <a th:href="@{/admin/products}" 
+                    <a th:href="@{/products}" 
                        style="flex: 1; padding: 0.75rem; background: #6c757d; color: white; text-decoration: none; border-radius: 4px; font-size: 1rem; text-align: center; display: flex; align-items: center; justify-content: center;">
                         Отказ
                     </a>
