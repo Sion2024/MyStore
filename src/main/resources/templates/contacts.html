@@ -25,10 +25,12 @@
             </div>
         </div>
         <div class="header-utils" style="margin-left: auto;">
-            <div class="language-selector">
-                <span>🇬🇧</span>
-                <span>English</span>
-            </div>
+            <a th:href="@{/change-language(lang=${#locale.language == 'bg' ? 'en' : 'bg'})}" class="language-selector" style="text-decoration: none; color: inherit;">
+                <span th:if="${#locale.language == 'bg'}">🇬🇧</span>
+                <span th:if="${#locale.language == 'en'}">🇧🇬</span>
+                <span th:if="${#locale.language == 'bg'}" th:text="#{lang.english}">English</span>
+                <span th:if="${#locale.language == 'en'}" th:text="#{lang.bulgarian}">Български</span>
+            </a>
             <a class="icon-btn" th:href="@{/profile}" aria-label="Профил"
                th:classappend="${session.userId != null ? 'logged-in' : ''}"
                style="position: relative;">

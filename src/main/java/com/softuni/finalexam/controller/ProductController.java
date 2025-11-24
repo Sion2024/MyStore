@@ -32,9 +32,7 @@ public class ProductController {
         this.orderItemRepository = orderItemRepository;
     }
 
-    /**
-     * Display all products
-     */
+
     @GetMapping("/products")
     public String showProducts(
             @RequestParam(required = false) UUID categoryId,
@@ -47,38 +45,30 @@ public class ProductController {
                     .filter(p -> p.getCategory() != null && p.getCategory().getId().equals(categoryId))
                     .toList();
         } else if (search != null && !search.isEmpty()) {
+            String searchLower = search.toLowerCase();
             products = productRepository.findAll().stream()
-                    .filter(p -> p.getName() != null && 
-                            (p.getName().toLowerCase().contains(search.toLowerCase()) ||
-                             (p.getDescription() != null && p.getDescription().toLowerCase().contains(search.toLowerCase()))))
+                    .filter(p -> (p.getName() != null && p.getName().toLowerCase().contains(searchLower)) ||
+                                 (p.getDescription() != null && p.getDescription().toLowerCase().contains(searchLower)))
                     .toList();
         } else {
             products = productRepository.findAll();
         }
 
-        List<Category> categories = categoryRepository.findAll();
-        
         model.addAttribute("products", products);
-        model.addAttribute("categories", categories);
+        model.addAttribute("categories", categoryRepository.findAll());
         model.addAttribute("selectedCategory", categoryId);
         model.addAttribute("searchQuery", search);
         
         return "products";
     }
     
-    /**
-     * Display create product form on products page (Admin only)
-     */
+
     @GetMapping("/products/create")
     public String showCreateProductFormOnProductsPage(Model model) {
-        List<Category> categories = categoryRepository.findAll();
-        model.addAttribute("categories", categories);
+        model.addAttribute("categories", categoryRepository.findAll());
         return "admin/product-create";
     }
-    
-    /**
-     * Create a new product from products page (Admin only)
-     */
+
     @PostMapping("/products/create")
     public String createProductFromProductsPage(
             @RequestParam String name,
@@ -90,58 +80,45 @@ public class ProductController {
             RedirectAttributes redirectAttributes) {
 
         try {
-            Category category = categoryId != null ? 
-                    categoryRepository.findById(categoryId).orElse(null) : null;
+            // could use Optional.map() here but this is clearer
+            Category cat = categoryId != null ? categoryRepository.findById(categoryId).orElse(null) : null;
 
             Product product = Product.builder()
                     .name(name)
                     .description(description)
                     .price(price)
                     .stock(stock)
-                    .category(category)
+                    .category(cat)
                     .imageUrl(imageUrl != null && !imageUrl.trim().isEmpty() ? imageUrl : null)
                     .build();
 
             productRepository.save(product);
-            
             redirectAttributes.addFlashAttribute("success", "Product created successfully!");
-            log.info("Product created successfully: {}", product.getId());
             return "redirect:/products";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Failed to create product.");
-            log.error("Failed to create product", e);
+            log.error("Error creating product", e);
             return "redirect:/products/create?error=true";
         }
     }
 
-    /**
-     * Display product details
-     */
+
     @GetMapping("/products/{id}")
     public String showProductDetails(@PathVariable UUID id, Model model) {
         Product product = productRepository.findById(id).orElse(null);
-        
         if (product == null) {
             return "redirect:/products";
         }
-
         model.addAttribute("product", product);
         return "product-details";
     }
 
-    /**
-     * Display create product form (Admin only)
-     */
     @GetMapping("/admin/products/create")
     public String showCreateProductForm(Model model) {
-        List<Category> categories = categoryRepository.findAll();
-        model.addAttribute("categories", categories);
+        model.addAttribute("categories", categoryRepository.findAll());
         return "admin/product-create";
     }
 
-    /**
-     * Create a new product (Admin only)
-     */
     @PostMapping("/admin/products")
     public String createProduct(
             @RequestParam String name,
@@ -152,8 +129,7 @@ public class ProductController {
             RedirectAttributes redirectAttributes) {
 
         try {
-            Category category = categoryId != null ? 
-                    categoryRepository.findById(categoryId).orElse(null) : null;
+            Category category = categoryId != null ? categoryRepository.findById(categoryId).orElse(null) : null;
 
             Product product = Product.builder()
                     .name(name)
@@ -164,33 +140,26 @@ public class ProductController {
                     .build();
 
             productRepository.save(product);
-            
             redirectAttributes.addFlashAttribute("success", "Product created successfully!");
-            log.info("Product created successfully: {}", product.getId());
             return "redirect:/products";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Failed to create product.");
-            log.error("Failed to create product", e);
+            log.error("Error creating product", e);
             return "redirect:/products/create?error=true";
         }
     }
 
-    /**
-     * Display admin products list with user order information (only APPROVED orders)
-     */
+
     @GetMapping("/admin/orders")
     public String showAdminProducts(Model model) {
         List<Product> products = productRepository.findAll();
-        
-        // Create a map of product -> list of users who ordered it (only APPROVED orders)
         Map<UUID, List<User>> productUsersMap = new HashMap<>();
-        // Create a map of product -> list of order IDs (only APPROVED orders)
         Map<UUID, List<UUID>> productOrderIdsMap = new HashMap<>();
         
         for (Product product : products) {
             List<OrderItem> orderItems = orderItemRepository.findByProduct(product);
             
-            // Filter only APPROVED orders
+            // only show APPROVED orders
             Set<User> uniqueUsers = orderItems.stream()
                     .filter(item -> item.getOrder() != null 
                             && item.getOrder().getUser() != null
@@ -205,7 +174,6 @@ public class ProductController {
                     .distinct()
                     .collect(Collectors.toList());
             
-            // Only add to maps if there are approved orders
             if (!uniqueUsers.isEmpty()) {
                 productUsersMap.put(product.getId(), new ArrayList<>(uniqueUsers));
             }
@@ -214,7 +182,6 @@ public class ProductController {
             }
         }
         
-        // Filter products to only show those with approved orders
         List<Product> productsWithApprovedOrders = products.stream()
                 .filter(product -> productOrderIdsMap.containsKey(product.getId()) 
                         && !productOrderIdsMap.get(product.getId()).isEmpty())
@@ -226,10 +193,7 @@ public class ProductController {
         return "admin/products";
     }
 
-    /**
-     * Delete product (Admin only)
-     * Deletes all associated order items first to avoid foreign key constraint violations
-     */
+
     @PostMapping("/admin/orders/{id}/delete")
     public String deleteProduct(@PathVariable UUID id, RedirectAttributes redirectAttributes) {
         try {
@@ -239,21 +203,18 @@ public class ProductController {
                 return "redirect:/admin/orders?error=true";
             }
             
-            // Delete all order items associated with this product first
+            // need to delete order items first to avoid FK constraint
             List<OrderItem> orderItems = orderItemRepository.findByProduct(product);
             if (!orderItems.isEmpty()) {
                 orderItemRepository.deleteAll(orderItems);
-                log.info("Deleted {} order items for product: {}", orderItems.size(), id);
             }
             
-            // Now delete the product
             productRepository.deleteById(id);
             redirectAttributes.addFlashAttribute("success", "Product deleted successfully!");
-            log.info("Product deleted successfully: {}", id);
             return "redirect:/admin/orders";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Failed to delete product: " + e.getMessage());
-            log.error("Failed to delete product: {}", id, e);
+            log.error("Error deleting product", e);
             return "redirect:/admin/orders?error=true";
         }
     }

@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Продукти - My Store</title>
+    <title th:text="#{page.title.products}">Продукти - My Store</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
-    <div class="top-banner">
+    <div class="top-banner" th:text="#{banner.free.delivery}">
         Безплатна доставка за поръчки над 150 лв. / 76.69 €
     </div>
 
@@ -25,49 +25,52 @@
         </div>
         <div class="search-bar">
             <form th:action="@{/products}" method="get" style="display: flex; width: 100%;">
-                <input type="text" name="search" class="search-input" placeholder="Какво търсиш днес?" 
+                <input type="text" name="search" class="search-input" th:placeholder="#{header.search.placeholder}" 
                        th:value="${searchQuery}">
                 <button type="submit" class="search-button">🔍</button>
             </form>
         </div>
         <div class="header-utils" style="margin-left: auto;">
-            <div class="language-selector">
-                <span>🇬🇧</span>
-                <span>English</span>
-            </div>
-            <a class="icon-btn" th:href="@{/profile}" aria-label="Профил" 
+            <a th:href="@{/change-language(lang=${#locale.language == 'bg' ? 'en' : 'bg'})}" class="language-selector" style="text-decoration: none; color: inherit;">
+                <span th:if="${#locale.language == 'bg'}">🇬🇧</span>
+                <span th:if="${#locale.language == 'en'}">🇧🇬</span>
+                <span th:if="${#locale.language == 'bg'}" th:text="#{lang.english}">English</span>
+                <span th:if="${#locale.language == 'en'}" th:text="#{lang.bulgarian}">Български</span>
+            </a>
+            <a class="icon-btn" th:href="@{/profile}" th:attr="aria-label=#{header.profile}" 
                th:classappend="${session.userId != null ? 'logged-in' : ''}"
                style="position: relative;">
                 <span th:if="${session.userId != null}">✅</span>
                 <span th:if="${session.userId == null}">👤</span>
             </a>
-            <a class="icon-btn" th:href="@{/wishlist-view}" aria-label="Любими">❤️</a>
-            <a class="icon-btn" th:href="@{/cart}" aria-label="Количка">🛒</a>
+            <a class="icon-btn" th:href="@{/wishlist-view}" th:attr="aria-label=#{header.wishlist}">❤️</a>
+            <a class="icon-btn" th:href="@{/cart}" th:attr="aria-label=#{header.cart}">🛒</a>
         </div>
     </header>
 
     <nav class="nav-menu">
         <ul>
-            <li><a th:href="@{/}">Начало</a></li>
-            <li><a th:href="@{/products}">Продукти</a></li>
-            <li><a href="#">Промоции</a></li>
-            <li><a th:href="@{/admin/users}" th:if="${session.userRole == 'ADMIN'}">Потребители</a></li>
-            <li><a th:href="@{/contacts}">Контакти</a></li>
+            <li><a th:href="@{/}" th:text="#{nav.home}">Начало</a></li>
+            <li><a th:href="@{/products}" th:text="#{nav.products}">Продукти</a></li>
+            <li><a href="#" th:text="#{nav.promotions}">Промоции</a></li>
+            <li><a th:href="@{/admin/users}" th:if="${session.userRole == 'ADMIN'}" th:text="#{nav.users}">Потребители</a></li>
+            <li><a th:href="@{/contacts}" th:text="#{nav.contacts}">Контакти</a></li>
             <li th:if="${session.userRole == 'ADMIN'}" class="admin-nav-item">
-                <a th:href="@{/admin/orders}" style="color: #ff6b6b; font-weight: bold;">⚙️ Админ панел</a>
+                <a th:href="@{/admin/orders}" th:text="#{nav.admin}" style="color: #ff6b6b; font-weight: bold;">⚙️ Админ панел</a>
             </li>
         </ul>
     </nav>
 
     <main style="max-width: 1200px; margin: 2rem auto; padding: 0 1rem;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-            <h1 style="font-size: 2rem; color: #333;">Продукти</h1>
+            <h1 style="font-size: 2rem; color: #333;" th:text="#{nav.products}">Продукти</h1>
             <div style="display: flex; gap: 1rem; align-items: center;">
                 <div th:if="${searchQuery != null and !searchQuery.isEmpty()}">
-                    <p>Резултати за: "<span th:text="${searchQuery}"></span>"</p>
+                    <p th:text="#{search.results.for(${searchQuery})}">Резултати за: "<span th:text="${searchQuery}"></span>"</p>
                 </div>
                 <a th:if="${session.userRole == 'ADMIN'}" 
                    th:href="@{/products/create}" 
+                   th:text="'+ ' + #{btn.create.product}"
                    style="padding: 0.75rem 1.5rem; background: #28a745; color: white; text-decoration: none; border-radius: 4px; font-weight: bold;">
                     + Добави продукт
                 </a>
@@ -76,9 +79,10 @@
 
         <!-- Categories Filter -->
         <div th:if="${categories != null and !#lists.isEmpty(categories)}" style="margin-bottom: 2rem;">
-            <h3>Филтрирай по категория:</h3>
+            <h3 th:text="#{filter.by.category}">Филтрирай по категория:</h3>
             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem;">
                 <a th:href="@{/products}" 
+                   th:text="#{filter.all}"
                    style="padding: 0.5rem 1rem; background: #e9ecef; border-radius: 4px; text-decoration: none; color: #333;">
                     Всички
                 </a>
@@ -128,6 +132,7 @@
                 <div class="product-actions" style="margin-top: 1rem; display: flex; gap: 0.5rem;">
                     <a th:href="@{/products/{id}(id=${product.id})}" 
                        th:if="${product.stock > 0}"
+                       th:text="#{common.details}"
                        style="flex: 1; text-align: center; padding: 0.75rem; background: #007bff; color: white; text-decoration: none; border-radius: 4px;">
                         Детайли
                     </a>
@@ -135,11 +140,13 @@
                         <input type="hidden" name="productId" th:value="${product.id}">
                         <input type="hidden" name="quantity" value="1">
                         <button type="submit" 
+                                th:text="#{common.add}"
                                 style="width: 100%; padding: 0.75rem; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">
                             Добави
                         </button>
                     </form>
                     <button disabled th:if="${product.stock == 0}" 
+                            th:text="#{product.stock.unavailable}"
                             style="width: 100%; padding: 0.75rem; background: #ccc; color: #666; border: none; border-radius: 4px; cursor: not-allowed;">
                         Няма наличност
                     </button>
@@ -151,14 +158,14 @@
         <div th:if="${products == null or #lists.isEmpty(products)}" 
              style="text-align: center; padding: 4rem 2rem; background: #f8f9fa; border-radius: 8px;">
             <div style="font-size: 4rem; margin-bottom: 1rem;">📦</div>
-            <h2>Няма налични продукти</h2>
-            <p th:if="${searchQuery != null and !searchQuery.isEmpty()}">
+            <h2 th:text="#{empty.products}">Няма налични продукти</h2>
+            <p th:if="${searchQuery != null and !searchQuery.isEmpty()}" th:text="#{empty.search.results(${searchQuery})}">
                 Няма резултати за "<span th:text="${searchQuery}"></span>"
             </p>
-            <p th:if="${searchQuery == null or searchQuery.isEmpty()}">
+            <p th:if="${searchQuery == null or searchQuery.isEmpty()}" th:text="#{empty.products.check.later}">
                 В момента няма налични продукти.
             </p>
-            <a th:href="@{/products}" style="display: inline-block; margin-top: 1rem; padding: 0.75rem 2rem; background: #007bff; color: white; text-decoration: none; border-radius: 4px;">
+            <a th:href="@{/products}" th:text="#{search.view.all}" style="display: inline-block; margin-top: 1rem; padding: 0.75rem 2rem; background: #007bff; color: white; text-decoration: none; border-radius: 4px;">
                 Виж всички продукти
             </a>
         </div>

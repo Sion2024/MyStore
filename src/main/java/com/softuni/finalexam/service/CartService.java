@@ -24,10 +24,6 @@ public class CartService {
         this.productRepository = productRepository;
     }
 
-    /**
-     * Get all cart items from session
-     */
-    @SuppressWarnings("unchecked")
     public List<CartItemDto> getCartItems(HttpSession session) {
         Object cartItemsObj = session.getAttribute(CART_SESSION_KEY);
         if (cartItemsObj instanceof List) {
@@ -36,10 +32,8 @@ public class CartService {
         return new ArrayList<>();
     }
 
-    /**
-     * Add product to cart
-     */
     public void addToCart(HttpSession session, UUID productId, int quantity) {
+        // could cache this but probably not needed for now
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
 
@@ -48,8 +42,6 @@ public class CartService {
         }
 
         List<CartItemDto> cartItems = getCartItems(session);
-
-        // Check if product already exists in cart
         Optional<CartItemDto> existingItem = cartItems.stream()
                 .filter(item -> item.getProduct().getId().equals(productId))
                 .findFirst();
@@ -69,22 +61,14 @@ public class CartService {
         }
 
         session.setAttribute(CART_SESSION_KEY, cartItems);
-        log.info("Added product {} (quantity: {}) to cart", productId, quantity);
     }
 
-    /**
-     * Remove product from cart
-     */
     public void removeFromCart(HttpSession session, UUID productId) {
         List<CartItemDto> cartItems = getCartItems(session);
         cartItems.removeIf(item -> item.getProduct().getId().equals(productId));
         session.setAttribute(CART_SESSION_KEY, cartItems);
-        log.info("Removed product {} from cart", productId);
     }
 
-    /**
-     * Update product quantity in cart
-     */
     public void updateQuantity(HttpSession session, UUID productId, int quantity) {
         if (quantity <= 0) {
             removeFromCart(session, productId);
@@ -104,21 +88,13 @@ public class CartService {
             }
             item.setQuantity(quantity);
             session.setAttribute(CART_SESSION_KEY, cartItems);
-            log.info("Updated product {} quantity to {}", productId, quantity);
         }
     }
 
-    /**
-     * Clear cart
-     */
     public void clearCart(HttpSession session) {
         session.removeAttribute(CART_SESSION_KEY);
-        log.info("Cart cleared");
     }
 
-    /**
-     * Calculate cart subtotal
-     */
     public BigDecimal calculateSubtotal(HttpSession session) {
         List<CartItemDto> cartItems = getCartItems(session);
         return cartItems.stream()
@@ -126,9 +102,6 @@ public class CartService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    /**
-     * Get total number of items in cart
-     */
     public int getTotalItems(HttpSession session) {
         List<CartItemDto> cartItems = getCartItems(session);
         return cartItems.stream()

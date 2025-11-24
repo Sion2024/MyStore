@@ -31,9 +31,8 @@ public class NotificationClient {
         this.notificationServiceUrl = notificationServiceUrl;
     }
 
-    /**
-     * Send welcome email when a new user registers
-     */
+
+     // Send welcome email when a new user registers
     public void sendWelcomeEmail(UUID userId, String userFirstName) {
         try {
             WelcomeEmailRequest request = new WelcomeEmailRequest();

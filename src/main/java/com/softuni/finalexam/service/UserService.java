@@ -28,21 +28,15 @@ public class UserService {
         return userRepository.findById(userId).orElse(null);
     }
 
-    /**
-     * Register a new user and send welcome email via notification service
-     */
     @Transactional
     public User registerUser(String firstName, String email, String password, boolean newsletterEnabled) {
-        // Check if user already exists
         Optional<User> existingUser = userRepository.findByEmail(email);
         if (existingUser.isPresent()) {
             throw new RuntimeException("User with email " + email + " already exists");
         }
 
-        // Hash password
         String hashedPassword = passwordEncoder.encode(password);
 
-        // Create and save user
         User user = User.builder()
                 .name(firstName)
                 .email(email)
@@ -52,7 +46,7 @@ public class UserService {
 
         User savedUser = userRepository.save(user);
 
-        // Create notification preference in notification service
+        // TODO: make notification calls async to avoid blocking registration
         try {
             notificationClient.upsertNotificationPreference(
                     savedUser.getId(),
@@ -60,31 +54,26 @@ public class UserService {
                     newsletterEnabled
             );
         } catch (Exception e) {
-            log.warn("Failed to create notification preference for user: {}", savedUser.getId(), e);
+            log.warn("Failed to create notification preference", e);
         }
 
-        // Send welcome email via notification service
         try {
             notificationClient.sendWelcomeEmail(savedUser.getId(), firstName);
         } catch (Exception e) {
-            log.warn("Failed to send welcome email for user: {}", savedUser.getId(), e);
+            log.warn("Failed to send welcome email", e);
         }
 
-        log.info("User registered successfully with ID: {}", savedUser.getId());
         return savedUser;
     }
 
-    /**
-     * Authenticate user for login
-     */
     public Optional<User> authenticate(String email, String password) {
         Optional<User> userOpt = userRepository.findByEmail(email);
         
         if (userOpt.isPresent()) {
             User user = userOpt.get();
-            // Check if password matches (handle both hashed and plain text for migration)
+            // support both hashed and plain text (for migration)
             if (passwordEncoder.matches(password, user.getPassword()) || 
-                user.getPassword().equals(password)) { // Fallback for existing plain text passwords
+                user.getPassword().equals(password)) {
                 return Optional.of(user);
             }
         }

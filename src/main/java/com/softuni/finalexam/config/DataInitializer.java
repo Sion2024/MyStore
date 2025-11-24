@@ -25,7 +25,7 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        // Check if products already exist (check for whiskey or any of the new beverage products)
+        // TODO: replace with proper database check - this is inefficient for large datasets
         boolean hasWhiskey = productRepository.findAll().stream().anyMatch(p -> p.getName() != null && p.getName().toLowerCase().contains("whiskey"));
         boolean hasRedWine = productRepository.findAll().stream().anyMatch(p -> p.getName() != null && p.getName().toLowerCase().contains("merlot"));
         boolean hasBeer = productRepository.findAll().stream().anyMatch(p -> p.getName() != null && p.getName().toLowerCase().contains("stella"));
@@ -220,10 +220,7 @@ public class DataInitializer implements CommandLineRunner {
         }
     }
 
-    /**
-     * Update existing products that don't have image URLs assigned
-     * Assigns images based on category name or product name keywords
-     */
+
     private void updateExistingProductsWithImages() {
         // Image URL constants
         final String WHISKEY_IMAGE = "https://images.unsplash.com/photo-1605634738950-0e0a5c0b0e0a?w=400&h=600&fit=crop&q=80";
@@ -261,9 +258,7 @@ public class DataInitializer implements CommandLineRunner {
         log.info("Updated {} products with image URLs.", updatedCount);
     }
 
-    /**
-     * Determine the appropriate image URL for a product based on category or name
-     */
+
     private String determineImageUrl(Product product, String whiskeyImage, String redWineImage, 
                                      String whiteWineImage, String champagneImage, String beerImage, 
                                      String waterImage, String softDrinkImage) {

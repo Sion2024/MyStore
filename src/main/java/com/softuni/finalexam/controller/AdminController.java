@@ -35,16 +35,10 @@ public class AdminController {
         this.orderItemRepository = orderItemRepository;
     }
 
-    
-    /**
-     * Display all registered users (Admin only)
-     */
     @GetMapping("/users")
     public String showAllUsers(HttpSession session, Model model) {
-        // Check if user is admin
         Object userRoleObj = session.getAttribute("userRole");
         if (userRoleObj == null || !"ADMIN".equals(userRoleObj.toString())) {
-            log.warn("Unauthorized access attempt to admin users");
             return "redirect:/";
         }
         
@@ -54,14 +48,10 @@ public class AdminController {
         
         model.addAttribute("users", users);
         model.addAttribute("currentUserId", currentUserId);
-        log.info("Admin viewing all users. Total users: {}", users.size());
         return "admin/users";
     }
     
-    /**
-     * Delete a user (Admin only)
-     * Admins cannot delete themselves
-     */
+
     @PostMapping("/users/{id}/delete")
     public String deleteUser(
             @PathVariable UUID id,
@@ -69,18 +59,16 @@ public class AdminController {
             RedirectAttributes redirectAttributes) {
         
         try {
-            // Check if user is admin
             Object userRoleObj = session.getAttribute("userRole");
             if (userRoleObj == null || !"ADMIN".equals(userRoleObj.toString())) {
                 redirectAttributes.addFlashAttribute("error", "Unauthorized access.");
                 return "redirect:/";
             }
             
-            // Check if trying to delete self
+            // can't delete yourself
             Object currentUserIdObj = session.getAttribute("userId");
             if (currentUserIdObj != null && id.toString().equals(currentUserIdObj.toString())) {
                 redirectAttributes.addFlashAttribute("error", "Не можете да изтриете собствения си профил.");
-                log.warn("Admin attempted to delete their own account");
                 return "redirect:/admin/users";
             }
             
@@ -90,40 +78,30 @@ public class AdminController {
                 return "redirect:/admin/users";
             }
             
-            User user = userOpt.get();
-            
-            // Delete all orders associated with this user first
+            // delete orders first
             List<Order> userOrders = orderRepository.findAll().stream()
                     .filter(order -> order.getUser() != null && order.getUser().getId().equals(id))
                     .toList();
             
-            if (!userOrders.isEmpty()) {
-                // Delete order items first, then orders
-                for (Order order : userOrders) {
-                    List<OrderItem> orderItems = orderItemRepository.findByOrder(order);
-                    if (!orderItems.isEmpty()) {
-                        orderItemRepository.deleteAll(orderItems);
-                    }
-                    orderRepository.delete(order);
+            for (Order order : userOrders) {
+                List<OrderItem> orderItems = orderItemRepository.findByOrder(order);
+                if (!orderItems.isEmpty()) {
+                    orderItemRepository.deleteAll(orderItems);
                 }
-                log.info("Deleted {} orders and their items for user: {}", userOrders.size(), id);
+                orderRepository.delete(order);
             }
             
-            // Now delete the user
             userRepository.deleteById(id);
             redirectAttributes.addFlashAttribute("success", "Потребителят е изтрит успешно!");
-            log.info("User deleted successfully: {}", id);
             return "redirect:/admin/users";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Грешка при изтриване на потребител: " + e.getMessage());
-            log.error("Failed to delete user: {}", id, e);
+            log.error("Error deleting user", e);
             return "redirect:/admin/users";
         }
     }
     
-    /**
-     * Promote user to admin (Admin only)
-     */
+
     @PostMapping("/users/{id}/promote")
     public String promoteUserToAdmin(
             @PathVariable UUID id,
@@ -131,7 +109,6 @@ public class AdminController {
             RedirectAttributes redirectAttributes) {
         
         try {
-            // Check if user is admin
             Object userRoleObj = session.getAttribute("userRole");
             if (userRoleObj == null || !"ADMIN".equals(userRoleObj.toString())) {
                 redirectAttributes.addFlashAttribute("error", "Unauthorized access.");
@@ -152,21 +129,15 @@ public class AdminController {
             
             user.setRole("ADMIN");
             userRepository.save(user);
-            
             redirectAttributes.addFlashAttribute("success", "Потребителят е повишен до администратор!");
-            log.info("User promoted to admin: {}", id);
             return "redirect:/admin/users";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Грешка при повишаване на потребител: " + e.getMessage());
-            log.error("Failed to promote user: {}", id, e);
+            log.error("Error promoting user", e);
             return "redirect:/admin/users";
         }
     }
-    
-    /**
-     * Demote admin to user (Admin only)
-     * Admins cannot demote themselves
-     */
+
     @PostMapping("/users/{id}/demote")
     public String demoteAdminToUser(
             @PathVariable UUID id,
@@ -174,18 +145,16 @@ public class AdminController {
             RedirectAttributes redirectAttributes) {
         
         try {
-            // Check if user is admin
             Object userRoleObj = session.getAttribute("userRole");
             if (userRoleObj == null || !"ADMIN".equals(userRoleObj.toString())) {
                 redirectAttributes.addFlashAttribute("error", "Unauthorized access.");
                 return "redirect:/";
             }
             
-            // Check if trying to demote self
+            // can't demote yourself
             Object currentUserIdObj = session.getAttribute("userId");
             if (currentUserIdObj != null && id.toString().equals(currentUserIdObj.toString())) {
                 redirectAttributes.addFlashAttribute("error", "Не можете да понижите собствения си профил.");
-                log.warn("Admin attempted to demote their own account");
                 return "redirect:/admin/users";
             }
             
@@ -203,13 +172,11 @@ public class AdminController {
             
             user.setRole("USER");
             userRepository.save(user);
-            
             redirectAttributes.addFlashAttribute("success", "Администраторът е понижен до обикновен потребител!");
-            log.info("Admin demoted to user: {}", id);
             return "redirect:/admin/users";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Грешка при понижаване на администратор: " + e.getMessage());
-            log.error("Failed to demote admin: {}", id, e);
+            log.error("Error demoting admin", e);
             return "redirect:/admin/users";
         }
     }
