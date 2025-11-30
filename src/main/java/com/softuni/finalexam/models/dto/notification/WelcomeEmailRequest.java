@@ -3,25 +3,27 @@ package com.softuni.finalexam.models.dto.notification;
 import com.softuni.finalexam.enums.EmailType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
 @Data
-@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 public class WelcomeEmailRequest {
 
     @NotBlank
-    private final String subject;
+    private String subject;
 
     @NotNull
-    private final EmailType emailType;
+    private EmailType emailType;
 
     @NotNull
-    private final UUID userId;
+    private UUID userId;
 
     @NotBlank
-    private final String userFirstName;
+    private String userFirstName;
 }
 

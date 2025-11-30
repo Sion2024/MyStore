@@ -5,6 +5,8 @@ import com.softuni.finalexam.models.entity.User;
 import com.softuni.finalexam.repository.OrderRepository;
 import com.softuni.finalexam.service.UserService;
 import jakarta.servlet.http.HttpSession;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
