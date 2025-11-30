@@ -101,7 +101,7 @@ public class AdminController {
         }
     }
     
-
+// PatchMapping
     @PostMapping("/users/{id}/promote")
     public String promoteUserToAdmin(
             @PathVariable UUID id,

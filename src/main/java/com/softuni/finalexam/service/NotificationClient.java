@@ -35,11 +35,12 @@ public class NotificationClient {
      // Send welcome email when a new user registers
     public void sendWelcomeEmail(UUID userId, String userFirstName) {
         try {
-            WelcomeEmailRequest request = new WelcomeEmailRequest();
-            request.setSubject("Welcome to MyStore!");
-            request.setEmailType(EmailType.WELCOME);
-            request.setUserId(userId);
-            request.setUserFirstName(userFirstName);
+            WelcomeEmailRequest request = new WelcomeEmailRequest(
+                    "Welcome to MyStore!",
+                    EmailType.WELCOME,
+                    userId,
+                    userFirstName
+            );
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
