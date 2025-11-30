@@ -1,7 +1,9 @@
 package com.softuni.finalexam.service;
 
+import com.softuni.finalexam.models.dto.UserRegistrationDto;
 import com.softuni.finalexam.models.entity.User;
 import com.softuni.finalexam.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,34 +14,29 @@ import java.util.UUID;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final NotificationClient notificationClient;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, NotificationClient notificationClient) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.notificationClient = notificationClient;
-    }
-
     public User getById(UUID userId) {
         return userRepository.findById(userId).orElse(null);
     }
 
     @Transactional
-    public User registerUser(String firstName, String email, String password, boolean newsletterEnabled) {
-        Optional<User> existingUser = userRepository.findByEmail(email);
+    public User registerUser(UserRegistrationDto registrationDto) {
+        Optional<User> existingUser = userRepository.findByEmail(registrationDto.getEmail());
         if (existingUser.isPresent()) {
-            throw new RuntimeException("User with email " + email + " already exists");
+            throw new RuntimeException("User with email " + registrationDto.getEmail() + " already exists");
         }
 
-        String hashedPassword = passwordEncoder.encode(password);
+        String hashedPassword = passwordEncoder.encode(registrationDto.getPassword());
 
         User user = User.builder()
-                .name(firstName)
-                .email(email)
+                .name(registrationDto.getFirstName())
+                .email(registrationDto.getEmail())
                 .password(hashedPassword)
                 .role("USER")
                 .build();
@@ -51,14 +48,14 @@ public class UserService {
             notificationClient.upsertNotificationPreference(
                     savedUser.getId(),
                     savedUser.getEmail(),
-                    newsletterEnabled
+                    registrationDto.isNewsletterEnabled()
             );
         } catch (Exception e) {
             log.warn("Failed to create notification preference", e);
         }
 
         try {
-            notificationClient.sendWelcomeEmail(savedUser.getId(), firstName);
+            notificationClient.sendWelcomeEmail(savedUser.getId(), registrationDto.getFirstName());
         } catch (Exception e) {
             log.warn("Failed to send welcome email", e);
         }

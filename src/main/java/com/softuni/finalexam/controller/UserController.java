@@ -1,16 +1,18 @@
 package com.softuni.finalexam.controller;
 
+import com.softuni.finalexam.models.dto.UserRegistrationDto;
 import com.softuni.finalexam.models.entity.Order;
 import com.softuni.finalexam.models.entity.User;
 import com.softuni.finalexam.repository.OrderRepository;
 import com.softuni.finalexam.service.UserService;
 import jakarta.servlet.http.HttpSession;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -39,19 +41,22 @@ public class UserController {
 
     @PostMapping("/profile/add")
     public String register(
-            @RequestParam String firstName,
-            @RequestParam String email,
-            @RequestParam String password,
-            @RequestParam(required = false, defaultValue = "false") boolean newsletterEnabled,
+            @Valid @ModelAttribute UserRegistrationDto registrationDto,
+            BindingResult bindingResult,
             RedirectAttributes redirectAttributes) {
 
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("error", "Please fill in all required fields.");
+            return "redirect:/profile-add?error=true";
+        }
+
         try {
-            userService.registerUser(firstName, email, password, newsletterEnabled);
+            userService.registerUser(registrationDto);
             redirectAttributes.addFlashAttribute("success", "Registration successful! Please login.");
             return "redirect:/profile?registered=true";
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            log.error("Registration failed: {}", email, e);
+            log.error("Registration failed: {}", registrationDto.getEmail(), e);
             return "redirect:/profile-add?error=true";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Registration failed. Please try again.");
