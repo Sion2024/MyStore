@@ -43,21 +43,14 @@ public class UserService {
 
         User savedUser = userRepository.save(user);
 
-
         try {
-            notificationClient.upsertNotificationPreference(
+            notificationClient.notifyNewUserRegistration(
                     savedUser.getId(),
-                    savedUser.getEmail(),
-                    registrationDto.isNewsletterEnabled()
+                    savedUser.getName(),
+                    savedUser.getEmail()
             );
         } catch (Exception e) {
-            log.warn("Failed to create notification preference", e);
-        }
-
-        try {
-            notificationClient.sendWelcomeEmail(savedUser.getId(), registrationDto.getFirstName());
-        } catch (Exception e) {
-            log.warn("Failed to send welcome email", e);
+            log.warn("Failed to send new user registration notification", e);
         }
 
         return savedUser;

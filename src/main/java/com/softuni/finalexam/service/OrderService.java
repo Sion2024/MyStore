@@ -25,13 +25,11 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final ProductRepository productRepository;
-    private final NotificationClient notificationClient;
 
-    public OrderService(OrderRepository orderRepository, OrderItemRepository orderItemRepository, ProductRepository productRepository, NotificationClient notificationClient) {
+    public OrderService(OrderRepository orderRepository, OrderItemRepository orderItemRepository, ProductRepository productRepository) {
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
         this.productRepository = productRepository;
-        this.notificationClient = notificationClient;
     }
 
 
@@ -70,20 +68,6 @@ public class OrderService {
             orderItemRepository.save(orderItem);
         }
 
-        // FIXME: notification service sometimes fails silently - should add retry logic
-        try {
-            notificationClient.sendOrderConfirmationEmail(
-                    user.getId(),
-                    fullName,
-                    address,
-                    phoneNumber,
-                    courier,
-                    paymentMethod
-            );
-        } catch (Exception e) {
-            log.warn("Failed to send order confirmation email", e);
-        }
-
         log.info("Order created: {} with {} items", savedOrder.getId(), cartItems.size());
         return savedOrder;
     }
@@ -96,19 +80,6 @@ public class OrderService {
 
         order.setStatus(OrderStatus.IN_TRANSIT);
         orderRepository.save(order);
-
-        try {
-            notificationClient.sendOrderShippedEmail(
-                    order.getUser().getId(),
-                    orderId,
-                    BigDecimal.valueOf(order.getTotal()),
-                    paymentMethod,
-                    courier,
-                    address
-            );
-        } catch (Exception e) {
-            log.warn("Failed to send shipped email", e);
-        }
     }
 
     @Transactional
