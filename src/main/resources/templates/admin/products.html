@@ -95,7 +95,8 @@
                             </div>
                         </td>
                         <td style="padding: 1rem; text-align: center;">
-                            <form th:action="@{/admin/orders/{id}/delete(id=${product.id})}" method="post" style="display: inline;">
+                            <form th:action="@{/admin/orders/{id}(id=${product.id})}" method="post" style="display: inline;">
+                                <input type="hidden" name="_method" value="DELETE">
                                 <button type="submit" 
                                         onclick="return confirm('Сигурни ли сте, че искате да изтриете този продукт?');"
                                         style="padding: 0.5rem 1rem; background: #dc3545; color: white; border: none; border-radius: 4px; font-size: 0.875rem; cursor: pointer;">

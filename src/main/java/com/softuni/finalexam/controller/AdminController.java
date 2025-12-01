@@ -10,9 +10,11 @@ import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -52,7 +54,7 @@ public class AdminController {
     }
     
 
-    @PostMapping("/users/{id}/delete")
+    @DeleteMapping("/users/{id}")
     public String deleteUser(
             @PathVariable UUID id,
             HttpSession session,
@@ -101,8 +103,7 @@ public class AdminController {
         }
     }
     
-// PatchMapping
-    @PostMapping("/users/{id}/promote")
+    @PatchMapping("/users/{id}/promote")
     public String promoteUserToAdmin(
             @PathVariable UUID id,
             HttpSession session,
@@ -138,7 +139,7 @@ public class AdminController {
         }
     }
 
-    @PostMapping("/users/{id}/demote")
+    @PatchMapping("/users/{id}/demote")
     public String demoteAdminToUser(
             @PathVariable UUID id,
             HttpSession session,

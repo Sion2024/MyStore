@@ -81,5 +81,29 @@ public class UserService {
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
+
+    @Transactional
+    public User updateEmail(UUID userId, String newEmail) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+
+        // Check if new email is the same as current email
+        if (user.getEmail() != null && user.getEmail().equals(newEmail)) {
+            throw new RuntimeException("New email is the same as current email");
+        }
+
+        // Check if new email already exists
+        Optional<User> existingUser = userRepository.findByEmail(newEmail);
+        if (existingUser.isPresent() && !existingUser.get().getId().equals(userId)) {
+            throw new RuntimeException("Email " + newEmail + " is already in use");
+        }
+
+        // Update email
+        user.setEmail(newEmail);
+        User updatedUser = userRepository.save(user);
+
+        log.info("Updated email for user {} to {}", userId, newEmail);
+        return updatedUser;
+    }
 }
 

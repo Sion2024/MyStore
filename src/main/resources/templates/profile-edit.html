@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактиране на профил - My Store</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <div class="top-banner">
+        Безплатна доставка за поръчки над 150 лв. / 76.69 €
+    </div>
+
+    <header class="header">
+        <div class="logo-section">
+            <a th:href="@{/}" style="text-decoration: none; color: inherit;">
+                <span class="logo-text">My Store</span>
+                <div class="logo-icon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </a>
+        </div>
+        <div class="search-bar">
+            <form th:action="@{/products}" method="get" style="display: flex; width: 100%;">
+                <input type="text" name="search" class="search-input" th:placeholder="#{header.search.placeholder}">
+                <button type="submit" class="search-button">🔍</button>
+            </form>
+        </div>
+        <div class="header-utils" style="margin-left: auto;">
+            <a th:href="@{/change-language(lang=${#locale.language == 'bg' ? 'en' : 'bg'})}" class="language-selector" style="text-decoration: none; color: inherit;">
+                <span th:if="${#locale.language == 'bg'}">🇬🇧</span>
+                <span th:if="${#locale.language == 'en'}">🇧🇬</span>
+                <span th:if="${#locale.language == 'bg'}" th:text="#{lang.english}">English</span>
+                <span th:if="${#locale.language == 'en'}" th:text="#{lang.bulgarian}">Български</span>
+            </a>
+            <a class="icon-btn" th:href="@{/profile}" aria-label="Профил"
+               th:classappend="${session.userId != null ? 'logged-in' : ''}"
+               style="position: relative;">
+                <span th:if="${session.userId != null}">✅</span>
+                <span th:if="${session.userId == null}">👤</span>
+            </a>
+            <a class="icon-btn" th:href="@{/wishlist-view}" aria-label="Любими">❤️</a>
+            <a class="icon-btn" th:href="@{/cart}" aria-label="Количка">🛒</a>
+        </div>
+    </header>
+
+    <nav class="nav-menu">
+        <ul>
+            <li><a th:href="@{/}">Начало</a></li>
+            <li><a th:href="@{/products}">Продукти</a></li>
+            <li><a href="#">Промоции</a></li>
+            <li><a th:href="@{/admin/users}" th:if="${session.userRole == 'ADMIN'}">Потребители</a></li>
+            <li><a th:href="@{/contacts}">Контакти</a></li>
+            <li th:if="${session.userRole == 'ADMIN'}" class="admin-nav-item">
+                <a th:href="@{/admin/orders}" style="color: #ff6b6b; font-weight: bold;">⚙️ Админ панел</a>
+            </li>
+        </ul>
+    </nav>
+
+    <main style="max-width: 1200px; margin: 2rem auto; padding: 0 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <h1 style="font-size: 2rem; color: #333; margin: 0;">Редактиране на профил</h1>
+            <a th:href="@{/profile}" style="padding: 0.75rem 1.5rem; background: #6c757d; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block;">
+                Отказ
+            </a>
+        </div>
+
+        <!-- Error Messages -->
+        <div th:if="${error}" style="padding: 1rem; background: #f8d7da; color: #721c24; border-radius: 4px; margin-bottom: 1rem;">
+            <span th:text="${error}"></span>
+        </div>
+
+        <!-- Edit Profile Form -->
+        <div style="background: white; padding: 2rem; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 2rem;">
+            <h2 style="margin-top: 0; color: #333; margin-bottom: 1.5rem;">Промяна на e-mail адрес</h2>
+            
+            <div style="margin-bottom: 1.5rem; padding: 1rem; background: #f8f9fa; border-radius: 4px;">
+                <p style="margin: 0; color: #666;"><strong>Текущ e-mail:</strong></p>
+                <p style="margin: 0.5rem 0 0 0; font-size: 1.125rem;" th:text="${user.email}">email@example.com</p>
+            </div>
+
+            <form th:action="@{/profile/email}" method="post" th:object="${updateEmailDto}">
+                <input type="hidden" name="_method" value="PUT">
+                <div style="margin-bottom: 1.5rem;">
+                    <label for="email" style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">
+                        Нов e-mail адрес <span style="color: #dc3545;">*</span>
+                    </label>
+                    <input type="email" 
+                           id="email" 
+                           name="email" 
+                           th:field="*{email}"
+                           required
+                           placeholder="example@email.com"
+                           style="width: 100%; max-width: 400px; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
+                    <div th:if="${#fields.hasErrors('email')}" style="color: #dc3545; margin-top: 0.5rem; font-size: 0.875rem;">
+                        <span th:errors="*{email}">Email error</span>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem;">
+                    <button type="submit" 
+                            style="padding: 0.75rem 2rem; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 1rem; font-weight: bold;">
+                        Запази промените
+                    </button>
+                    <a th:href="@{/profile}" 
+                       style="padding: 0.75rem 2rem; background: #6c757d; color: white; text-decoration: none; border-radius: 4px; font-size: 1rem; font-weight: bold; display: inline-block;">
+                        Отказ
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- User Information (Read-only) -->
+        <div style="background: white; padding: 2rem; border-radius: 8px; border: 1px solid #ddd;">
+            <h2 style="margin-top: 0; color: #333;">Друга информация</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+                <div>
+                    <p style="margin: 0.5rem 0; color: #666;"><strong>Име:</strong></p>
+                    <p style="margin: 0; font-size: 1.125rem;" th:text="${user.name}">Име на потребител</p>
+                </div>
+                <div>
+                    <p style="margin: 0.5rem 0; color: #666;"><strong>Роля:</strong></p>
+                    <p style="margin: 0; font-size: 1.125rem;" th:text="${user.role}">USER</p>
+                </div>
+            </div>
+            <p style="margin-top: 1.5rem; color: #666; font-size: 0.875rem;">
+                <em>За момента можете да редактирате само e-mail адреса си. Другите полета не могат да бъдат променяни.</em>
+            </p>
+        </div>
+    </main>
+
+    <footer class="footer" style="margin-top: 4rem; padding: 2rem; background: #f8f9fa; text-align: center;">
+        <p>&copy; 2025 My Store. All rights reserved.</p>
+    </footer>
+</body>
+</html>
+

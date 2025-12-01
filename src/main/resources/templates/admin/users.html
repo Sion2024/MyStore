@@ -94,6 +94,7 @@
                                       th:action="@{/admin/users/{id}/promote(id=${user.id})}" 
                                       method="post" 
                                       style="display: inline;">
+                                    <input type="hidden" name="_method" value="PATCH">
                                     <button type="submit" 
                                             onclick="return confirm('Сигурни ли сте, че искате да повишите този потребител до администратор?');"
                                             style="padding: 0.5rem 1rem; background: #28a745; color: white; border: none; border-radius: 4px; font-size: 0.875rem; cursor: pointer;">
@@ -104,6 +105,7 @@
                                       th:action="@{/admin/users/{id}/demote(id=${user.id})}" 
                                       method="post" 
                                       style="display: inline;">
+                                    <input type="hidden" name="_method" value="PATCH">
                                     <button type="submit" 
                                             onclick="return confirm('Сигурни ли сте, че искате да понижите този администратор до обикновен потребител?');"
                                             style="padding: 0.5rem 1rem; background: #ffc107; color: #000; border: none; border-radius: 4px; font-size: 0.875rem; cursor: pointer; font-weight: bold;">
@@ -111,9 +113,10 @@
                                     </button>
                                 </form>
                                 <form th:if="${currentUserId != null and !user.id.equals(currentUserId)}" 
-                                      th:action="@{/admin/users/{id}/delete(id=${user.id})}" 
+                                      th:action="@{/admin/users/{id}(id=${user.id})}" 
                                       method="post" 
                                       style="display: inline;">
+                                    <input type="hidden" name="_method" value="DELETE">
                                     <button type="submit" 
                                             onclick="return confirm('Сигурни ли сте, че искате да изтриете този потребител? Това действие не може да бъде отменено.');"
                                             style="padding: 0.5rem 1rem; background: #dc3545; color: white; border: none; border-radius: 4px; font-size: 0.875rem; cursor: pointer;">

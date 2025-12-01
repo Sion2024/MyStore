@@ -70,9 +70,23 @@
             </form>
         </div>
 
+        <!-- Success/Error Messages -->
+        <div th:if="${success}" style="padding: 1rem; background: #d4edda; color: #155724; border-radius: 4px; margin-bottom: 1rem;">
+            <span th:text="${success}"></span>
+        </div>
+        <div th:if="${error}" style="padding: 1rem; background: #f8d7da; color: #721c24; border-radius: 4px; margin-bottom: 1rem;">
+            <span th:text="${error}"></span>
+        </div>
+
         <!-- User Information Card -->
         <div style="background: white; padding: 2rem; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 2rem;">
-            <h2 style="margin-top: 0; color: #333;">Информация за профила</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h2 style="margin: 0; color: #333;">Информация за профила</h2>
+                <a th:href="@{/profile/edit}" 
+                   style="padding: 0.75rem 1.5rem; background: #007bff; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block;">
+                    Редактирай профил
+                </a>
+            </div>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
                 <div>
                     <p style="margin: 0.5rem 0; color: #666;"><strong>Име:</strong></p>

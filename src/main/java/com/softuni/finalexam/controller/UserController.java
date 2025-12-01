@@ -1,5 +1,6 @@
 package com.softuni.finalexam.controller;
 
+import com.softuni.finalexam.models.dto.UpdateEmailDto;
 import com.softuni.finalexam.models.dto.UserRegistrationDto;
 import com.softuni.finalexam.models.entity.Order;
 import com.softuni.finalexam.models.entity.OrderItem;
@@ -16,6 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -165,6 +167,68 @@ public class UserController {
     public String logoutGet(HttpSession session) {
         session.invalidate();
         return "redirect:/";
+    }
+
+    @GetMapping("/profile/edit")
+    public String showEditProfile(HttpSession session, Model model) {
+        Object userIdObj = session.getAttribute("userId");
+        if (userIdObj == null) {
+            return "redirect:/profile";
+        }
+
+        try {
+            UUID userId = UUID.fromString(userIdObj.toString());
+            User user = userService.getById(userId);
+            
+            if (user == null) {
+                return "redirect:/profile";
+            }
+
+            model.addAttribute("user", user);
+            model.addAttribute("updateEmailDto", new UpdateEmailDto());
+            return "profile-edit";
+        } catch (Exception e) {
+            log.error("Error loading edit profile", e);
+            return "redirect:/profile";
+        }
+    }
+
+    @PutMapping("/profile/email")
+    public String updateEmail(
+            @Valid @ModelAttribute UpdateEmailDto updateEmailDto,
+            BindingResult bindingResult,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
+
+        Object userIdObj = session.getAttribute("userId");
+        if (userIdObj == null) {
+            redirectAttributes.addFlashAttribute("error", "You must be logged in to update your email.");
+            return "redirect:/profile";
+        }
+
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("error", "Please provide a valid email address.");
+            return "redirect:/profile/edit?error=true";
+        }
+
+        try {
+            UUID userId = UUID.fromString(userIdObj.toString());
+            User updatedUser = userService.updateEmail(userId, updateEmailDto.getEmail());
+            
+            // Update session email attribute
+            session.setAttribute("userEmail", updatedUser.getEmail());
+            
+            redirectAttributes.addFlashAttribute("success", "Email updated successfully!");
+            return "redirect:/profile";
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            log.error("Email update failed for user: {}", userIdObj, e);
+            return "redirect:/profile/edit?error=true";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to update email. Please try again.");
+            log.error("Error updating email", e);
+            return "redirect:/profile/edit?error=true";
+        }
     }
 }
 
