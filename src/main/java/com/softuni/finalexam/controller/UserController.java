@@ -2,7 +2,9 @@ package com.softuni.finalexam.controller;
 
 import com.softuni.finalexam.models.dto.UserRegistrationDto;
 import com.softuni.finalexam.models.entity.Order;
+import com.softuni.finalexam.models.entity.OrderItem;
 import com.softuni.finalexam.models.entity.User;
+import com.softuni.finalexam.repository.OrderItemRepository;
 import com.softuni.finalexam.repository.OrderRepository;
 import com.softuni.finalexam.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -17,7 +19,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,10 +32,12 @@ public class UserController {
 
     private final UserService userService;
     private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
 
-    public UserController(UserService userService, OrderRepository orderRepository) {
+    public UserController(UserService userService, OrderRepository orderRepository, OrderItemRepository orderItemRepository) {
         this.userService = userService;
         this.orderRepository = orderRepository;
+        this.orderItemRepository = orderItemRepository;
     }
 
 
@@ -95,8 +102,19 @@ public class UserController {
                             .filter(order -> order.getStatus() != null && order.getStatus().name().equals("DELIVERED"))
                             .count();
                     
+                    // Calculate totals for each order from order items
+                    Map<UUID, BigDecimal> orderTotals = new HashMap<>();
+                    for (Order order : orders) {
+                        List<OrderItem> orderItems = orderItemRepository.findByOrder(order);
+                        BigDecimal total = orderItems.stream()
+                                .map(OrderItem::getTotalPrice)
+                                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                        orderTotals.put(order.getId(), total);
+                    }
+                    
                     model.addAttribute("user", user);
                     model.addAttribute("orders", orders);
+                    model.addAttribute("orderTotals", orderTotals);
                     model.addAttribute("totalOrders", totalOrders);
                     model.addAttribute("inTransitOrders", inTransitOrders);
                     model.addAttribute("deliveredOrders", deliveredOrders);

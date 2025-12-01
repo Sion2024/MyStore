@@ -102,7 +102,7 @@
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
                         <div>
                             <p style="margin: 0; font-size: 1.25rem; font-weight: bold;">
-                                Обща сума: <span style="color: #28a745;" th:text="${order.total} + ' лв.'">0.00 лв.</span>
+                                Обща сума: <span style="color: #28a745;" th:text="${orderTotals != null and orderTotals.containsKey(order.id) ? orderTotals.get(order.id) + ' лв.' : '0.00 лв.'}">0.00 лв.</span>
                             </p>
                         </div>
                         <div>

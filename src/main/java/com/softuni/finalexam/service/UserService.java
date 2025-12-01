@@ -43,7 +43,7 @@ public class UserService {
 
         User savedUser = userRepository.save(user);
 
-        // TODO: make notification calls async to avoid blocking registration
+
         try {
             notificationClient.upsertNotificationPreference(
                     savedUser.getId(),

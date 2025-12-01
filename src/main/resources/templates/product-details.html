@@ -103,7 +103,7 @@
                         <p th:text="${product.description}">Описание на продукта</p>
                     </div>
 
-                    <div class="stock-info" style="margin: 1.5rem 0;">
+                    <div class="stock-info" th:if="${session.userRole == 'ADMIN'}" style="margin: 1.5rem 0;">
                         <p th:if="${product.stock > 0}" style="color: #28a745; font-weight: bold;">
                             ✅ Наличност: <span th:text="${product.stock}">0</span> бр.
                         </p>

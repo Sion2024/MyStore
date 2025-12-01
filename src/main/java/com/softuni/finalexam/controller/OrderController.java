@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Controller
@@ -133,7 +135,18 @@ public class OrderController {
                 .filter(order -> order.getUser() != null && order.getUser().getId().equals(userId))
                 .toList();
 
+        // Calculate totals for each order from order items
+        Map<UUID, BigDecimal> orderTotals = new HashMap<>();
+        for (Order order : orders) {
+            List<OrderItem> orderItems = orderItemRepository.findByOrder(order);
+            BigDecimal total = orderItems.stream()
+                    .map(OrderItem::getTotalPrice)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            orderTotals.put(order.getId(), total);
+        }
+
         model.addAttribute("orders", orders);
+        model.addAttribute("orderTotals", orderTotals);
         return "orders";
     }
 
@@ -159,9 +172,16 @@ public class OrderController {
         }
 
         List<OrderItem> orderItems = orderItemRepository.findByOrder(order);
+        
+        // Calculate total from order items (more accurate than stored order.total)
+        BigDecimal calculatedTotal = orderItems.stream()
+                .map(OrderItem::getTotalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        
         model.addAttribute("order", order);
         model.addAttribute("orderItems", orderItems);
         model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("calculatedTotal", calculatedTotal);
         return "order-details";
     }
 

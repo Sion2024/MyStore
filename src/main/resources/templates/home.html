@@ -71,14 +71,13 @@
         <!-- Sidebar -->
         <aside class="sidebar">
             <ul>
-                <li><a href="#" th:text="#{category.wines}">Вина</a></li>
-                <li><a href="#" th:text="#{category.sparkling.wines}">Пенливи вина</a></li>
-                <li><a href="#" th:text="#{category.alcoholic.drinks}">Алкохолни напитки</a></li>
-                <li><a href="#" th:text="#{category.beer}">Бира</a></li>
-                <li><a href="#" th:text="#{category.water}">Вода</a></li>
-                <li><a href="#" th:text="#{category.soft.drinks}">Безалкохолни напитки</a></li>
-                <li><a href="#" th:text="#{category.coffee.tea.energy}">Кафе, чай и енергийни</a></li>
-                <li><a href="#" th:text="#{category.nuts}">Ядки</a></li>
+                <li><a th:href="@{/products?wines=true}" th:text="#{category.wines}">Вина</a></li>
+                <li><a th:href="@{/products?champagne=true}" th:text="#{category.sparkling.wines}">Пенливи вина</a></li>
+                <li><a th:href="@{/products?whiskey=true}" th:text="#{category.alcoholic.drinks}">Алкохолни напитки</a></li>
+                <li><a th:href="@{/products?beer=true}" th:text="#{category.beer}">Бира</a></li>
+                <li><a th:href="@{/products?water=true}" th:text="#{category.water}">Вода</a></li>
+                <li><a th:href="@{/products?softDrinks=true}" th:text="#{category.soft.drinks}">Безалкохолни напитки</a></li>
+
             </ul>
         </aside>
 
@@ -198,30 +197,30 @@
             <div class="popular-categories">
                 <h2 class="section-title" th:text="#{popular.categories}">Популярни категории</h2>
                 <div class="categories-grid">
-                    <div class="category-tile">
+                    <a th:href="@{/products?wines=true}" class="category-tile" style="text-decoration: none; color: inherit; display: block;">
                         <div class="category-icon">🍷</div>
                         <div class="category-name">Вина</div>
-                    </div>
-                    <div class="category-tile">
+                    </a>
+                    <a th:href="@{/products?champagne=true}" class="category-tile" style="text-decoration: none; color: inherit; display: block;">
                         <div class="category-icon">🥂</div>
                         <div class="category-name">Пенливи вина</div>
-                    </div>
-                    <div class="category-tile">
+                    </a>
+                    <a th:href="@{/products?whiskey=true}" class="category-tile" style="text-decoration: none; color: inherit; display: block;">
                         <div class="category-icon">🥃</div>
                         <div class="category-name">Алкохолни напитки</div>
-                    </div>
+                    </a>
                     <div class="category-tile">
                         <div class="category-icon">🥜</div>
                         <div class="category-name">Ядки</div>
                     </div>
-                    <div class="category-tile">
+                    <a th:href="@{/products?beer=true}" class="category-tile" style="text-decoration: none; color: inherit; display: block;">
                         <div class="category-icon">🍺</div>
                         <div class="category-name">Бира</div>
-                    </div>
-                    <div class="category-tile">
+                    </a>
+                    <a th:href="@{/products?water=true}" class="category-tile" style="text-decoration: none; color: inherit; display: block;">
                         <div class="category-icon">💧</div>
                         <div class="category-name">Вода</div>
-                    </div>
+                    </a>
                 </div>
             </div>
 
@@ -243,7 +242,7 @@
                              th:text="${#strings.abbreviate(product.description, 50)}">Описание</div>
                         <div class="product-specs" th:if="${product.category != null}">
                             <span th:text="${product.category.name}">Категория</span>
-                            <span th:if="${product.stock != null}"> | Наличност: <span th:text="${product.stock}">0</span> бр.</span>
+                            <span th:if="${session.userRole == 'ADMIN' and product.stock != null}"> | Наличност: <span th:text="${product.stock}">0</span> бр.</span>
                         </div>
                         <div class="price-section">
                             <span class="discounted-price" th:text="${product.price} + ' лв.'">0.00 лв.</span>

@@ -37,10 +37,34 @@ public class ProductController {
     public String showProducts(
             @RequestParam(required = false) UUID categoryId,
             @RequestParam(required = false) String search,
+            @RequestParam(required = false) Boolean wines,
+            @RequestParam(required = false) Boolean champagne,
+            @RequestParam(required = false) Boolean whiskey,
+            @RequestParam(required = false) Boolean beer,
+            @RequestParam(required = false) Boolean water,
+            @RequestParam(required = false) Boolean softDrinks,
             Model model) {
 
         List<Product> products;
-        if (categoryId != null) {
+        if (wines != null && wines) {
+            // Filter for Red Wine and White Wine categories
+            products = filterProductsByCategoryNames("Red Wine", "White Wine");
+        } else if (champagne != null && champagne) {
+            // Filter for Champagne category
+            products = filterProductsByCategoryNames("Champagne");
+        } else if (whiskey != null && whiskey) {
+            // Filter for Whiskey category
+            products = filterProductsByCategoryNames("Whiskey");
+        } else if (beer != null && beer) {
+            // Filter for Beer category
+            products = filterProductsByCategoryNames("Beer");
+        } else if (water != null && water) {
+            // Filter for Water category
+            products = filterProductsByCategoryNames("Water");
+        } else if (softDrinks != null && softDrinks) {
+            // Filter for Soft Drink category
+            products = filterProductsByCategoryNames("Soft Drink");
+        } else if (categoryId != null) {
             products = productRepository.findAll().stream()
                     .filter(p -> p.getCategory() != null && p.getCategory().getId().equals(categoryId))
                     .toList();
@@ -58,8 +82,36 @@ public class ProductController {
         model.addAttribute("categories", categoryRepository.findAll());
         model.addAttribute("selectedCategory", categoryId);
         model.addAttribute("searchQuery", search);
+        model.addAttribute("winesFilter", wines != null && wines);
+        model.addAttribute("champagneFilter", champagne != null && champagne);
+        model.addAttribute("whiskeyFilter", whiskey != null && whiskey);
+        model.addAttribute("beerFilter", beer != null && beer);
+        model.addAttribute("waterFilter", water != null && water);
+        model.addAttribute("softDrinksFilter", softDrinks != null && softDrinks);
         
         return "products";
+    }
+
+    private List<Product> filterProductsByCategoryNames(String... categoryNames) {
+        List<com.softuni.finalexam.models.entity.Category> categories = categoryRepository.findAll().stream()
+                .filter(c -> c != null && c.getName() != null)
+                .filter(c -> {
+                    for (String categoryName : categoryNames) {
+                        if (c.getName().equals(categoryName)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                })
+                .toList();
+        
+        List<UUID> categoryIds = categories.stream()
+                .map(com.softuni.finalexam.models.entity.Category::getId)
+                .toList();
+        
+        return productRepository.findAll().stream()
+                .filter(p -> p.getCategory() != null && categoryIds.contains(p.getCategory().getId()))
+                .toList();
     }
     
 
