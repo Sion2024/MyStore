@@ -88,74 +88,34 @@
                 <!-- Carousel Banner -->
                 <div class="promo-banner carousel-container">
                     <div class="carousel-slides" id="carouselSlides">
-                        <!-- Slide 1 -->
-                        <div class="carousel-slide carousel-slide-1">
+                        <!-- Dynamic Product Slides -->
+                        <div th:each="product, iterStat : ${randomProducts}" 
+                             th:classappend="|carousel-slide carousel-slide-${iterStat.index + 1}|"
+                             th:if="${randomProducts != null and !#lists.isEmpty(randomProducts)}">
+                            <div class="carousel-content">
+                                <span class="new-badge" th:text="|FEATURED!|">FEATURED!</span>
+                                <h1 class="carousel-title" th:text="${product.name}">Product Name</h1>
+                                <p class="carousel-subtitle" th:if="${product.category != null}" th:text="${product.category.name}">Category</p>
+                                <div class="price-tags">
+                                    <span class="price-tag" th:text="|${product.price} лв.|">0.00 лв.</span>
+                                </div>
+                            </div>
+                            <a th:href="@{/products/{id}(id=${product.id})}" 
+                               class="promo-button" 
+                               style="text-decoration: none; color: inherit; display: inline-block;">Виж детайли</a>
+                        </div>
+                        
+                        <!-- Fallback static slides if no products -->
+                        <div th:if="${randomProducts == null or #lists.isEmpty(randomProducts)}" class="carousel-slide carousel-slide-1">
                             <div class="carousel-content">
                                 <span class="new-badge">NEW!</span>
-                                <h1 class="carousel-title">ROBBY BUBBLE</h1>
-                                <p class="carousel-subtitle">BLUE & PINK</p>
+                                <h1 class="carousel-title">WELCOME</h1>
+                                <p class="carousel-subtitle">TO MY STORE</p>
                                 <div class="price-tags">
-                                    <span class="price-tag">7,99 лв.</span>
-                                    <span class="price-tag">4,09 лв.</span>
+                                    <span class="price-tag">Check back soon!</span>
                                 </div>
                             </div>
-                            <button class="promo-button" th:text="#{btn.order.now}">Поръчай сега</button>
-                        </div>
-
-                        <!-- Slide 2 -->
-                        <div class="carousel-slide carousel-slide-2">
-                            <div class="carousel-content">
-                                <span class="new-badge">HOT!</span>
-                                <h1 class="carousel-title">SPECIAL OFFER</h1>
-                                <p class="carousel-subtitle">RED & YELLOW</p>
-                                <div class="price-tags">
-                                    <span class="price-tag">12,99 лв.</span>
-                                    <span class="price-tag">9,99 лв.</span>
-                                </div>
-                            </div>
-                            <button class="promo-button" th:text="#{btn.order.now}">Поръчай сега</button>
-                        </div>
-
-                        <!-- Slide 3 -->
-                        <div class="carousel-slide carousel-slide-3">
-                            <div class="carousel-content">
-                                <span class="new-badge">LIMITED!</span>
-                                <h1 class="carousel-title">PREMIUM SELECTION</h1>
-                                <p class="carousel-subtitle">PURPLE & BLUE</p>
-                                <div class="price-tags">
-                                    <span class="price-tag">19,99 лв.</span>
-                                    <span class="price-tag">15,99 лв.</span>
-                                </div>
-                            </div>
-                            <button class="promo-button" th:text="#{btn.order.now}">Поръчай сега</button>
-                        </div>
-
-                        <!-- Slide 4 -->
-                        <div class="carousel-slide carousel-slide-4">
-                            <div class="carousel-content">
-                                <span class="new-badge">FRESH!</span>
-                                <h1 class="carousel-title">NEW ARRIVALS</h1>
-                                <p class="carousel-subtitle">CYAN & BLUE</p>
-                                <div class="price-tags">
-                                    <span class="price-tag">8,99 лв.</span>
-                                    <span class="price-tag">6,99 лв.</span>
-                                </div>
-                            </div>
-                            <button class="promo-button" th:text="#{btn.order.now}">Поръчай сега</button>
-                        </div>
-
-                        <!-- Slide 5 -->
-                        <div class="carousel-slide carousel-slide-5">
-                            <div class="carousel-content">
-                                <span class="new-badge">SALE!</span>
-                                <h1 class="carousel-title">SUMMER COLLECTION</h1>
-                                <p class="carousel-subtitle">PINK & YELLOW</p>
-                                <div class="price-tags">
-                                    <span class="price-tag">14,99 лв.</span>
-                                    <span class="price-tag">11,99 лв.</span>
-                                </div>
-                            </div>
-                            <button class="promo-button" th:text="#{btn.order.now}">Поръчай сега</button>
+                            <a th:href="@{/products}" class="promo-button" style="text-decoration: none; color: inherit; display: inline-block;" th:text="#{btn.view.all}">Виж продукти</a>
                         </div>
                     </div>
 
@@ -165,11 +125,13 @@
 
                     <!-- Indicators -->
                     <div class="carousel-indicators" id="carouselIndicators">
-                        <span class="carousel-indicator active" onclick="goToSlide(0)"></span>
-                        <span class="carousel-indicator" onclick="goToSlide(1)"></span>
-                        <span class="carousel-indicator" onclick="goToSlide(2)"></span>
-                        <span class="carousel-indicator" onclick="goToSlide(3)"></span>
-                        <span class="carousel-indicator" onclick="goToSlide(4)"></span>
+                        <span th:each="product, iterStat : ${randomProducts}" 
+                              th:classappend="${iterStat.index == 0 ? 'active' : ''}"
+                              th:onclick="|goToSlide(${iterStat.index})|"
+                              class="carousel-indicator"></span>
+                        <span th:if="${randomProducts == null or #lists.isEmpty(randomProducts)}" 
+                              class="carousel-indicator active" 
+                              onclick="goToSlide(0)"></span>
                     </div>
                 </div>
 
@@ -416,7 +378,7 @@
 
     <script>
         let currentSlide = 0;
-        const totalSlides = 5;
+        const totalSlides = /*[[${randomProducts != null and !#lists.isEmpty(randomProducts) ? #lists.size(randomProducts) : 1}]]*/ 5;
         let carouselInterval;
 
         function updateCarousel() {

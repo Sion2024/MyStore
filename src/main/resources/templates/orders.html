@@ -85,7 +85,7 @@
                         <div>
                             <h3 style="margin: 0 0 0.5rem 0;">Поръчка #<span th:text="${order.id}">ID</span></h3>
                             <p style="margin: 0; color: #666; font-size: 0.875rem;">
-                                Дата: <span th:text="${order.date != null ? #temporals.format(order.date, 'dd.MM.yyyy HH:mm') : 'N/A'}">N/A</span>
+                                Дата: <span th:text="${order.date != null ? #temporals.format(order.date.atZoneSameInstant(T(java.time.ZoneId).of('Europe/Sofia')).toLocalDateTime(), 'dd.MM.yyyy HH:mm') : 'N/A'}">N/A</span>
                             </p>
                         </div>
                         <div style="text-align: right;">

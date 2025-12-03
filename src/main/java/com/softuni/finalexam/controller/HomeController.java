@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.LocaleResolver;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -30,6 +32,19 @@ public class HomeController {
     public String home(Model model) {
         List<Product> products = productRepository.findAll();
         model.addAttribute("products", products);
+        
+        // Get 5 random products for the carousel
+        List<Product> randomProducts = products;
+        if (!products.isEmpty()) {
+            List<Product> shuffledProducts = new java.util.ArrayList<>(products);
+            Collections.shuffle(shuffledProducts);
+            // Take up to 5 random products
+            randomProducts = shuffledProducts.stream()
+                    .limit(5)
+                    .collect(Collectors.toList());
+        }
+        model.addAttribute("randomProducts", randomProducts);
+        
         return "home";
     }
 

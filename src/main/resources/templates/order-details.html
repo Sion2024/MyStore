@@ -73,7 +73,7 @@
                 <div>
                     <h1 style="font-size: 2rem; color: #333; margin: 0;">Поръчка #<span th:text="${order.id}">ID</span></h1>
                     <p style="color: #666; margin: 0.5rem 0;">
-                        Дата: <span th:text="${order.date != null ? #temporals.format(order.date, 'dd.MM.yyyy HH:mm') : 'N/A'}">N/A</span>
+                        Дата: <span th:text="${order.date != null ? #temporals.format(order.date.atZoneSameInstant(T(java.time.ZoneId).of('Europe/Sofia')).toLocalDateTime(), 'dd.MM.yyyy HH:mm') : 'N/A'}">N/A</span>
                     </p>
                 </div>
                 <div>
@@ -137,7 +137,7 @@
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                     <div>
                         <p style="margin: 0.5rem 0;"><strong>Номер на поръчка:</strong> <span th:text="${order.id}">ID</span></p>
-                        <p style="margin: 0.5rem 0;"><strong>Дата:</strong> <span th:text="${order.date != null ? #temporals.format(order.date, 'dd.MM.yyyy HH:mm') : 'N/A'}">N/A</span></p>
+                        <p style="margin: 0.5rem 0;"><strong>Дата:</strong> <span th:text="${order.date != null ? #temporals.format(order.date.atZoneSameInstant(T(java.time.ZoneId).of('Europe/Sofia')).toLocalDateTime(), 'dd.MM.yyyy HH:mm') : 'N/A'}">N/A</span></p>
                         <p style="margin: 0.5rem 0;"><strong>Статус:</strong> 
                             <span th:switch="${order.status}">
                                 <span th:case="APPROVED">Одобрена</span>
@@ -156,48 +156,6 @@
                 </div>
             </div>
 
-            <!-- Admin Actions (if admin) -->
-            <div th:if="${isAdmin}" 
-                 style="background: #fff3cd; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border: 1px solid #ffc107;">
-                <h3 style="margin-top: 0;">Админ действия</h3>
-                <div th:if="${order.status.name() == 'APPROVED'}">
-                    <form th:action="@{/orders/{id}/ship(id=${order.id})}" method="post" th:object="${shipOrderDto}" style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: end;">
-                        <input type="hidden" name="_method" value="PATCH">
-                        <div>
-                            <label>Куриер:</label>
-                            <input type="text" th:field="*{courier}" required style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
-                            <div th:if="${#fields.hasErrors('courier')}" style="color: #dc3545; font-size: 0.75rem; margin-top: 0.25rem;">
-                                <span th:errors="*{courier}">Courier error</span>
-                            </div>
-                        </div>
-                        <div>
-                            <label>Адрес:</label>
-                            <input type="text" th:field="*{address}" required style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
-                            <div th:if="${#fields.hasErrors('address')}" style="color: #dc3545; font-size: 0.75rem; margin-top: 0.25rem;">
-                                <span th:errors="*{address}">Address error</span>
-                            </div>
-                        </div>
-                        <div>
-                            <label>Начин на плащане:</label>
-                            <input type="text" th:field="*{paymentMethod}" required style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
-                            <div th:if="${#fields.hasErrors('paymentMethod')}" style="color: #dc3545; font-size: 0.75rem; margin-top: 0.25rem;">
-                                <span th:errors="*{paymentMethod}">Payment method error</span>
-                            </div>
-                        </div>
-                        <button type="submit" style="padding: 0.5rem 1.5rem; background: #17a2b8; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                            Маркирай като изпратена
-                        </button>
-                    </form>
-                </div>
-                <div th:if="${order.status.name() == 'IN_TRANSIT'}">
-                    <form th:action="@{/orders/{id}/deliver(id=${order.id})}" method="post">
-                        <input type="hidden" name="_method" value="PATCH">
-                        <button type="submit" style="padding: 0.5rem 1.5rem; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                            Маркирай като доставена
-                        </button>
-                    </form>
-                </div>
-            </div>
         </div>
     </main>
 

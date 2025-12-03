@@ -88,10 +88,10 @@
                             </div>
                         </td>
                         <td style="padding: 1rem;">
-                            <span th:text="${order.date != null ? #temporals.format(order.date, 'dd.MM.yyyy HH:mm') : 'N/A'}">Дата</span>
+                            <span th:text="${order.date != null ? #temporals.format(order.date.atZoneSameInstant(T(java.time.ZoneId).of('Europe/Sofia')).toLocalDateTime(), 'dd.MM.yyyy HH:mm') : 'N/A'}">Дата</span>
                         </td>
                         <td style="padding: 1rem; text-align: right; font-weight: bold; color: #28a745;">
-                            <span th:text="${order.total} + ' лв.'">0.00 лв.</span>
+                            <span th:text="${orderTotals != null and orderTotals.get(order.id) != null ? orderTotals.get(order.id) + ' лв.' : '0.00 лв.'}">0.00 лв.</span>
                         </td>
                         <td style="padding: 1rem; text-align: center;">
                             <span th:switch="${order.status}" 
@@ -123,25 +123,25 @@
             <div style="background: #fff3cd; padding: 1.5rem; border-radius: 8px; border: 1px solid #ffc107;">
                 <h3 style="margin: 0 0 0.5rem 0; color: #856404;">Одобрени</h3>
                 <p style="margin: 0; font-size: 2rem; font-weight: bold; color: #856404;">
-                    <span th:text="${#lists.size(#lists.select(orders, order.status.name() == 'APPROVED'))}">0</span>
+                    <span th:text="${approvedCount != null ? approvedCount : 0}">0</span>
                 </p>
             </div>
             <div style="background: #d1ecf1; padding: 1.5rem; border-radius: 8px; border: 1px solid #17a2b8;">
                 <h3 style="margin: 0 0 0.5rem 0; color: #0c5460;">В доставка</h3>
                 <p style="margin: 0; font-size: 2rem; font-weight: bold; color: #0c5460;">
-                    <span th:text="${#lists.size(#lists.select(orders, order.status.name() == 'IN_TRANSIT'))}">0</span>
+                    <span th:text="${inTransitCount != null ? inTransitCount : 0}">0</span>
                 </p>
             </div>
             <div style="background: #d4edda; padding: 1.5rem; border-radius: 8px; border: 1px solid #28a745;">
                 <h3 style="margin: 0 0 0.5rem 0; color: #155724;">Доставени</h3>
                 <p style="margin: 0; font-size: 2rem; font-weight: bold; color: #155724;">
-                    <span th:text="${#lists.size(#lists.select(orders, order.status.name() == 'DELIVERED'))}">0</span>
+                    <span th:text="${deliveredCount != null ? deliveredCount : 0}">0</span>
                 </p>
             </div>
             <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; border: 1px solid #6c757d;">
                 <h3 style="margin: 0 0 0.5rem 0; color: #343a40;">Общо поръчки</h3>
                 <p style="margin: 0; font-size: 2rem; font-weight: bold; color: #343a40;">
-                    <span th:text="${orders != null ? #lists.size(orders) : 0}">0</span>
+                    <span th:text="${totalOrders != null ? totalOrders : 0}">0</span>
                 </p>
             </div>
         </div>

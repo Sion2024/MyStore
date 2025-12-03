@@ -1,5 +1,6 @@
 package com.softuni.finalexam.client;
 
+import com.softuni.finalexam.models.dto.notification.NewOrderRequest;
 import com.softuni.finalexam.models.dto.notification.NewUserRegistrationRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -11,5 +12,8 @@ public interface NotificationServiceClient {
 
     @PostMapping("/users/registered")
     ResponseEntity<Void> notifyUserRegistration(@RequestBody NewUserRegistrationRequest request);
+
+    @PostMapping("/orders/new")
+    ResponseEntity<Void> notifyNewOrder(@RequestBody NewOrderRequest request);
 }
 

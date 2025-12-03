@@ -16,7 +16,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,11 +30,14 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final ProductRepository productRepository;
+    private final NotificationClient notificationClient;
 
-    public OrderService(OrderRepository orderRepository, OrderItemRepository orderItemRepository, ProductRepository productRepository) {
+    public OrderService(OrderRepository orderRepository, OrderItemRepository orderItemRepository, 
+                       ProductRepository productRepository, NotificationClient notificationClient) {
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
         this.productRepository = productRepository;
+        this.notificationClient = notificationClient;
     }
 
 
@@ -75,7 +81,7 @@ public class OrderService {
 
         Order order = Order.builder()
                 .user(user)
-                .date(OffsetDateTime.now())
+                .date(OffsetDateTime.now(ZoneId.of("Europe/Sofia")))
                 .total(totalAmount.intValue())
                 .status(OrderStatus.APPROVED)
                 .build();
@@ -110,8 +116,24 @@ public class OrderService {
             orderItemRepository.save(orderItem);
         }
 
-        // Notification service only sends welcome emails on user registration
-        // Order confirmation emails are not currently supported
+        // Send notification to admin about new order
+        try {
+            LocalDateTime orderDate = savedOrder.getDate() != null 
+                    ? savedOrder.getDate().atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
+                    : LocalDateTime.now();
+            
+            notificationClient.notifyNewOrder(
+                    savedOrder.getId(),
+                    user.getId(),
+                    fullName,
+                    user.getEmail(),
+                    orderDate,
+                    totalAmount
+            );
+        } catch (Exception e) {
+            // Log warning but don't fail order creation if notification fails
+            log.warn("Failed to send new order notification for order: {}", savedOrder.getId(), e);
+        }
 
         log.info("Order created: {} with {} items", savedOrder.getId(), cartItems.size());
         return savedOrder;

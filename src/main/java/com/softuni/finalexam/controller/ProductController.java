@@ -228,7 +228,7 @@ public class ProductController {
     }
 
 
-    @GetMapping("/admin/orders")
+    @GetMapping("/admin/products")
     public String showAdminProducts(Model model) {
         List<Product> products = productRepository.findAll();
         Map<UUID, List<User>> productUsersMap = new HashMap<>();

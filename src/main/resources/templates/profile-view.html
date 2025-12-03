@@ -132,7 +132,7 @@
                                    th:text="${#strings.substring(order.id.toString(), 0, 8)}">ID</a>
                             </td>
                             <td style="padding: 1rem;">
-                                <span th:text="${order.date != null ? #temporals.format(order.date, 'dd.MM.yyyy HH:mm') : 'N/A'}">Дата</span>
+                                <span th:text="${order.date != null ? #temporals.format(order.date.atZoneSameInstant(T(java.time.ZoneId).of('Europe/Sofia')).toLocalDateTime(), 'dd.MM.yyyy HH:mm') : 'N/A'}">Дата</span>
                             </td>
                             <td style="padding: 1rem; text-align: right; font-weight: bold; color: #28a745;">
                                 <span th:text="${orderTotals != null and orderTotals.containsKey(order.id) ? orderTotals.get(order.id) + ' лв.' : '0.00 лв.'}">0.00 лв.</span>

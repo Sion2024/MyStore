@@ -1,5 +1,6 @@
 package com.softuni.finalexam.controller;
 
+import com.softuni.finalexam.enums.OrderStatus;
 import com.softuni.finalexam.models.entity.Order;
 import com.softuni.finalexam.models.entity.OrderItem;
 import com.softuni.finalexam.models.entity.User;
@@ -18,7 +19,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -51,6 +55,54 @@ public class AdminController {
         model.addAttribute("users", users);
         model.addAttribute("currentUserId", currentUserId);
         return "admin/users";
+    }
+
+    @GetMapping("/orders")
+    public String showAllOrders(HttpSession session, Model model) {
+        Object userRoleObj = session.getAttribute("userRole");
+        if (userRoleObj == null || !"ADMIN".equals(userRoleObj.toString())) {
+            return "redirect:/";
+        }
+
+        List<Order> orders = orderRepository.findAll().stream()
+                .sorted((o1, o2) -> {
+                    if (o1.getDate() != null && o2.getDate() != null) {
+                        return o2.getDate().compareTo(o1.getDate());
+                    }
+                    return 0;
+                })
+                .toList();
+
+        // Calculate totals for each order from order items
+        Map<UUID, BigDecimal> orderTotals = new HashMap<>();
+        long approvedCount = 0;
+        long inTransitCount = 0;
+        long deliveredCount = 0;
+        
+        for (Order order : orders) {
+            List<OrderItem> orderItems = orderItemRepository.findByOrder(order);
+            BigDecimal total = orderItems.stream()
+                    .map(OrderItem::getTotalPrice)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            orderTotals.put(order.getId(), total);
+            
+            // Count orders by status
+            if (order.getStatus() != null) {
+                switch (order.getStatus()) {
+                    case APPROVED -> approvedCount++;
+                    case IN_TRANSIT -> inTransitCount++;
+                    case DELIVERED -> deliveredCount++;
+                }
+            }
+        }
+
+        model.addAttribute("orders", orders);
+        model.addAttribute("orderTotals", orderTotals);
+        model.addAttribute("approvedCount", approvedCount);
+        model.addAttribute("inTransitCount", inTransitCount);
+        model.addAttribute("deliveredCount", deliveredCount);
+        model.addAttribute("totalOrders", orders.size());
+        return "admin/orders";
     }
     
 
