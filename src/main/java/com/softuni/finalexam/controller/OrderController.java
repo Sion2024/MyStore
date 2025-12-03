@@ -2,6 +2,8 @@ package com.softuni.finalexam.controller;
 
 import com.softuni.finalexam.enums.OrderStatus;
 import com.softuni.finalexam.models.dto.CartItemDto;
+import com.softuni.finalexam.models.dto.CreateOrderDto;
+import com.softuni.finalexam.models.dto.ShipOrderDto;
 import com.softuni.finalexam.models.entity.Order;
 import com.softuni.finalexam.models.entity.OrderItem;
 import com.softuni.finalexam.models.entity.User;
@@ -11,14 +13,16 @@ import com.softuni.finalexam.service.CartService;
 import com.softuni.finalexam.service.OrderService;
 import com.softuni.finalexam.service.UserService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -76,23 +80,48 @@ public class OrderController {
         model.addAttribute("user", user);
         model.addAttribute("cartItems", cartItems);
         model.addAttribute("subtotal", subtotal);
+        if (!model.containsAttribute("createOrderDto")) {
+            CreateOrderDto createOrderDto = new CreateOrderDto();
+            createOrderDto.setFullName(user.getName());
+            model.addAttribute("createOrderDto", createOrderDto);
+        }
         return "checkout";
     }
 
 
     @PostMapping("/orders/create")
     public String createOrder(
-            @RequestParam String fullName,
-            @RequestParam String address,
-            @RequestParam String phoneNumber,
-            @RequestParam String courier,
-            @RequestParam String paymentMethod,
+            @Valid @ModelAttribute("createOrderDto") CreateOrderDto createOrderDto,
+            BindingResult bindingResult,
             HttpSession session,
+            Model model,
             RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors()) {
+            Object userIdObj = session.getAttribute("userId");
+            if (userIdObj != null) {
+                try {
+                    UUID userId = UUID.fromString(userIdObj.toString());
+                    User user = userService.getById(userId);
+                    if (user != null) {
+                        List<CartItemDto> cartItems = cartService.getCartItems(session);
+                        BigDecimal subtotal = cartService.calculateSubtotal(session);
+                        model.addAttribute("user", user);
+                        model.addAttribute("cartItems", cartItems);
+                        model.addAttribute("subtotal", subtotal);
+                    }
+                } catch (Exception e) {
+                    log.error("Error loading checkout data", e);
+                }
+            }
+            model.addAttribute("createOrderDto", createOrderDto);
+            return "checkout";
+        }
 
         try {
             Object userIdObj = session.getAttribute("userId");
             if (userIdObj == null) {
+                redirectAttributes.addFlashAttribute("error", "You must be logged in to create an order.");
                 return "redirect:/profile";
             }
 
@@ -115,7 +144,12 @@ public class OrderController {
                 return "redirect:/cart";
             }
 
-            Order order = orderService.createOrder(user, cartItems, fullName, address, phoneNumber, courier, paymentMethod);
+            Order order = orderService.createOrder(user, cartItems, 
+                    createOrderDto.getFullName(), 
+                    createOrderDto.getAddress(), 
+                    createOrderDto.getPhoneNumber(), 
+                    createOrderDto.getCourier(), 
+                    createOrderDto.getPaymentMethod());
             cartService.clearCart(session);
 
             redirectAttributes.addFlashAttribute("success", "Order created successfully! Order ID: " + order.getId());
@@ -187,6 +221,9 @@ public class OrderController {
         model.addAttribute("orderItems", orderItems);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("calculatedTotal", calculatedTotal);
+        if (!model.containsAttribute("shipOrderDto")) {
+            model.addAttribute("shipOrderDto", new ShipOrderDto());
+        }
         return "order-details";
     }
 
@@ -194,24 +231,57 @@ public class OrderController {
     @PatchMapping("/orders/{id}/ship")
     public String shipOrder(
             @PathVariable UUID id,
-            @RequestParam String courier,
-            @RequestParam String address,
-            @RequestParam String paymentMethod,
+            @Valid @ModelAttribute("shipOrderDto") ShipOrderDto shipOrderDto,
+            BindingResult bindingResult,
             HttpSession session,
+            Model model,
             RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors()) {
+            Object userIdObj = session.getAttribute("userId");
+            if (userIdObj != null) {
+                try {
+                    UUID userId = UUID.fromString(userIdObj.toString());
+                    Order order = orderRepository.findById(id).orElse(null);
+                    if (order != null) {
+                        Object userRoleObj = session.getAttribute("userRole");
+                        boolean isAdmin = userRoleObj != null && "ADMIN".equals(userRoleObj.toString());
+                        boolean isOwner = order.getUser() != null && order.getUser().getId().equals(userId);
+                        
+                        if (isAdmin || isOwner) {
+                            List<OrderItem> orderItems = orderItemRepository.findByOrder(order);
+                            BigDecimal calculatedTotal = orderItems.stream()
+                                    .map(OrderItem::getTotalPrice)
+                                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+                            
+                            model.addAttribute("order", order);
+                            model.addAttribute("orderItems", orderItems);
+                            model.addAttribute("isAdmin", isAdmin);
+                            model.addAttribute("calculatedTotal", calculatedTotal);
+                            model.addAttribute("shipOrderDto", shipOrderDto);
+                            return "order-details";
+                        }
+                    }
+                } catch (Exception e) {
+                    log.error("Error loading order details", e);
+                }
+            }
+            redirectAttributes.addFlashAttribute("error", "Invalid shipping data. Please check all fields.");
+            return "redirect:/orders/" + id + "?error=true";
+        }
 
         try {
             Object userRoleObj = session.getAttribute("userRole");
             if (userRoleObj == null || !"ADMIN".equals(userRoleObj.toString())) {
-                redirectAttributes.addFlashAttribute("error", "Unauthorized access.");
+                redirectAttributes.addFlashAttribute("error", "Unauthorized access. Only administrators can ship orders.");
                 return "redirect:/orders";
             }
 
-            orderService.shipOrder(id, courier, address, paymentMethod);
+            orderService.shipOrder(id, shipOrderDto.getCourier(), shipOrderDto.getAddress(), shipOrderDto.getPaymentMethod());
             redirectAttributes.addFlashAttribute("success", "Order shipped successfully!");
             return "redirect:/orders/" + id;
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Failed to ship order.");
+            redirectAttributes.addFlashAttribute("error", "Failed to ship order: " + e.getMessage());
             log.error("Error shipping order", e);
             return "redirect:/orders/" + id + "?error=true";
         }

@@ -44,19 +44,29 @@ public class UserController {
 
 
     @GetMapping("/profile-add")
-    public String showRegistrationPage() {
+    public String showRegistrationPage(Model model) {
+        if (!model.containsAttribute("userRegistrationDto")) {
+            model.addAttribute("userRegistrationDto", new UserRegistrationDto());
+        }
         return "profile-add";
     }
 
     @PostMapping("/profile/add")
     public String register(
-            @Valid @ModelAttribute UserRegistrationDto registrationDto,
+            @Valid @ModelAttribute("userRegistrationDto") UserRegistrationDto registrationDto,
             BindingResult bindingResult,
+            Model model,
             RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("error", "Please fill in all required fields.");
-            return "redirect:/profile-add?error=true";
+            StringBuilder errorMessage = new StringBuilder("Моля, поправете следните грешки: ");
+            bindingResult.getFieldErrors().forEach(error -> {
+                errorMessage.append(error.getDefaultMessage()).append("; ");
+            });
+            redirectAttributes.addFlashAttribute("error", errorMessage.toString());
+            redirectAttributes.addFlashAttribute("userRegistrationDto", registrationDto);
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.userRegistrationDto", bindingResult);
+            return "redirect:/profile-add";
         }
 
         try {
@@ -195,9 +205,10 @@ public class UserController {
 
     @PutMapping("/profile/email")
     public String updateEmail(
-            @Valid @ModelAttribute UpdateEmailDto updateEmailDto,
+            @Valid @ModelAttribute("updateEmailDto") UpdateEmailDto updateEmailDto,
             BindingResult bindingResult,
             HttpSession session,
+            Model model,
             RedirectAttributes redirectAttributes) {
 
         Object userIdObj = session.getAttribute("userId");
@@ -207,8 +218,17 @@ public class UserController {
         }
 
         if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("error", "Please provide a valid email address.");
-            return "redirect:/profile/edit?error=true";
+            try {
+                UUID userId = UUID.fromString(userIdObj.toString());
+                User user = userService.getById(userId);
+                if (user != null) {
+                    model.addAttribute("user", user);
+                }
+            } catch (Exception e) {
+                log.error("Error loading user for edit", e);
+            }
+            model.addAttribute("updateEmailDto", updateEmailDto);
+            return "profile-edit";
         }
 
         try {

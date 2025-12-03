@@ -1,6 +1,7 @@
 package com.softuni.finalexam.controller;
 
 import com.softuni.finalexam.enums.OrderStatus;
+import com.softuni.finalexam.models.dto.CreateProductDto;
 import com.softuni.finalexam.models.entity.Category;
 import com.softuni.finalexam.models.entity.OrderItem;
 import com.softuni.finalexam.models.entity.Product;
@@ -8,14 +9,16 @@ import com.softuni.finalexam.models.entity.User;
 import com.softuni.finalexam.repository.CategoryRepository;
 import com.softuni.finalexam.repository.OrderItemRepository;
 import com.softuni.finalexam.repository.ProductRepository;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -123,37 +126,45 @@ public class ProductController {
     @GetMapping("/products/create")
     public String showCreateProductFormOnProductsPage(Model model) {
         model.addAttribute("categories", categoryRepository.findAll());
+        if (!model.containsAttribute("createProductDto")) {
+            model.addAttribute("createProductDto", new CreateProductDto());
+        }
         return "admin/product-create";
     }
 
     @PostMapping("/products/create")
     public String createProductFromProductsPage(
-            @RequestParam String name,
-            @RequestParam String description,
-            @RequestParam BigDecimal price,
-            @RequestParam int stock,
-            @RequestParam(required = false) UUID categoryId,
-            @RequestParam(required = false) String imageUrl,
+            @Valid @ModelAttribute("createProductDto") CreateProductDto createProductDto,
+            BindingResult bindingResult,
+            Model model,
             RedirectAttributes redirectAttributes) {
 
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("categories", categoryRepository.findAll());
+            model.addAttribute("createProductDto", createProductDto);
+            return "admin/product-create";
+        }
+
         try {
-            // could use Optional.map() here but this is clearer
-            Category cat = categoryId != null ? categoryRepository.findById(categoryId).orElse(null) : null;
+            Category cat = createProductDto.getCategoryId() != null 
+                    ? categoryRepository.findById(createProductDto.getCategoryId()).orElse(null) 
+                    : null;
 
             Product product = Product.builder()
-                    .name(name)
-                    .description(description)
-                    .price(price)
-                    .stock(stock)
+                    .name(createProductDto.getName())
+                    .description(createProductDto.getDescription())
+                    .price(createProductDto.getPrice())
+                    .stock(createProductDto.getStock())
                     .category(cat)
-                    .imageUrl(imageUrl != null && !imageUrl.trim().isEmpty() ? imageUrl : null)
+                    .imageUrl(createProductDto.getImageUrl() != null && !createProductDto.getImageUrl().trim().isEmpty() 
+                            ? createProductDto.getImageUrl() : null)
                     .build();
 
             productRepository.save(product);
             redirectAttributes.addFlashAttribute("success", "Product created successfully!");
             return "redirect:/products";
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Failed to create product.");
+            redirectAttributes.addFlashAttribute("error", "Failed to create product: " + e.getMessage());
             log.error("Error creating product", e);
             return "redirect:/products/create?error=true";
         }
@@ -173,36 +184,46 @@ public class ProductController {
     @GetMapping("/admin/products/create")
     public String showCreateProductForm(Model model) {
         model.addAttribute("categories", categoryRepository.findAll());
+        if (!model.containsAttribute("createProductDto")) {
+            model.addAttribute("createProductDto", new CreateProductDto());
+        }
         return "admin/product-create";
     }
 
     @PostMapping("/admin/products")
     public String createProduct(
-            @RequestParam String name,
-            @RequestParam String description,
-            @RequestParam BigDecimal price,
-            @RequestParam int stock,
-            @RequestParam(required = false) UUID categoryId,
+            @Valid @ModelAttribute("createProductDto") CreateProductDto createProductDto,
+            BindingResult bindingResult,
+            Model model,
             RedirectAttributes redirectAttributes) {
 
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("categories", categoryRepository.findAll());
+            model.addAttribute("createProductDto", createProductDto);
+            return "admin/product-create";
+        }
+
         try {
-            Category category = categoryId != null ? categoryRepository.findById(categoryId).orElse(null) : null;
+            Category category = createProductDto.getCategoryId() != null 
+                    ? categoryRepository.findById(createProductDto.getCategoryId()).orElse(null) 
+                    : null;
 
             Product product = Product.builder()
-                    .name(name)
-                    .description(description)
-                    .price(price)
-                    .stock(stock)
+                    .name(createProductDto.getName())
+                    .description(createProductDto.getDescription())
+                    .price(createProductDto.getPrice())
+                    .stock(createProductDto.getStock())
                     .category(category)
+                    .imageUrl(createProductDto.getImageUrl())
                     .build();
 
             productRepository.save(product);
             redirectAttributes.addFlashAttribute("success", "Product created successfully!");
             return "redirect:/products";
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Failed to create product.");
+            redirectAttributes.addFlashAttribute("error", "Failed to create product: " + e.getMessage());
             log.error("Error creating product", e);
-            return "redirect:/products/create?error=true";
+            return "redirect:/admin/products/create?error=true";
         }
     }
 

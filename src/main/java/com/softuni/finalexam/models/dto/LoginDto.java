@@ -2,7 +2,6 @@ package com.softuni.finalexam.models.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,20 +9,13 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRegistrationDto {
-
-    @NotBlank(message = "{user.firstName.notBlank}")
-    @Size(min = 2, max = 50, message = "{user.firstName.size}")
-    private String firstName;
+public class LoginDto {
 
     @NotBlank(message = "{user.email.notBlank}")
     @Email(message = "{user.email.valid}")
     private String email;
 
     @NotBlank(message = "{user.password.notBlank}")
-    @Size(min = 6, message = "{user.password.size}")
     private String password;
-
-    private boolean newsletterEnabled = false;
 }
 

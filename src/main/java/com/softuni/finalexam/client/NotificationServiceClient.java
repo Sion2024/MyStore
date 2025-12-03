@@ -10,6 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface NotificationServiceClient {
 
     @PostMapping("/users/registered")
-    ResponseEntity<Void> notifyNewUserRegistration(@RequestBody NewUserRegistrationRequest request);
+    ResponseEntity<Void> notifyUserRegistration(@RequestBody NewUserRegistrationRequest request);
 }
 

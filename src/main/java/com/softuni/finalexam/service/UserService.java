@@ -1,5 +1,7 @@
 package com.softuni.finalexam.service;
 
+import com.softuni.finalexam.exception.UserAlreadyExistsException;
+import com.softuni.finalexam.exception.UserNotFoundException;
 import com.softuni.finalexam.models.dto.UserRegistrationDto;
 import com.softuni.finalexam.models.entity.User;
 import com.softuni.finalexam.repository.UserRepository;
@@ -29,7 +31,7 @@ public class UserService {
     public User registerUser(UserRegistrationDto registrationDto) {
         Optional<User> existingUser = userRepository.findByEmail(registrationDto.getEmail());
         if (existingUser.isPresent()) {
-            throw new RuntimeException("User with email " + registrationDto.getEmail() + " already exists");
+            throw new UserAlreadyExistsException("Потребител с имейл " + registrationDto.getEmail() + " вече съществува");
         }
 
         String hashedPassword = passwordEncoder.encode(registrationDto.getPassword());
@@ -43,6 +45,7 @@ public class UserService {
 
         User savedUser = userRepository.save(user);
 
+        // Send welcome email to the newly registered user
         try {
             notificationClient.notifyNewUserRegistration(
                     savedUser.getId(),
@@ -50,7 +53,7 @@ public class UserService {
                     savedUser.getEmail()
             );
         } catch (Exception e) {
-            log.warn("Failed to send new user registration notification", e);
+            log.warn("Failed to send welcome email", e);
         }
 
         return savedUser;
@@ -78,17 +81,17 @@ public class UserService {
     @Transactional
     public User updateEmail(UUID userId, String newEmail) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+                .orElseThrow(() -> new UserNotFoundException("Потребител с ID " + userId + " не е намерен"));
 
         // Check if new email is the same as current email
         if (user.getEmail() != null && user.getEmail().equals(newEmail)) {
-            throw new RuntimeException("New email is the same as current email");
+            throw new IllegalArgumentException("Новият имейл е същият като текущия имейл");
         }
 
         // Check if new email already exists
         Optional<User> existingUser = userRepository.findByEmail(newEmail);
         if (existingUser.isPresent() && !existingUser.get().getId().equals(userId)) {
-            throw new RuntimeException("Email " + newEmail + " is already in use");
+            throw new UserAlreadyExistsException("Имейл " + newEmail + " вече се използва");
         }
 
         // Update email

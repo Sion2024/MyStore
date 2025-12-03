@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${errorTitle ?: 'Грешка'}">Грешка</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <div class="error-container">
+            <h1 th:text="${errorTitle ?: 'Грешка'}">Грешка</h1>
+            <p class="error-message" th:text="${errorMessage ?: 'Възникна неочаквана грешка.'}">
+                Възникна неочаквана грешка.
+            </p>
+            <a th:href="@{/}" class="btn btn-primary">Върни се към началната страница</a>
+        </div>
+    </div>
+</body>
+</html>
+

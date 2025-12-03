@@ -1,6 +1,8 @@
 package com.softuni.finalexam.service;
 
 import com.softuni.finalexam.enums.OrderStatus;
+import com.softuni.finalexam.exception.InsufficientStockException;
+import com.softuni.finalexam.exception.OrderNotFoundException;
 import com.softuni.finalexam.models.dto.CartItemDto;
 import com.softuni.finalexam.models.entity.Order;
 import com.softuni.finalexam.models.entity.OrderItem;
@@ -36,9 +38,40 @@ public class OrderService {
     @Transactional
     public Order createOrder(User user, List<CartItemDto> cartItems, String fullName, String address,
                             String phoneNumber, String courier, String paymentMethod) {
+        // Validate user
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null when creating an order");
+        }
+
+        // Validate cart items
+        if (cartItems == null || cartItems.isEmpty()) {
+            throw new IllegalArgumentException("Cart cannot be empty when creating an order");
+        }
+
+        // Validate order details
+        if (fullName == null || fullName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Full name is required");
+        }
+        if (address == null || address.trim().isEmpty()) {
+            throw new IllegalArgumentException("Address is required");
+        }
+        if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
+            throw new IllegalArgumentException("Phone number is required");
+        }
+        if (courier == null || courier.trim().isEmpty()) {
+            throw new IllegalArgumentException("Courier is required");
+        }
+        if (paymentMethod == null || paymentMethod.trim().isEmpty()) {
+            throw new IllegalArgumentException("Payment method is required");
+        }
+
         BigDecimal totalAmount = cartItems.stream()
                 .map(CartItemDto::getTotalPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        if (totalAmount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Order total must be greater than zero");
+        }
 
         Order order = Order.builder()
                 .user(user)
@@ -52,9 +85,18 @@ public class OrderService {
         for (CartItemDto cartItem : cartItems) {
             Product product = cartItem.getProduct();
             
+            if (product == null) {
+                throw new IllegalArgumentException("Product cannot be null in cart item");
+            }
+            
+            if (cartItem.getQuantity() <= 0) {
+                throw new IllegalArgumentException("Product quantity must be greater than zero");
+            }
+            
             int newStock = product.getStock() - cartItem.getQuantity();
             if (newStock < 0) {
-                throw new RuntimeException("Insufficient stock for product: " + product.getName());
+                throw new InsufficientStockException("Недостатъчна наличност за продукт: " + product.getName() + 
+                        ". Наличност: " + product.getStock() + ", Заявено: " + cartItem.getQuantity());
             }
             product.setStock(newStock);
             productRepository.save(product);
@@ -68,6 +110,9 @@ public class OrderService {
             orderItemRepository.save(orderItem);
         }
 
+        // Notification service only sends welcome emails on user registration
+        // Order confirmation emails are not currently supported
+
         log.info("Order created: {} with {} items", savedOrder.getId(), cartItems.size());
         return savedOrder;
     }
@@ -75,17 +120,39 @@ public class OrderService {
 
     @Transactional
     public void shipOrder(UUID orderId, String courier, String address, String paymentMethod) {
+        // Validate parameters
+        if (courier == null || courier.trim().isEmpty()) {
+            throw new IllegalArgumentException("Courier is required");
+        }
+        if (address == null || address.trim().isEmpty()) {
+            throw new IllegalArgumentException("Address is required");
+        }
+        if (paymentMethod == null || paymentMethod.trim().isEmpty()) {
+            throw new IllegalArgumentException("Payment method is required");
+        }
+
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found with ID: " + orderId));
+                .orElseThrow(() -> new OrderNotFoundException("Поръчка с ID " + orderId + " не е намерена"));
+
+        if (order.getStatus() == OrderStatus.IN_TRANSIT) {
+            throw new IllegalArgumentException("Order is already in transit");
+        }
+        if (order.getStatus() == OrderStatus.DELIVERED) {
+            throw new IllegalArgumentException("Cannot ship an already delivered order");
+        }
 
         order.setStatus(OrderStatus.IN_TRANSIT);
         orderRepository.save(order);
+
+        log.info("Order {} shipped via {} to {}", orderId, courier, address);
+        // Notification service only sends welcome emails on user registration
+        // Order shipped emails are not currently supported
     }
 
     @Transactional
     public void markAsDelivered(UUID orderId) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found with ID: " + orderId));
+                .orElseThrow(() -> new OrderNotFoundException("Поръчка с ID " + orderId + " не е намерена"));
 
         order.setStatus(OrderStatus.DELIVERED);
         orderRepository.save(order);

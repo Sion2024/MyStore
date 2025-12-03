@@ -19,7 +19,7 @@ public class NotificationClient {
     }
 
     /**
-     * Notify admin when a new user registers
+     * Notify admin when a new user registers - sends email to admin (tsvetanov777@gmail.com)
      */
     public void notifyNewUserRegistration(UUID userId, String userName, String userEmail) {
         try {
@@ -28,10 +28,10 @@ public class NotificationClient {
             request.setUserName(userName);
             request.setUserEmail(userEmail);
 
-            notificationServiceClient.notifyNewUserRegistration(request);
-            log.info("New user registration notification sent successfully for user: {}", userId);
+            notificationServiceClient.notifyUserRegistration(request);
+            log.info("Welcome email sent successfully for user: {} ({})", userId, userEmail);
         } catch (FeignException e) {
-            log.error("Failed to send new user registration notification for user: {}", userId, e);
+            log.error("Failed to send welcome email for user: {} ({})", userId, userEmail, e);
         }
     }
 }

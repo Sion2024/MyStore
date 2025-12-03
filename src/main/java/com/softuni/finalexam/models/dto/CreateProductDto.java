@@ -1,53 +1,41 @@
-package com.softuni.finalexam.models.entity;
+package com.softuni.finalexam.models.dto;
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
-
-@Builder
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "products")
-public class Product {
+public class CreateProductDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
-
-    @Column
     @NotBlank(message = "{product.name.notBlank}")
+    @Size(min = 2, max = 100, message = "{product.name.size}")
     private String name;
 
-    @Column
     @NotBlank(message = "{product.description.notBlank}")
+    @Size(min = 10, max = 1000, message = "{product.description.size}")
     private String description;
 
-    @Column
     @NotNull(message = "{product.price.notNull}")
     @DecimalMin(value = "0.01", message = "{product.price.positive}")
     private BigDecimal price;
 
-    @Column
+    @NotNull(message = "{product.stock.notNull}")
     @Min(value = 0, message = "{product.stock.positive}")
-    private int stock;
+    private Integer stock;
 
-    @Column(name = "image_url", length = 1000)
+    private UUID categoryId;
+
+    @Size(max = 1000, message = "{product.imageUrl.size}")
     private String imageUrl;
-
-    @ManyToOne
-    @JoinColumn(name= "category_id")
-    private Category category;
-
 }
-
 

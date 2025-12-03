@@ -25,3 +25,4 @@ public class NewUserRegistrationRequest {
     private String userEmail;
 }
 
+

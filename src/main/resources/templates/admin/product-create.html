@@ -58,36 +58,48 @@
 
         <!-- Create Product Form -->
         <div style="background: white; padding: 2rem; border-radius: 8px; border: 1px solid #ddd;">
-            <form th:action="@{/products/create}" method="post">
+            <form th:action="@{/products/create}" method="post" th:object="${createProductDto}">
                 <div style="margin-bottom: 1.5rem;">
                     <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Име на продукт *</label>
-                    <input type="text" name="name" required 
+                    <input type="text" th:field="*{name}" required 
                            style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
+                    <div th:if="${#fields.hasErrors('name')}" style="color: #dc3545; margin-top: 0.5rem; font-size: 0.875rem;">
+                        <span th:errors="*{name}">Name error</span>
+                    </div>
                 </div>
 
                 <div style="margin-bottom: 1.5rem;">
                     <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Описание *</label>
-                    <textarea name="description" required rows="4"
+                    <textarea th:field="*{description}" required rows="4"
                               style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; resize: vertical;"></textarea>
+                    <div th:if="${#fields.hasErrors('description')}" style="color: #dc3545; margin-top: 0.5rem; font-size: 0.875rem;">
+                        <span th:errors="*{description}">Description error</span>
+                    </div>
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
                     <div>
                         <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Цена (лв.) *</label>
-                        <input type="number" name="price" step="0.01" min="0" required 
+                        <input type="number" th:field="*{price}" step="0.01" min="0" required 
                                style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
+                        <div th:if="${#fields.hasErrors('price')}" style="color: #dc3545; margin-top: 0.5rem; font-size: 0.875rem;">
+                            <span th:errors="*{price}">Price error</span>
+                        </div>
                     </div>
 
                     <div>
                         <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Наличност (бр.) *</label>
-                        <input type="number" name="stock" min="0" required 
+                        <input type="number" th:field="*{stock}" min="0" required 
                                style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
+                        <div th:if="${#fields.hasErrors('stock')}" style="color: #dc3545; margin-top: 0.5rem; font-size: 0.875rem;">
+                            <span th:errors="*{stock}">Stock error</span>
+                        </div>
                     </div>
                 </div>
 
                 <div style="margin-bottom: 1.5rem;">
                     <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Категория</label>
-                    <select name="categoryId"
+                    <select th:field="*{categoryId}"
                             style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
                         <option value="">Без категория</option>
                         <option th:each="category : ${categories}" 
@@ -98,9 +110,12 @@
 
                 <div style="margin-bottom: 1.5rem;">
                     <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">URL на изображение</label>
-                    <input type="url" name="imageUrl" 
+                    <input type="url" th:field="*{imageUrl}" 
                            placeholder="https://example.com/image.jpg"
                            style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
+                    <div th:if="${#fields.hasErrors('imageUrl')}" style="color: #dc3545; margin-top: 0.5rem; font-size: 0.875rem;">
+                        <span th:errors="*{imageUrl}">Image URL error</span>
+                    </div>
                     <small style="color: #666; font-size: 0.875rem;">Оставете празно за използване на изображение по подразбиране</small>
                 </div>
 

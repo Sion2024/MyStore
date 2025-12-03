@@ -57,18 +57,32 @@
 <main class="profile-add-main">
     <section class="profile-card">
         <h1 class="profile-card-title">Регистрация и вход</h1>
-        <form class="profile-form" th:action="@{/profile/add}" method="post">
+        <!-- Error Messages -->
+        <div th:if="${error}" style="padding: 1rem; background: #f8d7da; color: #721c24; border-radius: 4px; margin-bottom: 1rem;">
+            <span th:text="${error}"></span>
+        </div>
+
+        <form class="profile-form" th:action="@{/profile/add}" method="post" th:object="${userRegistrationDto}">
             <div class="form-row">
                 <label for="firstName">Име</label>
-                <input id="firstName" name="firstName" type="text" placeholder="Мария" required>
+                <input id="firstName" name="firstName" type="text" placeholder="Мария" th:field="*{firstName}" required>
+                <div th:if="${#fields.hasErrors('firstName')}" style="color: #dc3545; margin-top: 0.5rem; font-size: 0.875rem;">
+                    <span th:errors="*{firstName}">First name error</span>
+                </div>
             </div>
             <div class="form-row">
                 <label for="password">Парола</label>
-                <input id="password" name="password" type="password" placeholder="Създайте парола" required>
+                <input id="password" name="password" type="password" placeholder="Създайте парола" th:field="*{password}" required>
+                <div th:if="${#fields.hasErrors('password')}" style="color: #dc3545; margin-top: 0.5rem; font-size: 0.875rem;">
+                    <span th:errors="*{password}">Password error</span>
+                </div>
             </div>
             <div class="form-row">
                 <label for="email">E-mail</label>
-                <input id="email" name="email" type="email" placeholder="example@email.com" required>
+                <input id="email" name="email" type="email" placeholder="example@email.com" th:field="*{email}" required>
+                <div th:if="${#fields.hasErrors('email')}" style="color: #dc3545; margin-top: 0.5rem; font-size: 0.875rem;">
+                    <span th:errors="*{email}">Email error</span>
+                </div>
             </div>
 
             <div class="form-row">

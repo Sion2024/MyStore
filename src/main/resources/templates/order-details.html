@@ -161,19 +161,28 @@
                  style="background: #fff3cd; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border: 1px solid #ffc107;">
                 <h3 style="margin-top: 0;">Админ действия</h3>
                 <div th:if="${order.status.name() == 'APPROVED'}">
-                    <form th:action="@{/orders/{id}/ship(id=${order.id})}" method="post" style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: end;">
+                    <form th:action="@{/orders/{id}/ship(id=${order.id})}" method="post" th:object="${shipOrderDto}" style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: end;">
                         <input type="hidden" name="_method" value="PATCH">
                         <div>
                             <label>Куриер:</label>
-                            <input type="text" name="courier" required style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                            <input type="text" th:field="*{courier}" required style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                            <div th:if="${#fields.hasErrors('courier')}" style="color: #dc3545; font-size: 0.75rem; margin-top: 0.25rem;">
+                                <span th:errors="*{courier}">Courier error</span>
+                            </div>
                         </div>
                         <div>
                             <label>Адрес:</label>
-                            <input type="text" name="address" required style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                            <input type="text" th:field="*{address}" required style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                            <div th:if="${#fields.hasErrors('address')}" style="color: #dc3545; font-size: 0.75rem; margin-top: 0.25rem;">
+                                <span th:errors="*{address}">Address error</span>
+                            </div>
                         </div>
                         <div>
                             <label>Начин на плащане:</label>
-                            <input type="text" name="paymentMethod" required style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                            <input type="text" th:field="*{paymentMethod}" required style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                            <div th:if="${#fields.hasErrors('paymentMethod')}" style="color: #dc3545; font-size: 0.75rem; margin-top: 0.25rem;">
+                                <span th:errors="*{paymentMethod}">Payment method error</span>
+                            </div>
                         </div>
                         <button type="submit" style="padding: 0.5rem 1.5rem; background: #17a2b8; color: white; border: none; border-radius: 4px; cursor: pointer;">
                             Маркирай като изпратена

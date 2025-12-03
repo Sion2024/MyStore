@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 /**
  * Integration test for NotificationClient
- * 
+ *
  * NOTE: This test requires the notification service to be running on port 8081
  * To run this test, uncomment @Disabled annotation and ensure notification service is running
  */

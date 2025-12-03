@@ -71,29 +71,38 @@
             <!-- Checkout Form -->
             <div style="background: white; padding: 2rem; border-radius: 8px; border: 1px solid #ddd;">
                 <h2 style="margin-top: 0;">Информация за доставка</h2>
-                <form th:action="@{/orders/create}" method="post">
+                <form th:action="@{/orders/create}" method="post" th:object="${createOrderDto}">
                     <div style="margin-bottom: 1.5rem;">
                         <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Пълно име *</label>
-                        <input type="text" name="fullName" required 
+                        <input type="text" th:field="*{fullName}" required 
                                th:value="${user != null ? user.name : ''}"
                                style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
+                        <div th:if="${#fields.hasErrors('fullName')}" style="color: #dc3545; margin-top: 0.5rem; font-size: 0.875rem;">
+                            <span th:errors="*{fullName}">Full name error</span>
+                        </div>
                     </div>
 
                     <div style="margin-bottom: 1.5rem;">
                         <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Адрес за доставка *</label>
-                        <textarea name="address" required rows="3"
+                        <textarea th:field="*{address}" required rows="3"
                                   style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; resize: vertical;"></textarea>
+                        <div th:if="${#fields.hasErrors('address')}" style="color: #dc3545; margin-top: 0.5rem; font-size: 0.875rem;">
+                            <span th:errors="*{address}">Address error</span>
+                        </div>
                     </div>
 
                     <div style="margin-bottom: 1.5rem;">
                         <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Телефонен номер *</label>
-                        <input type="tel" name="phoneNumber" required
+                        <input type="tel" th:field="*{phoneNumber}" required
                                style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
+                        <div th:if="${#fields.hasErrors('phoneNumber')}" style="color: #dc3545; margin-top: 0.5rem; font-size: 0.875rem;">
+                            <span th:errors="*{phoneNumber}">Phone number error</span>
+                        </div>
                     </div>
 
                     <div style="margin-bottom: 1.5rem;">
                         <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Куриер *</label>
-                        <select name="courier" required
+                        <select th:field="*{courier}" required
                                 style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
                             <option value="">Избери куриер</option>
                             <option value="Speedy">Speedy</option>
@@ -101,17 +110,23 @@
                             <option value="DHL">DHL</option>
                             <option value="Лично получаване">Лично получаване</option>
                         </select>
+                        <div th:if="${#fields.hasErrors('courier')}" style="color: #dc3545; margin-top: 0.5rem; font-size: 0.875rem;">
+                            <span th:errors="*{courier}">Courier error</span>
+                        </div>
                     </div>
 
                     <div style="margin-bottom: 1.5rem;">
                         <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Начин на плащане *</label>
-                        <select name="paymentMethod" required
+                        <select th:field="*{paymentMethod}" required
                                 style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
                             <option value="">Избери начин на плащане</option>
                             <option value="Наложен платеж">Наложен платеж</option>
                             <option value="Банков превод">Банков превод</option>
                             <option value="Кредитна/Дебитна карта">Кредитна/Дебитна карта</option>
                         </select>
+                        <div th:if="${#fields.hasErrors('paymentMethod')}" style="color: #dc3545; margin-top: 0.5rem; font-size: 0.875rem;">
+                            <span th:errors="*{paymentMethod}">Payment method error</span>
+                        </div>
                     </div>
 
                     <!-- Total amount will be calculated from cart items on the backend -->
