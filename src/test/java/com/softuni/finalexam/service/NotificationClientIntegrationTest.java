@@ -1,13 +1,13 @@
 package com.softuni.finalexam.service;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -25,77 +25,35 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 @Disabled("Enable this test when notification service is running on port 8081")
 class NotificationClientIntegrationTest {
 
+    @Autowired
     private NotificationClient notificationClient;
-    private RestTemplate restTemplate;
-
-    @BeforeEach
-    void setUp() {
-        restTemplate = new RestTemplateConfig().restTemplate();
-        notificationClient = new NotificationClient(
-                restTemplate,
-                "http://localhost:8081/api/v1/notifications"
-        );
-    }
 
     @Test
-    void testSendWelcomeEmail_Integration() {
+    void testNotifyNewUserRegistration_Integration() {
         // Given
         UUID userId = UUID.randomUUID();
-        String firstName = "TestUser";
+        String userName = "TestUser";
+        String userEmail = "test@example.com";
 
         // When/Then - should not throw exception
         assertDoesNotThrow(() -> {
-            notificationClient.sendWelcomeEmail(userId, firstName);
+            notificationClient.notifyNewUserRegistration(userId, userName, userEmail);
         });
     }
 
     @Test
-    void testSendOrderConfirmationEmail_Integration() {
+    void testNotifyNewOrder_Integration() {
         // Given
-        UUID userId = UUID.randomUUID();
-        String fullName = "Test User";
-        String address = "123 Test Street";
-        String phoneNumber = "1234567890";
-        String courier = "Test Courier";
-        String paymentMethod = "Credit Card";
-
-        // When/Then - should not throw exception
-        assertDoesNotThrow(() -> {
-            notificationClient.sendOrderConfirmationEmail(
-                    userId, fullName, address, phoneNumber, courier, paymentMethod
-            );
-        });
-    }
-
-    @Test
-    void testSendOrderShippedEmail_Integration() {
-        // Given
-        UUID userId = UUID.randomUUID();
         UUID orderId = UUID.randomUUID();
-        BigDecimal totalAmount = new BigDecimal("99.99");
-        String paymentMethod = "Credit Card";
-        String courier = "Test Courier";
-        String address = "123 Test Street";
-
-        // When/Then - should not throw exception
-        assertDoesNotThrow(() -> {
-            notificationClient.sendOrderShippedEmail(
-                    userId, orderId, totalAmount, paymentMethod, courier, address
-            );
-        });
-    }
-
-    @Test
-    void testUpsertNotificationPreference_Integration() {
-        // Given
         UUID userId = UUID.randomUUID();
-        String email = "test@example.com";
-        boolean newsletterEnabled = true;
+        String customerName = "Test User";
+        String customerEmail = "test@example.com";
+        LocalDateTime orderDate = LocalDateTime.now();
+        BigDecimal totalAmount = new BigDecimal("99.99");
 
         // When/Then - should not throw exception
         assertDoesNotThrow(() -> {
-            notificationClient.upsertNotificationPreference(userId, email, newsletterEnabled);
+            notificationClient.notifyNewOrder(orderId, userId, customerName, customerEmail, orderDate, totalAmount);
         });
     }
 }
-

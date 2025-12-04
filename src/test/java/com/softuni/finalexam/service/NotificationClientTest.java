@@ -1,163 +1,108 @@
 package com.softuni.finalexam.service;
 
+import com.softuni.finalexam.client.NotificationServiceClient;
+import com.softuni.finalexam.models.dto.notification.NewOrderRequest;
+import com.softuni.finalexam.models.dto.notification.NewUserRegistrationRequest;
+import feign.FeignException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class NotificationClientTest {
 
     @Mock
-    private RestTemplate restTemplate;
+    private NotificationServiceClient notificationServiceClient;
 
     private NotificationClient notificationClient;
 
-    private final String notificationServiceUrl = "http://localhost:8081/api/v1/notifications";
-
     @BeforeEach
     void setUp() {
-        notificationClient = new NotificationClient(restTemplate, notificationServiceUrl);
+        notificationClient = new NotificationClient(notificationServiceClient);
     }
 
     @Test
-    void testSendWelcomeEmail_Success() {
+    void testNotifyNewUserRegistration_Success() {
         // Given
         UUID userId = UUID.randomUUID();
-        String firstName = "John";
+        String userName = "John Doe";
+        String userEmail = "john@example.com";
 
-        when(restTemplate.postForEntity(anyString(), any(), eq(Void.class)))
-                .thenReturn(new ResponseEntity<>(HttpStatus.CREATED));
+        when(notificationServiceClient.notifyUserRegistration(any(NewUserRegistrationRequest.class)))
+                .thenReturn(ResponseEntity.ok().build());
 
         // When
-        notificationClient.sendWelcomeEmail(userId, firstName);
+        notificationClient.notifyNewUserRegistration(userId, userName, userEmail);
 
         // Then
-        verify(restTemplate, times(1)).postForEntity(
-                eq(notificationServiceUrl + "/emails/welcome"),
-                any(),
-                eq(Void.class)
-        );
+        verify(notificationServiceClient, times(1)).notifyUserRegistration(any(NewUserRegistrationRequest.class));
     }
 
     @Test
-    void testSendWelcomeEmail_Failure() {
+    void testNotifyNewUserRegistration_Failure() {
         // Given
         UUID userId = UUID.randomUUID();
-        String firstName = "John";
+        String userName = "John Doe";
+        String userEmail = "john@example.com";
 
-        when(restTemplate.postForEntity(anyString(), any(), eq(Void.class)))
-                .thenThrow(new RestClientException("Service unavailable"));
+        when(notificationServiceClient.notifyUserRegistration(any(NewUserRegistrationRequest.class)))
+                .thenThrow(mock(FeignException.class));
 
         // When
-        notificationClient.sendWelcomeEmail(userId, firstName);
+        notificationClient.notifyNewUserRegistration(userId, userName, userEmail);
 
         // Then - should not throw exception, just log error
-        verify(restTemplate, times(1)).postForEntity(anyString(), any(), eq(Void.class));
+        verify(notificationServiceClient, times(1)).notifyUserRegistration(any(NewUserRegistrationRequest.class));
     }
 
     @Test
-    void testSendOrderConfirmationEmail_Success() {
+    void testNotifyNewOrder_Success() {
         // Given
-        UUID userId = UUID.randomUUID();
-        String fullName = "John Doe";
-        String address = "123 Main St";
-        String phoneNumber = "1234567890";
-        String courier = "DHL";
-        String paymentMethod = "Credit Card";
-
-        when(restTemplate.postForEntity(anyString(), any(), eq(Void.class)))
-                .thenReturn(new ResponseEntity<>(HttpStatus.CREATED));
-
-        // When
-        notificationClient.sendOrderConfirmationEmail(userId, fullName, address, phoneNumber, courier, paymentMethod);
-
-        // Then
-        verify(restTemplate, times(1)).postForEntity(
-                eq(notificationServiceUrl + "/emails/order/confirmation"),
-                any(),
-                eq(Void.class)
-        );
-    }
-
-    @Test
-    void testSendNewOrderEmail_Success() {
-        // Given
-        UUID userId = UUID.randomUUID();
-        String fullName = "John Doe";
-        String address = "123 Main St";
-        String phoneNumber = "1234567890";
-        String courier = "DHL";
-        String paymentMethod = "Credit Card";
-
-        when(restTemplate.postForEntity(anyString(), any(), eq(Void.class)))
-                .thenReturn(new ResponseEntity<>(HttpStatus.CREATED));
-
-        // When
-        notificationClient.sendNewOrderEmail(userId, fullName, address, phoneNumber, courier, paymentMethod);
-
-        // Then
-        verify(restTemplate, times(1)).postForEntity(
-                eq(notificationServiceUrl + "/emails/order/new"),
-                any(),
-                eq(Void.class)
-        );
-    }
-
-    @Test
-    void testSendOrderShippedEmail_Success() {
-        // Given
-        UUID userId = UUID.randomUUID();
         UUID orderId = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
+        String customerName = "John Doe";
+        String customerEmail = "john@example.com";
+        LocalDateTime orderDate = LocalDateTime.now();
         BigDecimal totalAmount = new BigDecimal("99.99");
-        String paymentMethod = "Credit Card";
-        String courier = "DHL";
-        String address = "123 Main St";
 
-        when(restTemplate.postForEntity(anyString(), any(), eq(Void.class)))
-                .thenReturn(new ResponseEntity<>(HttpStatus.CREATED));
+        when(notificationServiceClient.notifyNewOrder(any(NewOrderRequest.class)))
+                .thenReturn(ResponseEntity.ok().build());
 
         // When
-        notificationClient.sendOrderShippedEmail(userId, orderId, totalAmount, paymentMethod, courier, address);
+        notificationClient.notifyNewOrder(orderId, userId, customerName, customerEmail, orderDate, totalAmount);
 
         // Then
-        verify(restTemplate, times(1)).postForEntity(
-                eq(notificationServiceUrl + "/emails/order/shipped"),
-                any(),
-                eq(Void.class)
-        );
+        verify(notificationServiceClient, times(1)).notifyNewOrder(any(NewOrderRequest.class));
     }
 
     @Test
-    void testUpsertNotificationPreference_Success() {
+    void testNotifyNewOrder_Failure() {
         // Given
+        UUID orderId = UUID.randomUUID();
         UUID userId = UUID.randomUUID();
-        String email = "test@example.com";
-        boolean newsletterEnabled = true;
+        String customerName = "John Doe";
+        String customerEmail = "john@example.com";
+        LocalDateTime orderDate = LocalDateTime.now();
+        BigDecimal totalAmount = new BigDecimal("99.99");
 
-        when(restTemplate.postForEntity(anyString(), any(), eq(Void.class)))
-                .thenReturn(new ResponseEntity<>(HttpStatus.CREATED));
+        when(notificationServiceClient.notifyNewOrder(any(NewOrderRequest.class)))
+                .thenThrow(mock(FeignException.class));
 
         // When
-        notificationClient.upsertNotificationPreference(userId, email, newsletterEnabled);
+        notificationClient.notifyNewOrder(orderId, userId, customerName, customerEmail, orderDate, totalAmount);
 
-        // Then
-        verify(restTemplate, times(1)).postForEntity(
-                eq(notificationServiceUrl + "/preferences"),
-                any(),
-                eq(Void.class)
-        );
+        // Then - should not throw exception, just log error
+        verify(notificationServiceClient, times(1)).notifyNewOrder(any(NewOrderRequest.class));
     }
 }
 
