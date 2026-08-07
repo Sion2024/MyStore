@@ -7,10 +7,19 @@ import com.softuni.finalexam.models.entity.OrderItem;
 import com.softuni.finalexam.models.entity.User;
 import com.softuni.finalexam.repository.OrderItemRepository;
 import com.softuni.finalexam.repository.OrderRepository;
+import com.softuni.finalexam.security.CustomUserDetailsService;
 import com.softuni.finalexam.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -30,18 +39,14 @@ import java.util.UUID;
 
 @Controller
 @Slf4j
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
-
-    public UserController(UserService userService, OrderRepository orderRepository, OrderItemRepository orderItemRepository) {
-        this.userService = userService;
-        this.orderRepository = orderRepository;
-        this.orderItemRepository = orderItemRepository;
-    }
-
+    private final CustomUserDetailsService customUserDetailsService;
+    private final SecurityContextRepository securityContextRepository;
 
     @GetMapping("/profile-add")
     public String showRegistrationPage(Model model) {
@@ -95,7 +100,6 @@ public class UserController {
                 User user = userService.getById(userId);
                 
                 if (user != null) {
-                    // TODO: optimize this query - should use repository method instead of filtering all orders
                     List<Order> orders = orderRepository.findAll().stream()
                             .filter(order -> order.getUser() != null && order.getUser().getId().equals(userId))
                             .sorted((o1, o2) -> {
@@ -146,35 +150,49 @@ public class UserController {
 
     @PostMapping("/login")
     public String login(
-            @RequestParam String username, // form field is named "username" but it's actually email
+            @RequestParam String username,
             @RequestParam String password,
             HttpSession session,
+            HttpServletRequest request,
+            HttpServletResponse response,
             RedirectAttributes redirectAttributes) {
 
         Optional<User> userOpt = userService.authenticate(username, password);
-        
+
         if (userOpt.isPresent()) {
             User user = userOpt.get();
+            UserDetails userDetails = customUserDetailsService.loadUserByUsername(user.getEmail());
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+            SecurityContext context = SecurityContextHolder.createEmptyContext();
+            context.setAuthentication(authentication);
+            SecurityContextHolder.setContext(context);
+            securityContextRepository.saveContext(context, request, response);
+
             session.setAttribute("userId", user.getId().toString());
             session.setAttribute("userEmail", user.getEmail());
             session.setAttribute("userName", user.getName());
-            session.setAttribute("userRole", user.getRole());
+            session.setAttribute("userRole", user.getRole() != null ? user.getRole().name() : "USER");
+            log.info("User logged in: {}", user.getEmail());
             return "redirect:/";
-        } else {
-            redirectAttributes.addFlashAttribute("error", "Invalid email or password.");
-            return "redirect:/profile?error=true";
         }
+
+        redirectAttributes.addFlashAttribute("error", "Invalid email or password.");
+        return "redirect:/profile?error=true";
     }
 
 
     @PostMapping("/logout")
     public String logout(HttpSession session) {
+        SecurityContextHolder.clearContext();
         session.invalidate();
         return "redirect:/";
     }
 
     @GetMapping("/logout")
     public String logoutGet(HttpSession session) {
+        SecurityContextHolder.clearContext();
         session.invalidate();
         return "redirect:/";
     }

@@ -1,6 +1,7 @@
 package com.softuni.finalexam.service;
 
 import com.softuni.finalexam.enums.OrderStatus;
+import com.softuni.finalexam.enums.UserRole;
 import com.softuni.finalexam.models.entity.Order;
 import com.softuni.finalexam.models.entity.User;
 import com.softuni.finalexam.repository.OrderRepository;
@@ -48,7 +49,7 @@ class OrderSchedulerServiceIntegrationTest {
                 .name("Test User")
                 .email("test@example.com")
                 .password("password")
-                .role("USER")
+                .role(UserRole.USER)
                 .build();
         testUser = userRepository.save(testUser);
     }

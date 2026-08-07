@@ -3,6 +3,7 @@ package com.softuni.finalexam.controller;
 import com.softuni.finalexam.models.dto.CartItemDto;
 import com.softuni.finalexam.service.CartService;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,13 +17,12 @@ import java.util.UUID;
 @Controller
 @RequestMapping("/cart")
 @Slf4j
+@RequiredArgsConstructor
 public class CartController {
 
     private final CartService cartService;
 
-    public CartController(CartService cartService) {
-        this.cartService = cartService;
-    }
+
 
 
     @GetMapping

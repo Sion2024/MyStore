@@ -11,6 +11,7 @@ import com.softuni.finalexam.models.entity.User;
 import com.softuni.finalexam.repository.OrderItemRepository;
 import com.softuni.finalexam.repository.OrderRepository;
 import com.softuni.finalexam.repository.ProductRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,21 +26,13 @@ import java.util.UUID;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final ProductRepository productRepository;
     private final NotificationClient notificationClient;
-
-    public OrderService(OrderRepository orderRepository, OrderItemRepository orderItemRepository, 
-                       ProductRepository productRepository, NotificationClient notificationClient) {
-        this.orderRepository = orderRepository;
-        this.orderItemRepository = orderItemRepository;
-        this.productRepository = productRepository;
-        this.notificationClient = notificationClient;
-    }
-
 
     @Transactional
     public Order createOrder(User user, List<CartItemDto> cartItems, String fullName, String address,

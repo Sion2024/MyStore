@@ -18,7 +18,7 @@ public class OrderSchedulerService {
 
     private final OrderRepository orderRepository;
 
-    /**
+    /*
      * Scheduled job using cron expression to mark orders as delivered.
      * Runs every 2 minutes at second 0
      * Cron expression: "0 *{@literal /}2 * * * *" = second, minute, hour, day, month, weekday
@@ -51,7 +51,7 @@ public class OrderSchedulerService {
         }
     }
 
-    /**
+    /*
      * Scheduled job using fixedRate to mark orders as delivered.
      * Runs every 2 minutes (120000 milliseconds = 2 minutes)
      * Fixed rate means it runs at fixed intervals regardless of execution time

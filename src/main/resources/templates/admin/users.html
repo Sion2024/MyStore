@@ -78,18 +78,18 @@
                             <span th:text="${user.email}">email@example.com</span>
                         </td>
                         <td style="padding: 1rem; text-align: center;">
-                            <span th:if="${user.role != null and user.role == 'ADMIN'}" 
+                            <span th:if="${user.role != null and user.role.name() == 'ADMIN'}" 
                                   style="padding: 0.5rem 1rem; background: #ff6b6b; color: white; border-radius: 4px; font-size: 0.875rem; font-weight: bold;">
                                 ADMIN
                             </span>
-                            <span th:if="${user.role == null or user.role != 'ADMIN'}" 
+                            <span th:if="${user.role == null or user.role.name() != 'ADMIN'}" 
                                   style="padding: 0.5rem 1rem; background: #6c757d; color: white; border-radius: 4px; font-size: 0.875rem; font-weight: bold;">
                                 USER
                             </span>
                         </td>
                         <td style="padding: 1rem; text-align: center;">
                             <div style="display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;">
-                                <form th:if="${user.role == null or user.role != 'ADMIN'}" 
+                                <form th:if="${user.role == null or user.role.name() != 'ADMIN'}" 
                                       th:action="@{/admin/users/{id}/promote(id=${user.id})}" 
                                       method="post" 
                                       style="display: inline;">
@@ -100,7 +100,7 @@
                                         Повиши до админ
                                     </button>
                                 </form>
-                                <form th:if="${user.role != null and user.role == 'ADMIN' and (currentUserId == null or !user.id.equals(currentUserId))}" 
+                                <form th:if="${user.role != null and user.role.name() == 'ADMIN' and (currentUserId == null or !user.id.equals(currentUserId))}" 
                                       th:action="@{/admin/users/{id}/demote(id=${user.id})}" 
                                       method="post" 
                                       style="display: inline;">
@@ -148,13 +148,17 @@
             </div>
             <div style="background: #fff3cd; padding: 1.5rem; border-radius: 8px; text-align: center;">
                 <p style="margin: 0; font-size: 2rem; font-weight: bold; color: #856404;">
-                    <span th:text="${users != null ? users.?[role != null and role == 'ADMIN'].size() : 0}">0</span>
+                    <span th:text="${users != null ? users.?[role != null and role.name() == 'ADMIN'].size() : 0}">
+                        0
+                    </span>
                 </p>
                 <p style="margin: 0.5rem 0 0 0; color: #666;">Администратори</p>
             </div>
             <div style="background: #d1ecf1; padding: 1.5rem; border-radius: 8px; text-align: center;">
                 <p style="margin: 0; font-size: 2rem; font-weight: bold; color: #0c5460;">
-                    <span th:text="${users != null ? users.?[role == null or role != 'ADMIN'].size() : 0}">0</span>
+                    <span th:text="${users != null ? users.?[role == null or role.name() != 'ADMIN'].size() : 0}">
+                        0
+                    </span>
                 </p>
                 <p style="margin: 0.5rem 0 0 0; color: #666;">Обикновени потребители</p>
             </div>

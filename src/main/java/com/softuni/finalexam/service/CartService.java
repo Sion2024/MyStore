@@ -3,6 +3,7 @@ package com.softuni.finalexam.service;
 import com.softuni.finalexam.models.dto.CartItemDto;
 import com.softuni.finalexam.models.entity.Product;
 import com.softuni.finalexam.repository.ProductRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -15,14 +16,11 @@ import java.util.UUID;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CartService {
 
     private static final String CART_SESSION_KEY = "cartItems";
     private final ProductRepository productRepository;
-
-    public CartService(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
 
     public List<CartItemDto> getCartItems(HttpSession session) {
         Object cartItemsObj = session.getAttribute(CART_SESSION_KEY);

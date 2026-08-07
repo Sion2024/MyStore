@@ -1,5 +1,6 @@
 package com.softuni.finalexam.service;
 
+import com.softuni.finalexam.enums.UserRole;
 import com.softuni.finalexam.exception.UserAlreadyExistsException;
 import com.softuni.finalexam.exception.UserNotFoundException;
 import com.softuni.finalexam.models.dto.UserRegistrationDto;
@@ -55,7 +56,7 @@ class UserServiceTest {
                 .name("John")
                 .email("john@example.com")
                 .password("hashedPassword")
-                .role("USER")
+                .role(UserRole.USER)
                 .build();
         when(userRepository.save(any(User.class))).thenReturn(savedUser);
 
@@ -66,7 +67,7 @@ class UserServiceTest {
         assertNotNull(result);
         assertEquals("John", result.getName());
         assertEquals("john@example.com", result.getEmail());
-        assertEquals("USER", result.getRole());
+        assertEquals(UserRole.USER, result.getRole());
         verify(userRepository, times(1)).findByEmail("john@example.com");
         verify(passwordEncoder, times(1)).encode("password123");
         verify(userRepository, times(1)).save(any(User.class));
@@ -109,7 +110,7 @@ class UserServiceTest {
                 .name("John")
                 .email("oldemail@example.com")
                 .password("password")
-                .role("USER")
+                .role(UserRole.USER)
                 .build();
         
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));

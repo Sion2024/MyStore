@@ -14,6 +14,7 @@ import com.softuni.finalexam.service.OrderService;
 import com.softuni.finalexam.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,6 +35,7 @@ import java.util.UUID;
 
 @Controller
 @Slf4j
+@RequiredArgsConstructor
 public class OrderController {
 
     private final OrderService orderService;
@@ -41,14 +43,6 @@ public class OrderController {
     private final OrderItemRepository orderItemRepository;
     private final UserService userService;
     private final CartService cartService;
-
-    public OrderController(OrderService orderService, OrderRepository orderRepository, OrderItemRepository orderItemRepository, UserService userService, CartService cartService) {
-        this.orderService = orderService;
-        this.orderRepository = orderRepository;
-        this.orderItemRepository = orderItemRepository;
-        this.userService = userService;
-        this.cartService = cartService;
-    }
 
 
     @GetMapping("/checkout")
@@ -271,12 +265,6 @@ public class OrderController {
         }
 
         try {
-            Object userRoleObj = session.getAttribute("userRole");
-            if (userRoleObj == null || !"ADMIN".equals(userRoleObj.toString())) {
-                redirectAttributes.addFlashAttribute("error", "Unauthorized access. Only administrators can ship orders.");
-                return "redirect:/orders";
-            }
-
             orderService.shipOrder(id, shipOrderDto.getCourier(), shipOrderDto.getAddress(), shipOrderDto.getPaymentMethod());
             redirectAttributes.addFlashAttribute("success", "Order shipped successfully!");
             return "redirect:/orders/" + id;
@@ -290,14 +278,7 @@ public class OrderController {
     @PatchMapping("/orders/{id}/deliver")
     public String deliverOrder(
             @PathVariable UUID id,
-            HttpSession session,
             RedirectAttributes redirectAttributes) {
-
-        Object userRoleObj = session.getAttribute("userRole");
-        if (userRoleObj == null || !"ADMIN".equals(userRoleObj.toString())) {
-            redirectAttributes.addFlashAttribute("error", "Unauthorized access.");
-            return "redirect:/orders";
-        }
 
         try {
             orderService.markAsDelivered(id);

@@ -4,6 +4,7 @@ import com.softuni.finalexam.models.entity.Category;
 import com.softuni.finalexam.models.entity.Product;
 import com.softuni.finalexam.repository.CategoryRepository;
 import com.softuni.finalexam.repository.ProductRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -13,19 +14,14 @@ import java.util.Optional;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class DataInitializer implements CommandLineRunner {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
 
-    public DataInitializer(ProductRepository productRepository, CategoryRepository categoryRepository) {
-        this.productRepository = productRepository;
-        this.categoryRepository = categoryRepository;
-    }
-
     @Override
     public void run(String... args) {
-        // TODO: replace with proper database check - this is inefficient for large datasets
         boolean hasWhiskey = productRepository.findAll().stream().anyMatch(p -> p.getName() != null && p.getName().toLowerCase().contains("whiskey"));
         boolean hasRedWine = productRepository.findAll().stream().anyMatch(p -> p.getName() != null && p.getName().toLowerCase().contains("merlot"));
         boolean hasBeer = productRepository.findAll().stream().anyMatch(p -> p.getName() != null && p.getName().toLowerCase().contains("stella"));

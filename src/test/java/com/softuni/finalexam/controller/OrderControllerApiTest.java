@@ -1,6 +1,7 @@
 package com.softuni.finalexam.controller;
 
 import com.softuni.finalexam.enums.OrderStatus;
+import com.softuni.finalexam.enums.UserRole;
 import com.softuni.finalexam.models.dto.CartItemDto;
 import com.softuni.finalexam.models.entity.Order;
 import com.softuni.finalexam.models.entity.OrderItem;
@@ -10,6 +11,7 @@ import com.softuni.finalexam.repository.OrderItemRepository;
 import com.softuni.finalexam.repository.OrderRepository;
 import com.softuni.finalexam.repository.ProductRepository;
 import com.softuni.finalexam.repository.UserRepository;
+import com.softuni.finalexam.security.ApplicationUserDetails;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -63,25 +66,22 @@ class OrderControllerApiTest {
 
     @BeforeEach
     void setUp() {
-        // Create test user
         testUser = User.builder()
                 .name("Test User")
                 .email("test@example.com")
                 .password("password")
-                .role("USER")
+                .role(UserRole.USER)
                 .build();
         testUser = userRepository.save(testUser);
 
-        // Create admin user
         adminUser = User.builder()
                 .name("Admin User")
                 .email("admin@example.com")
                 .password("password")
-                .role("ADMIN")
+                .role(UserRole.ADMIN)
                 .build();
         adminUser = userRepository.save(adminUser);
 
-        // Create test product
         testProduct = Product.builder()
                 .name("Test Product")
                 .description("Test Product Description")
@@ -90,7 +90,6 @@ class OrderControllerApiTest {
                 .build();
         testProduct = productRepository.save(testProduct);
 
-        // Create test order
         testOrder = Order.builder()
                 .user(testUser)
                 .date(OffsetDateTime.now(ZoneId.of("Europe/Sofia")))
@@ -102,10 +101,8 @@ class OrderControllerApiTest {
 
     @Test
     void testGetOrders_AuthenticatedUser() throws Exception {
-        // Given - user is authenticated (simulated via session)
-        
-        // When/Then
         mockMvc.perform(get("/orders")
+                        .with(user(new ApplicationUserDetails(testUser)))
                         .sessionAttr("userId", testUser.getId().toString())
                         .sessionAttr("userRole", "USER"))
                 .andExpect(status().isOk())
@@ -114,9 +111,6 @@ class OrderControllerApiTest {
 
     @Test
     void testGetOrders_UnauthenticatedUser() throws Exception {
-        // Given - no session attributes
-        
-        // When/Then
         mockMvc.perform(get("/orders"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/profile"));
@@ -124,10 +118,8 @@ class OrderControllerApiTest {
 
     @Test
     void testGetOrderDetails_AsOwner() throws Exception {
-        // Given - user is the owner of the order
-        
-        // When/Then
         mockMvc.perform(get("/orders/{id}", testOrder.getId())
+                        .with(user(new ApplicationUserDetails(testUser)))
                         .sessionAttr("userId", testUser.getId().toString())
                         .sessionAttr("userRole", "USER"))
                 .andExpect(status().isOk())
@@ -136,10 +128,8 @@ class OrderControllerApiTest {
 
     @Test
     void testGetOrderDetails_AsAdmin() throws Exception {
-        // Given - admin user accessing any order
-        
-        // When/Then
         mockMvc.perform(get("/orders/{id}", testOrder.getId())
+                        .with(user(new ApplicationUserDetails(adminUser)))
                         .sessionAttr("userId", adminUser.getId().toString())
                         .sessionAttr("userRole", "ADMIN"))
                 .andExpect(status().isOk())
@@ -148,17 +138,16 @@ class OrderControllerApiTest {
 
     @Test
     void testGetOrderDetails_Unauthorized() throws Exception {
-        // Given - different user trying to access another user's order
         User otherUser = User.builder()
                 .name("Other User")
                 .email("other@example.com")
                 .password("password")
-                .role("USER")
+                .role(UserRole.USER)
                 .build();
         otherUser = userRepository.save(otherUser);
-        
-        // When/Then
+
         mockMvc.perform(get("/orders/{id}", testOrder.getId())
+                        .with(user(new ApplicationUserDetails(otherUser)))
                         .sessionAttr("userId", otherUser.getId().toString())
                         .sessionAttr("userRole", "USER"))
                 .andExpect(status().is3xxRedirection())
@@ -167,9 +156,6 @@ class OrderControllerApiTest {
 
     @Test
     void testGetOrderDetails_Unauthenticated() throws Exception {
-        // Given - no session
-        
-        // When/Then
         mockMvc.perform(get("/orders/{id}", testOrder.getId()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/profile"));
@@ -177,16 +163,15 @@ class OrderControllerApiTest {
 
     @Test
     void testGetCheckout_AuthenticatedUser() throws Exception {
-        // Given - user is authenticated with cart items
         List<CartItemDto> cartItems = new ArrayList<>();
         CartItemDto cartItem = CartItemDto.builder()
                 .product(testProduct)
                 .quantity(2)
                 .build();
         cartItems.add(cartItem);
-        
-        // When/Then
+
         mockMvc.perform(get("/checkout")
+                        .with(user(new ApplicationUserDetails(testUser)))
                         .sessionAttr("userId", testUser.getId().toString())
                         .sessionAttr("userRole", "USER")
                         .sessionAttr("cartItems", cartItems))
@@ -196,9 +181,6 @@ class OrderControllerApiTest {
 
     @Test
     void testGetCheckout_UnauthenticatedUser() throws Exception {
-        // Given - no session
-        
-        // When/Then
         mockMvc.perform(get("/checkout"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/profile"));
@@ -206,14 +188,11 @@ class OrderControllerApiTest {
 
     @Test
     void testGetCheckout_EmptyCart() throws Exception {
-        // Given - user is authenticated but cart is empty
-        
-        // When/Then
         mockMvc.perform(get("/checkout")
+                        .with(user(new ApplicationUserDetails(testUser)))
                         .sessionAttr("userId", testUser.getId().toString())
                         .sessionAttr("userRole", "USER"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/cart?error=Cart is empty"));
     }
 }
-

@@ -1,6 +1,7 @@
 package com.softuni.finalexam.models.entity;
 
 
+import com.softuni.finalexam.enums.UserRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -35,5 +36,6 @@ public class User  {
     private String email;
 
     @Column
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
 }

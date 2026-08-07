@@ -1,5 +1,6 @@
 package com.softuni.finalexam.service;
 
+import com.softuni.finalexam.enums.UserRole;
 import com.softuni.finalexam.exception.UserAlreadyExistsException;
 import com.softuni.finalexam.exception.UserNotFoundException;
 import com.softuni.finalexam.models.dto.UserRegistrationDto;
@@ -40,7 +41,7 @@ public class UserService {
                 .name(registrationDto.getFirstName())
                 .email(registrationDto.getEmail())
                 .password(hashedPassword)
-                .role("USER")
+                .role(UserRole.USER)
                 .build();
 
         User savedUser = userRepository.save(user);

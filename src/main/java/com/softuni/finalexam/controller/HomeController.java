@@ -4,6 +4,7 @@ import com.softuni.finalexam.models.entity.Product;
 import com.softuni.finalexam.repository.ProductRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,15 +19,13 @@ import java.util.stream.Collectors;
 
 
 @Controller
+@RequiredArgsConstructor
 public class HomeController {
 
     private final ProductRepository productRepository;
     private final LocaleResolver localeResolver;
 
-    public HomeController(ProductRepository productRepository, LocaleResolver localeResolver) {
-        this.productRepository = productRepository;
-        this.localeResolver = localeResolver;
-    }
+
 
     @GetMapping("/")
     public String home(Model model) {

@@ -10,6 +10,7 @@ import com.softuni.finalexam.repository.CategoryRepository;
 import com.softuni.finalexam.repository.OrderItemRepository;
 import com.softuni.finalexam.repository.ProductRepository;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,17 +29,14 @@ import java.util.stream.Collectors;
 
 @Controller
 @Slf4j
+@RequiredArgsConstructor
 public class ProductController {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final OrderItemRepository orderItemRepository;
 
-    public ProductController(ProductRepository productRepository, CategoryRepository categoryRepository, OrderItemRepository orderItemRepository) {
-        this.productRepository = productRepository;
-        this.categoryRepository = categoryRepository;
-        this.orderItemRepository = orderItemRepository;
-    }
+
 
 
     @GetMapping("/products")
