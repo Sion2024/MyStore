@@ -52,6 +52,7 @@ public class SecurityConfig {
                         "/profile/add",
                         "/profile",
                         "/login",
+                        "/logout",
                         "/css/**",
                         "/error"
                 ).permitAll()
@@ -75,7 +76,7 @@ public class SecurityConfig {
                         response.sendRedirect(request.getContextPath() + "/?error=access_denied"))
             )
             .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
             )
             .formLogin(form -> form.disable())
             .logout(logout -> logout.disable());

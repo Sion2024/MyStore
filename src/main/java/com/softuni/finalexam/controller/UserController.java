@@ -184,17 +184,27 @@ public class UserController {
 
 
     @PostMapping("/logout")
-    public String logout(HttpSession session) {
-        SecurityContextHolder.clearContext();
-        session.invalidate();
-        return "redirect:/";
+    public String logout(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+        clearAuthentication(request, response, session);
+        return "redirect:/?logout=true";
     }
 
     @GetMapping("/logout")
-    public String logoutGet(HttpSession session) {
-        SecurityContextHolder.clearContext();
-        session.invalidate();
-        return "redirect:/";
+    public String logoutGet(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+        clearAuthentication(request, response, session);
+        return "redirect:/?logout=true";
+    }
+
+    private void clearAuthentication(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+        SecurityContext emptyContext = SecurityContextHolder.createEmptyContext();
+        SecurityContextHolder.setContext(emptyContext);
+        securityContextRepository.saveContext(emptyContext, request, response);
+
+        if (session != null) {
+            session.invalidate();
+        }
+
+        log.info("User logged out");
     }
 
     @GetMapping("/profile/edit")
