@@ -15,14 +15,14 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 /**
  * Integration test for NotificationClient
  *
- * NOTE: This test requires the notification service to be running on port 8081
- * To run this test, uncomment @Disabled annotation and ensure notification service is running
+ * NOTE: This test requires the notification service to be running on port 8082
+ * To run this test, remove @Disabled and ensure notification service is running
  */
 @SpringBootTest
 @TestPropertySource(properties = {
-        "notification.service.url=http://localhost:8081/api/v1/notifications"
+        "notification.service.url=http://localhost:8082/api/v1/notifications"
 })
-@Disabled("Enable this test when notification service is running on port 8081")
+@Disabled("Enable this test when notification service is running on port 8082")
 class NotificationClientIntegrationTest {
 
     @Autowired

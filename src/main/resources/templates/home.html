@@ -4,30 +4,94 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="#{page.title.home}">Home - My Store</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css(v=9)}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
+        .product-card .product-actions {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.5rem;
+            width: 100%;
+            margin-top: 0.5rem;
+            box-sizing: border-box;
+        }
 
+        .product-card .product-actions--single {
+            grid-template-columns: 1fr;
+        }
+
+        .product-card .product-action-slot {
+            min-width: 0;
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        .product-card .product-action-fill {
+            display: block;
+            width: 100%;
+            min-width: 0;
+            max-width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .product-card .product-action-fill input[type="hidden"] {
+            display: none;
+        }
+
+        .product-card .product-action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            height: 44px;
+            margin: 0;
+            padding: 0 18px;
+            border: none;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-family: inherit;
+            font-size: 0.875rem;
+            font-weight: 600;
+            line-height: 1.2;
+            text-align: center;
+            text-transform: none;
+            letter-spacing: 0.01em;
+            white-space: nowrap;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            overflow: hidden;
+        }
+
+        .product-card .product-action-btn--details {
+            background: #007bff;
+            color: #fff;
+        }
+
+        .product-card .product-action-btn--add {
+            background: #28a745;
+            color: #fff;
+        }
+
+        .product-card .product-action-btn--disabled {
+            background: #ccc;
+            color: #666;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
     <!-- Top Banner -->
     <div class="top-banner" th:text="#{banner.free.delivery}">
-        Безплатна доставка за поръчки над 150 лв. / 76.69 €
+        Безплатна доставка за поръчки над 150 €
     </div>
 
     <!-- Header -->
     <header class="header">
-        <div class="logo-section">
-            <a th:href="@{/}" style="text-decoration: none; color: inherit;">
-                <span class="logo-text">My Store</span>
-                <div class="logo-icon" >
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </a>
-        </div>
+        <div th:replace="~{fragments/header :: logo}"></div>
         <div class="search-bar">
             <form th:action="@{/products}" method="get" style="display: flex; width: 100%;">
                 <input type="text" name="search" class="search-input" th:placeholder="#{header.search.placeholder}">
@@ -53,18 +117,7 @@
     </header>
 
     <!-- Navigation Menu -->
-    <nav class="nav-menu">
-        <ul>
-            <li><a th:href="@{/}" th:text="#{nav.home}">Начало</a></li>
-            <li><a th:href="@{/products}" th:text="#{nav.products}">Продукти</a></li>
-            <li><a href="#" th:text="#{nav.promotions}">Промоции</a></li>
-            <li><a th:href="@{/admin/users}" th:if="${session.userRole == 'ADMIN'}" th:text="#{nav.users}">Потребители</a></li>
-            <li><a th:href="@{/contacts}" th:text="#{nav.contacts}">Контакти</a></li>
-            <li th:if="${session.userRole == 'ADMIN'}" class="admin-nav-item">
-                <a th:href="@{/admin/orders}" th:text="#{nav.admin}" style="color: #ff6b6b; font-weight: bold;">⚙️ Админ панел</a>
-            </li>
-        </ul>
-    </nav>
+    <nav th:replace="~{fragments/nav :: nav}"></nav>
 
     <!-- Main Container -->
     <div class="main-container">
@@ -97,7 +150,7 @@
                                 <h1 class="carousel-title" th:text="${product.name}">Product Name</h1>
                                 <p class="carousel-subtitle" th:if="${product.category != null}" th:text="${product.category.name}">Category</p>
                                 <div class="price-tags">
-                                    <span class="price-tag" th:text="|${product.price} лв.|">0.00 лв.</span>
+                                    <span class="price-tag" th:text="|${product.price} €|">0.00 €</span>
                                 </div>
                             </div>
                             <a th:href="@{/products/{id}(id=${product.id})}" 
@@ -134,25 +187,6 @@
                               onclick="goToSlide(0)"></span>
                     </div>
                 </div>
-
-                <!-- Promotions Banner -->
-                <div class="promo-banner promotions-banner">
-                    <div>
-                        <h2 class="promotions-title" th:text="#{promotions}">ПРОМОЦИИ</h2>
-                        <div class="bottles-container">
-                            <div class="bottle"></div>
-                            <div class="bottle" style="height: 140px;"></div>
-                            <div class="bottle" style="height: 100px;"></div>
-                            <div class="bottle" style="height: 160px;"></div>
-                            <div class="bottle" style="height: 110px;"></div>
-                            <div class="bottle" style="height: 130px;"></div>
-                        </div>
-                        <p class="promotions-description" th:text="#{promotions.description}">
-                            Разгледайте нашата секция с налични продукти
-                        </p>
-                    </div>
-                    <button class="promo-button" th:text="#{btn.view.all}">Виж всички продукти</button>
-                </div>
             </div>
 
             <!-- Popular Categories -->
@@ -161,39 +195,39 @@
                 <div class="categories-grid">
                     <a th:href="@{/products?wines=true}" class="category-tile" style="text-decoration: none; color: inherit; display: block;">
                         <div class="category-icon">🍷</div>
-                        <div class="category-name">Вина</div>
+                        <div class="category-name" th:text="#{category.wines}">Вина</div>
                     </a>
                     <a th:href="@{/products?champagne=true}" class="category-tile" style="text-decoration: none; color: inherit; display: block;">
                         <div class="category-icon">🥂</div>
-                        <div class="category-name">Пенливи вина</div>
+                        <div class="category-name" th:text="#{category.sparkling.wines}">Пенливи вина</div>
                     </a>
                     <a th:href="@{/products?whiskey=true}" class="category-tile" style="text-decoration: none; color: inherit; display: block;">
                         <div class="category-icon">🥃</div>
-                        <div class="category-name">Алкохолни напитки</div>
+                        <div class="category-name" th:text="#{category.alcoholic.drinks}">Алкохолни напитки</div>
                     </a>
                     <a th:href="@{/products?beer=true}" class="category-tile" style="text-decoration: none; color: inherit; display: block;">
                         <div class="category-icon">🍺</div>
-                        <div class="category-name">Бира</div>
+                        <div class="category-name" th:text="#{category.beer}">Бира</div>
                     </a>
                     <a th:href="@{/products?water=true}" class="category-tile" style="text-decoration: none; color: inherit; display: block;">
                         <div class="category-icon">💧</div>
-                        <div class="category-name">Вода</div>
+                        <div class="category-name" th:text="#{category.water}">Вода</div>
                     </a>
                 </div>
             </div>
 
-            <!-- Promotions Products Section -->
-            <div class="promotions-section">
+            <!-- Products Section -->
+            <div class="products-section">
                 <h2 class="section-title" th:text="#{our.products}">Нашите Продукти</h2>
                 <div class="products-grid" th:if="${products != null and !#lists.isEmpty(products)}">
                     <!-- Product Card - Dynamic from Database -->
                     <div class="product-card" th:each="product : ${products}">
-                        <div class="discount-badge" th:if="${product.stock > 0}">
-                            <span class="flag-icon">🥃</span>
-                            <span th:if="${product.category != null}" th:text="${product.category.name}">Категория</span>
-                        </div>
                         <div class="product-image">
-                            <div class="bottle-image"></div>
+                            <img th:if="${product.imageUrl != null and !product.imageUrl.isEmpty()}"
+                                 th:src="${product.imageUrl}"
+                                 th:alt="${product.name}"
+                                 style="max-width: 100%; height: 150px; object-fit: contain;">
+                            <div th:if="${product.imageUrl == null or product.imageUrl.isEmpty()}" class="bottle-image"></div>
                         </div>
                         <div class="product-name" th:text="${product.name}">Име на продукт</div>
                         <div class="product-specs" th:if="${product.description != null and !product.description.isEmpty()}" 
@@ -203,178 +237,54 @@
                             <span th:if="${session.userRole == 'ADMIN' and product.stock != null}"> | Наличност: <span th:text="${product.stock}">0</span> бр.</span>
                         </div>
                         <div class="price-section">
-                            <span class="discounted-price" th:text="${product.price} + ' лв.'">0.00 лв.</span>
+                            <span class="product-price" th:text="${product.price} + ' €'">0.00 €</span>
                         </div>
-                        <div class="product-actions" style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
-                            <a th:href="@{/products/{id}(id=${product.id})}" 
-                               th:if="${product.stock > 0}"
-                               th:text="#{common.details}"
-                               style="flex: 1; text-align: center; padding: 0.75rem; background: #007bff; color: white; text-decoration: none; border-radius: 4px;">
-                                Детайли
-                            </a>
-                            <form th:if="${product.stock > 0}" th:action="@{/cart/add}" method="post" style="flex: 1;">
-                                <input type="hidden" name="productId" th:value="${product.id}">
-                                <input type="hidden" name="quantity" value="1">
-                                <button type="submit" 
-                                        th:text="#{common.add}"
-                                        style="width: 100%; padding: 0.75rem; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                                    Добави
-                                </button>
-                            </form>
-                            <button disabled th:if="${product.stock == 0}" 
-                                    th:text="#{product.stock.unavailable}"
-                                    style="width: 100%; padding: 0.75rem; background: #ccc; color: #666; border: none; border-radius: 4px; cursor: not-allowed;">
-                                Няма наличност
-                            </button>
+                        <div class="product-actions" th:classappend="${product.stock == 0 ? 'product-actions--single' : ''}">
+                            <div class="product-action-slot" th:if="${product.stock > 0}">
+                                <form class="product-action-fill" th:action="@{/products/{id}(id=${product.id})}" method="get">
+                                    <button type="submit"
+                                            class="product-action-btn product-action-btn--details"
+                                            th:text="#{common.details}">
+                                        Детайли
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="product-action-slot" th:if="${product.stock > 0}">
+                                <form class="product-action-fill" th:action="@{/cart/add}" method="post">
+                                    <input type="hidden" name="productId" th:value="${product.id}">
+                                    <input type="hidden" name="quantity" value="1">
+                                    <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                    <button type="submit"
+                                            th:text="#{common.add}"
+                                            class="product-action-btn product-action-btn--add">
+                                        Добави
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="product-action-slot" th:if="${product.stock == 0}">
+                                <div class="product-action-fill">
+                                    <button disabled
+                                            th:text="#{product.stock.unavailable}"
+                                            class="product-action-btn product-action-btn--disabled">
+                                        Няма наличност
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                </div>
+                <div class="products-view-all" th:if="${products != null and !#lists.isEmpty(products)}">
+                    <a th:href="@{/products}" class="products-view-all-btn" th:text="#{btn.view.all}">Виж всички продукти</a>
                 </div>
                 <!-- Empty State -->
                 <div class="empty-products" th:if="${products == null or #lists.isEmpty(products)}">
                     <p th:text="#{empty.products.check.later}">Няма налични продукти в момента. Моля, проверете по-късно.</p>
                 </div>
             </div>
-
-            <!-- Newsletter Banner -->
-            <div class="newsletter-banner">
-                <div class="newsletter-image">
-                    <div class="couple-illustration">
-                        <div class="person person-woman">
-                            <div class="person-head"></div>
-                            <div class="person-body"></div>
-                            <div class="person-phone"></div>
-                        </div>
-                        <div class="person person-man">
-                            <div class="person-head"></div>
-                            <div class="person-body"></div>
-                            <div class="person-phone"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="newsletter-content">
-                    <h2 class="newsletter-headline" th:text="#{newsletter.title}">Остави ни e-mail и ще те почерпим!</h2>
-                    <p class="newsletter-description" th:text="#{newsletter.description}">
-                        Запиши се за нашия бюлетин, за да получаваш първи информация за нови продукти, промоции и отстъпки.
-                    </p>
-                    <form class="newsletter-form" onsubmit="event.preventDefault(); return false;">
-                        <input 
-                            type="email" 
-                            class="newsletter-email" 
-                            placeholder="s1on@abv.bg"
-                            required
-                        >
-                        <button type="submit" class="newsletter-button" th:text="#{newsletter.subscribe}">Запиши се</button>
-                    </form>
-                </div>
-            </div>
         </main>
     </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <!-- Left Column -->
-            <div class="footer-column">
-                <div class="footer-logo">
-                    <span class="footer-logo-text">MY STORE</span>
-                    <div class="footer-logo-icon">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
-                </div>
-                <p>България, гр. София</p>
-                <p>+359 876758565</p>
-            </div>
-
-            <!-- Middle Column -->
-            <div class="footer-column">
-                <h3>За нас</h3>
-                <ul>
-                    <li><a th:href="@{/contacts}">Контакти</a></li>
-                    <li><a th:href="@{/profile}">Профил</a></li>
-                    <li><a th:href="@{/profile-add}">Регистрация</a></li>
-                    <li><a href="#">Моите поръчки</a></li>
-                    <li><a th:href="@{/wishlist-view}">Списък с желания</a></li>
-                </ul>
-                <h3 style="margin-top: 30px;">Информация</h3>
-                <ul>
-                    <li><a href="#">Доставка</a></li>
-                    <li><a href="#">Лични данни</a></li>
-                    <li><a href="#">Общи условия</a></li>
-                </ul>
-            </div>
-
-            <!-- Right Column -->
-            <div class="footer-column">
-                <h3>Категории</h3>
-                <ul>
-                    <li><a href="#">Алкохолни напитки</a></li>
-                    <li><a href="#">Други хранителни продукти</a></li>
-                    <li><a href="#">Нехранителни продукти</a></li>
-                    <li><a href="#">Минерална вода</a></li>
-                    <li><a href="#">Като за подарък</a></li>
-                    <li><a href="#">Предварителна поръчка</a></li>
-                    <li><a href="#">Промоции</a></li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- Payment Methods -->
-        <div class="payment-methods">
-            <h4>Начин на плащане</h4>
-            <div class="payment-icons">
-                <i class="fa">&#xf1f0;</i>
-                <i class="fa">&#xf1f1;</i>
-            </div>
-        </div>
-
-        <!-- Copyright -->
-        <div class="copyright">
-            <p>© 2025 My Store. Всички права запазени.</p>
-        </div>
-    </footer>
-
-    <!-- Floating Chat Widget -->
-    <div class="chat-widget">
-        <div class="chat-icon">💬</div>
-        <span>СВЪРЖЕТЕ СЕ С НАС</span>
-    </div>
-
-    <div id="cartOverlayHome" class="cart-overlay"></div>
-
-    <aside id="cartDrawerHome" class="cart-drawer" aria-hidden="true">
-        <div class="cart-drawer-header">
-            <h2>Вашата количка</h2>
-            <button id="closeCartButtonHome" class="cart-close-btn" aria-label="Затвори количката">&times;</button>
-        </div>
-        <div class="cart-items">
-            <div th:if="${cartItems == null or #lists.isEmpty(cartItems)}" class="empty-cart">
-                Все още няма добавени продукти.
-            </div>
-
-            <div th:if="${cartItems != null}" th:each="item : ${cartItems}" class="cart-item">
-                <div>
-                    <h3 th:text="${item.product.name}">Име на продукт</h3>
-                    <span th:text="'Количество: ' + ${item.quantity}">Количество</span>
-                    <span th:text="'Единична цена: ' + ${item.product.price} + ' лв.'">Цена</span>
-                </div>
-                <strong th:text="${item.totalPrice} + ' лв.'">79.99 лв.</strong>
-            </div>
-        </div>
-
-        <div class="cart-summary" th:if="${cartItems != null and !#lists.isEmpty(cartItems)}">
-            <div class="cart-summary-row">
-                <span>Общо артикули:</span>
-                <span th:text="${cartItems.size()}">3</span>
-            </div>
-            <div class="cart-summary-row">
-                <span>Междинна сума:</span>
-                <span th:text="${cartSubtotal} + ' лв.'">0.00 лв.</span>
-            </div>
-            <a class="checkout-btn" th:href="@{/cart}">Преглед и финализиране</a>
-        </div>
-    </aside>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
 
     <script>
         let currentSlide = 0;
@@ -423,41 +333,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             updateCarousel();
             carouselInterval = setInterval(nextSlide, 5000);
-            initCartDrawer();
         });
-
-        function initCartDrawer() {
-            const drawer = document.getElementById('cartDrawerHome');
-            const overlay = document.getElementById('cartOverlayHome');
-            const openBtn = document.getElementById('cartToggleBtn');
-            const closeBtn = document.getElementById('closeCartButtonHome');
-
-            if (!drawer || !overlay || !openBtn || !closeBtn) {
-                return;
-            }
-
-            function openCart() {
-                drawer.classList.add('open');
-                overlay.classList.add('visible');
-                drawer.setAttribute('aria-hidden', 'false');
-            }
-
-            function closeCart() {
-                drawer.classList.remove('open');
-                overlay.classList.remove('visible');
-                drawer.setAttribute('aria-hidden', 'true');
-            }
-
-            openBtn.addEventListener('click', openCart);
-            closeBtn.addEventListener('click', closeCart);
-            overlay.addEventListener('click', closeCart);
-
-            document.addEventListener('keydown', function (event) {
-                if (event.key === 'Escape' && drawer.classList.contains('open')) {
-                    closeCart();
-                }
-            });
-        }
     </script>
 </body>
 </html>

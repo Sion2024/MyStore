@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <nav th:fragment="nav" class="nav-menu">
+        <ul>
+            <li><a th:href="@{/}" th:text="#{nav.home}">Начало</a></li>
+            <li><a th:href="@{/products}" th:text="#{nav.products}">Продукти</a></li>
+            <li th:if="${session.userRole != 'ADMIN'}">
+                <a th:href="@{/contacts}" th:text="#{nav.contacts}">Контакти</a>
+            </li>
+            <li th:if="${session.userRole == 'ADMIN'}">
+                <a th:href="@{/admin/users}" th:text="#{nav.users}">Потребители</a>
+            </li>
+            <li th:if="${session.userRole == 'ADMIN'}" class="admin-nav-item">
+                <a th:href="@{/admin/orders}" th:text="#{nav.admin}" style="color: #ff6b6b; font-weight: bold;">Админ панел</a>
+            </li>
+        </ul>
+    </nav>
+</body>
+</html>

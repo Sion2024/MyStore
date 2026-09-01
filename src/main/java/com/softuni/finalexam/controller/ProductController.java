@@ -1,6 +1,7 @@
 package com.softuni.finalexam.controller;
 
 import com.softuni.finalexam.enums.OrderStatus;
+import com.softuni.finalexam.exception.ProductImageStorageException;
 import com.softuni.finalexam.models.dto.CreateProductDto;
 import com.softuni.finalexam.models.entity.Category;
 import com.softuni.finalexam.models.entity.OrderItem;
@@ -9,9 +10,12 @@ import com.softuni.finalexam.models.entity.User;
 import com.softuni.finalexam.repository.CategoryRepository;
 import com.softuni.finalexam.repository.OrderItemRepository;
 import com.softuni.finalexam.repository.ProductRepository;
+import com.softuni.finalexam.service.ProductImageStorageService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,6 +25,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
@@ -35,10 +40,8 @@ public class ProductController {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final OrderItemRepository orderItemRepository;
-
-
-
-
+    private final ProductImageStorageService productImageStorageService;
+    private final MessageSource messageSource;
     @GetMapping("/products")
     public String showProducts(
             @RequestParam(required = false) UUID categoryId,
@@ -134,6 +137,7 @@ public class ProductController {
     public String createProductFromProductsPage(
             @Valid @ModelAttribute("createProductDto") CreateProductDto createProductDto,
             BindingResult bindingResult,
+            @RequestParam("imageFile") MultipartFile imageFile,
             Model model,
             RedirectAttributes redirectAttributes) {
 
@@ -144,8 +148,9 @@ public class ProductController {
         }
 
         try {
-            Category cat = createProductDto.getCategoryId() != null 
-                    ? categoryRepository.findById(createProductDto.getCategoryId()).orElse(null) 
+            String imageUrl = productImageStorageService.store(imageFile);
+            Category cat = createProductDto.getCategoryId() != null
+                    ? categoryRepository.findById(createProductDto.getCategoryId()).orElse(null)
                     : null;
 
             Product product = Product.builder()
@@ -154,13 +159,17 @@ public class ProductController {
                     .price(createProductDto.getPrice())
                     .stock(createProductDto.getStock())
                     .category(cat)
-                    .imageUrl(createProductDto.getImageUrl() != null && !createProductDto.getImageUrl().trim().isEmpty() 
-                            ? createProductDto.getImageUrl() : null)
+                    .imageUrl(imageUrl)
                     .build();
 
             productRepository.save(product);
             redirectAttributes.addFlashAttribute("success", "Product created successfully!");
             return "redirect:/products";
+        } catch (ProductImageStorageException e) {
+            model.addAttribute("categories", categoryRepository.findAll());
+            model.addAttribute("createProductDto", createProductDto);
+            model.addAttribute("error", resolveImageErrorMessage(e));
+            return "admin/product-create";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Failed to create product: " + e.getMessage());
             log.error("Error creating product", e);
@@ -192,6 +201,7 @@ public class ProductController {
     public String createProduct(
             @Valid @ModelAttribute("createProductDto") CreateProductDto createProductDto,
             BindingResult bindingResult,
+            @RequestParam("imageFile") MultipartFile imageFile,
             Model model,
             RedirectAttributes redirectAttributes) {
 
@@ -202,8 +212,9 @@ public class ProductController {
         }
 
         try {
-            Category category = createProductDto.getCategoryId() != null 
-                    ? categoryRepository.findById(createProductDto.getCategoryId()).orElse(null) 
+            String imageUrl = productImageStorageService.store(imageFile);
+            Category category = createProductDto.getCategoryId() != null
+                    ? categoryRepository.findById(createProductDto.getCategoryId()).orElse(null)
                     : null;
 
             Product product = Product.builder()
@@ -212,17 +223,31 @@ public class ProductController {
                     .price(createProductDto.getPrice())
                     .stock(createProductDto.getStock())
                     .category(category)
-                    .imageUrl(createProductDto.getImageUrl())
+                    .imageUrl(imageUrl)
                     .build();
 
             productRepository.save(product);
             redirectAttributes.addFlashAttribute("success", "Product created successfully!");
             return "redirect:/products";
+        } catch (ProductImageStorageException e) {
+            model.addAttribute("categories", categoryRepository.findAll());
+            model.addAttribute("createProductDto", createProductDto);
+            model.addAttribute("error", resolveImageErrorMessage(e));
+            return "admin/product-create";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Failed to create product: " + e.getMessage());
             log.error("Error creating product", e);
             return "redirect:/admin/products/create?error=true";
         }
+    }
+
+    private String resolveImageErrorMessage(ProductImageStorageException exception) {
+        return messageSource.getMessage(
+                exception.getMessage(),
+                null,
+                exception.getMessage(),
+                LocaleContextHolder.getLocale()
+        );
     }
 
 

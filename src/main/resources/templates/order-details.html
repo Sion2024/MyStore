@@ -9,20 +9,11 @@
 </head>
 <body>
     <div class="top-banner">
-        Безплатна доставка за поръчки над 150 лв. / 76.69 €
+        Безплатна доставка за поръчки над 150 €
     </div>
 
     <header class="header">
-        <div class="logo-section">
-            <a th:href="@{/}" style="text-decoration: none; color: inherit;">
-                <span class="logo-text">My Store</span>
-                <div class="logo-icon">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </a>
-        </div>
+        <div th:replace="~{fragments/header :: logo}"></div>
         <div class="search-bar">
             <form th:action="@{/products}" method="get" style="display: flex; width: 100%;">
                 <input type="text" name="search" class="search-input" th:placeholder="#{header.search.placeholder}">
@@ -47,14 +38,7 @@
         </div>
     </header>
 
-    <nav class="nav-menu">
-        <ul>
-            <li><a th:href="@{/}">Начало</a></li>
-            <li><a th:href="@{/products}">Продукти</a></li>
-            <li><a href="#">Промоции</a></li>
-            <li><a th:href="@{/contacts}">Контакти</a></li>
-        </ul>
-    </nav>
+        <nav th:replace="~{fragments/nav :: nav}"></nav>
 
     <main style="max-width: 1200px; margin: 2rem auto; padding: 0 1rem;">
         <a th:href="@{/orders}" style="display: inline-block; margin-bottom: 1rem; color: #007bff; text-decoration: none;">
@@ -117,10 +101,10 @@
                                     <span th:text="${item.quantity}">1</span>
                                 </td>
                                 <td style="padding: 1rem; text-align: right;">
-                                    <span th:text="|${item.price} лв.|">0.00 лв.</span>
+                                    <span th:text="|${item.price} €|">0.00 €</span>
                                 </td>
                                 <td style="padding: 1rem; text-align: right; font-weight: bold;">
-                                    <span th:text="|${item.totalPrice} лв.|">0.00 лв.</span>
+                                    <span th:text="|${item.totalPrice} €|">0.00 €</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -150,7 +134,7 @@
                     <div style="text-align: right;">
                         <p style="margin: 0.5rem 0; font-size: 1.5rem;">
                             <strong>Обща сума:</strong> 
-                            <span style="color: #28a745;" th:text="|${calculatedTotal} лв.|">0.00 лв.</span>
+                            <span style="color: #28a745;" th:text="|${calculatedTotal} €|">0.00 €</span>
                         </p>
                     </div>
                 </div>
@@ -159,9 +143,7 @@
         </div>
     </main>
 
-    <footer class="footer" style="margin-top: 4rem; padding: 2rem; background: #f8f9fa; text-align: center;">
-        <p>&copy; 2025 My Store. All rights reserved.</p>
-    </footer>
+    <footer th:replace="~{fragments/footer :: footer-simple}"></footer>
 </body>
 </html>
 

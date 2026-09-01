@@ -4,25 +4,92 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="#{page.title.products}">Продукти - My Store</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css(v=8)}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        .product-card .product-actions {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.5rem;
+            width: 100%;
+            margin-top: 0.5rem;
+            box-sizing: border-box;
+        }
+
+        .product-card .product-actions--single {
+            grid-template-columns: 1fr;
+        }
+
+        .product-card .product-action-slot {
+            min-width: 0;
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        .product-card .product-action-fill {
+            display: block;
+            width: 100%;
+            min-width: 0;
+            max-width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .product-card .product-action-fill input[type="hidden"] {
+            display: none;
+        }
+
+        .product-card .product-action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            height: 44px;
+            margin: 0;
+            padding: 0 18px;
+            border: none;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-family: inherit;
+            font-size: 0.875rem;
+            font-weight: 600;
+            line-height: 1.2;
+            text-align: center;
+            text-transform: none;
+            letter-spacing: 0.01em;
+            white-space: nowrap;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            overflow: hidden;
+        }
+
+        .product-card .product-action-btn--details {
+            background: #007bff;
+            color: #fff;
+        }
+
+        .product-card .product-action-btn--add {
+            background: #28a745;
+            color: #fff;
+        }
+
+        .product-card .product-action-btn--disabled {
+            background: #ccc;
+            color: #666;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
 <body>
     <div class="top-banner" th:text="#{banner.free.delivery}">
-        Безплатна доставка за поръчки над 150 лв. / 76.69 €
+        Безплатна доставка за поръчки над 150 €
     </div>
 
     <header class="header">
-        <div class="logo-section">
-            <a th:href="@{/}" style="text-decoration: none; color: inherit;">
-                <span class="logo-text">My Store</span>
-                <div class="logo-icon">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </a>
-        </div>
+        <div th:replace="~{fragments/header :: logo}"></div>
         <div class="search-bar">
             <form th:action="@{/products}" method="get" style="display: flex; width: 100%;">
                 <input type="text" name="search" class="search-input" th:placeholder="#{header.search.placeholder}" 
@@ -48,18 +115,7 @@
         </div>
     </header>
 
-    <nav class="nav-menu">
-        <ul>
-            <li><a th:href="@{/}" th:text="#{nav.home}">Начало</a></li>
-            <li><a th:href="@{/products}" th:text="#{nav.products}">Продукти</a></li>
-            <li><a href="#" th:text="#{nav.promotions}">Промоции</a></li>
-            <li><a th:href="@{/admin/users}" th:if="${session.userRole == 'ADMIN'}" th:text="#{nav.users}">Потребители</a></li>
-            <li><a th:href="@{/contacts}" th:text="#{nav.contacts}">Контакти</a></li>
-            <li th:if="${session.userRole == 'ADMIN'}" class="admin-nav-item">
-                <a th:href="@{/admin/orders}" th:text="#{nav.admin}" style="color: #ff6b6b; font-weight: bold;">⚙️ Админ панел</a>
-            </li>
-        </ul>
-    </nav>
+    <nav th:replace="~{fragments/nav :: nav}"></nav>
 
     <main style="max-width: 1200px; margin: 2rem auto; padding: 0 1rem;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
@@ -100,10 +156,6 @@
              style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 2rem;">
             <div class="product-card" th:each="product : ${products}" 
                  style="border: 1px solid #ddd; border-radius: 8px; padding: 1rem; background: white; transition: transform 0.2s;">
-                <div class="discount-badge" th:if="${product.stock > 0 and product.category != null}">
-                    <span class="flag-icon">🥃</span>
-                    <span th:text="${product.category.name}">Категория</span>
-                </div>
                 <div class="product-image" style="text-align: center; padding: 1rem;">
                     <img th:if="${product.imageUrl != null and !product.imageUrl.isEmpty()}" 
                          th:src="${product.imageUrl}" 
@@ -127,29 +179,39 @@
                 </div>
                 <div class="price-section" style="margin: 1rem 0;">
                     <span style="font-size: 1.5rem; font-weight: bold; color: #28a745;" 
-                          th:text="${product.price} + ' лв.'">0.00 лв.</span>
+                          th:text="${product.price} + ' €'">0.00 €</span>
                 </div>
-                <div class="product-actions" style="margin-top: 1rem; display: flex; gap: 0.5rem;">
-                    <a th:href="@{/products/{id}(id=${product.id})}" 
-                       th:if="${product.stock > 0}"
-                       th:text="#{common.details}"
-                       style="flex: 1; text-align: center; padding: 0.75rem; background: #007bff; color: white; text-decoration: none; border-radius: 4px;">
-                        Детайли
-                    </a>
-                    <form th:if="${product.stock > 0}" th:action="@{/cart/add}" method="post" style="flex: 1;">
-                        <input type="hidden" name="productId" th:value="${product.id}">
-                        <input type="hidden" name="quantity" value="1">
-                        <button type="submit" 
-                                th:text="#{common.add}"
-                                style="width: 100%; padding: 0.75rem; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                            Добави
-                        </button>
-                    </form>
-                    <button disabled th:if="${product.stock == 0}" 
-                            th:text="#{product.stock.unavailable}"
-                            style="width: 100%; padding: 0.75rem; background: #ccc; color: #666; border: none; border-radius: 4px; cursor: not-allowed;">
-                        Няма наличност
-                    </button>
+                <div class="product-actions" th:classappend="${product.stock == 0 ? 'product-actions--single' : ''}">
+                    <div class="product-action-slot" th:if="${product.stock > 0}">
+                        <form class="product-action-fill" th:action="@{/products/{id}(id=${product.id})}" method="get">
+                            <button type="submit"
+                                    class="product-action-btn product-action-btn--details"
+                                    th:text="#{common.details}">
+                                Детайли
+                            </button>
+                        </form>
+                    </div>
+                    <div class="product-action-slot" th:if="${product.stock > 0}">
+                        <form class="product-action-fill" th:action="@{/cart/add}" method="post">
+                            <input type="hidden" name="productId" th:value="${product.id}">
+                            <input type="hidden" name="quantity" value="1">
+                            <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                            <button type="submit"
+                                    th:text="#{common.add}"
+                                    class="product-action-btn product-action-btn--add">
+                                Добави
+                            </button>
+                        </form>
+                    </div>
+                    <div class="product-action-slot" th:if="${product.stock == 0}">
+                        <div class="product-action-fill">
+                            <button disabled
+                                    th:text="#{product.stock.unavailable}"
+                                    class="product-action-btn product-action-btn--disabled">
+                                Няма наличност
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -171,9 +233,7 @@
         </div>
     </main>
 
-    <footer class="footer" style="margin-top: 4rem; padding: 2rem; background: #f8f9fa; text-align: center;">
-        <p>&copy; 2025 My Store. All rights reserved.</p>
-    </footer>
+    <footer th:replace="~{fragments/footer :: footer-simple}"></footer>
 </body>
 </html>
 

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <footer th:fragment="footer" class="footer">
+        <div class="footer-content">
+            <div class="footer-column">
+                <div class="footer-logo">
+                    <span class="footer-logo-text">MY STORE</span>
+                    <div class="footer-logo-icon">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+                <p th:text="#{footer.location}">България, гр. София</p>
+                <p>+359 876758565</p>
+            </div>
+
+            <div class="footer-column">
+                <h3 th:text="#{footer.about}">За нас</h3>
+                <ul>
+                    <li><a th:href="@{/contacts}" th:text="#{nav.contacts}">Контакти</a></li>
+                    <li><a th:href="@{/profile}" th:text="#{header.profile}">Профил</a></li>
+                    <li><a th:href="@{/profile-add}" th:text="#{profile.register}">Регистрация</a></li>
+                    <li><a th:href="@{/orders}" th:text="#{footer.my.orders}">Моите поръчки</a></li>
+                    <li><a th:href="@{/wishlist-view}" th:text="#{footer.wishlist}">Списък с желания</a></li>
+                </ul>
+                <h3 style="margin-top: 30px;" th:text="#{footer.information}">Информация</h3>
+                <ul>
+                    <li><a th:href="@{/delivery}" th:text="#{footer.delivery}">Доставка</a></li>
+                    <li><a href="#" th:text="#{footer.privacy}">Лични данни</a></li>
+                    <li><a href="#" th:text="#{footer.terms}">Общи условия</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3 th:text="#{footer.categories}">Категории</h3>
+                <ul>
+                    <li><a th:href="@{/products?whiskey=true}" th:text="#{category.alcoholic.drinks}">Алкохолни напитки</a></li>
+                    <li><a href="#" th:text="#{footer.cat.other.food}">Други хранителни продукти</a></li>
+                    <li><a href="#" th:text="#{footer.cat.non.food}">Нехранителни продукти</a></li>
+                    <li><a th:href="@{/products?water=true}" th:text="#{footer.cat.mineral.water}">Минерална вода</a></li>
+                    <li><a href="#" th:text="#{footer.cat.gift}">Като за подарък</a></li>
+                    <li><a href="#" th:text="#{footer.cat.preorder}">Предварителна поръчка</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="copyright">
+            <p th:text="#{footer.copyright}">© 2025 My Store. Всички права запазени.</p>
+        </div>
+    </footer>
+
+    <footer th:fragment="footer-simple" class="footer" style="margin-top: 4rem; padding: 2rem; background: #f8f9fa; text-align: center;">
+        <p th:text="#{footer.copyright}">&copy; 2025 My Store. All rights reserved.</p>
+    </footer>
+</body>
+</html>

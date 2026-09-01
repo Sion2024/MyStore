@@ -10,18 +10,11 @@
 </head>
 <body class="cart-page-body">
     <div class="top-banner">
-        Безплатна доставка за поръчки над 150 лв. / 76.69 €
+        Безплатна доставка за поръчки над 150 €
     </div>
 
     <header class="header">
-        <div class="logo-section">
-            <span class="logo-text">My Store</span>
-            <div class="logo-icon">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </div>
+        <div th:replace="~{fragments/header :: logo}"></div>
         <div class="search-bar">
             <form th:action="@{/products}" method="get" style="display: flex; width: 100%;">
                 <input type="text" name="search" class="search-input" th:placeholder="#{header.search.placeholder}">
@@ -46,18 +39,7 @@
         </div>
     </header>
 
-    <nav class="nav-menu">
-        <ul>
-            <li><a th:href="@{/}">Начало</a></li>
-            <li><a th:href="@{/products}">Продукти</a></li>
-            <li><a href="#">Промоции</a></li>
-            <li><a th:href="@{/admin/users}" th:if="${session.userRole == 'ADMIN'}">Потребители</a></li>
-            <li><a href="#">Контакти</a></li>
-            <li th:if="${session.userRole == 'ADMIN'}" class="admin-nav-item">
-                <a th:href="@{/admin/orders}" style="color: #ff6b6b; font-weight: bold;">⚙️ Админ панел</a>
-            </li>
-        </ul>
-    </nav>
+        <nav th:replace="~{fragments/nav :: nav}"></nav>
 
     <main class="cart-main">
         <div class="cart-container">
@@ -111,8 +93,8 @@
                                         </form>
                                     </div>
                                     <div class="cart-item-price">
-                                        <span class="price-current" th:text="${item.totalPrice} + ' лв.'">79.99 лв.</span>
-                                        <span class="price-unit" th:text="'Единична цена: ' + ${item.product.price} + ' лв.'">99.99 лв.</span>
+                                        <span class="price-current" th:text="${item.totalPrice} + ' €'">79.99 €</span>
+                                        <span class="price-unit" th:text="'Единична цена: ' + ${item.product.price} + ' €'">99.99 €</span>
                                     </div>
                                 </div>
                             </div>
@@ -130,11 +112,11 @@
                             </div>
                             <div class="summary-row">
                                 <span>Междинна сума:</span>
-                                <strong th:text="${cartSubtotal} + ' лв.'">0.00 лв.</strong>
+                                <strong th:text="${cartSubtotal} + ' €'">0.00 €</strong>
                             </div>
                             <div class="summary-row summary-row-total">
                                 <span>Общо:</span>
-                                <strong class="total-price" th:text="${cartSubtotal} + ' лв.'">0.00 лв.</strong>
+                                <strong class="total-price" th:text="${cartSubtotal} + ' €'">0.00 €</strong>
                             </div>
                         </div>
                         <a th:href="@{/checkout(total=${cartSubtotal})}" 
@@ -162,64 +144,6 @@
         </div>
     </main>
 
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-column">
-                <div class="footer-logo">
-                    <span class="footer-logo-text">MY STORE</span>
-                    <div class="footer-logo-icon">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
-                </div>
-                <p>България, гр. София</p>
-                <p>+359 876758565</p>
-            </div>
-            <div class="footer-column">
-                <h3>За нас</h3>
-                <ul>
-                    <li><a th:href="@{/contacts}">Контакти</a></li>
-                    <li><a th:href="@{/profile}">Профил</a></li>
-                    <li><a th:href="@{/profile-add}">Регистрация</a></li>
-                    <li><a href="#">Моите поръчки</a></li>
-                    <li><a th:href="@{/wishlist-view}">Списък с желания</a></li>
-                </ul>
-                <h3 style="margin-top: 30px;">Информация</h3>
-                <ul>
-                    <li><a href="#">Доставка</a></li>
-                    <li><a href="#">Лични данни</a></li>
-                    <li><a href="#">Общи условия</a></li>
-                </ul>
-            </div>
-            <div class="footer-column">
-                <h3>Категории</h3>
-                <ul>
-                    <li><a href="#">Алкохолни напитки</a></li>
-                    <li><a href="#">Други хранителни продукти</a></li>
-                    <li><a href="#">Нехранителни продукти</a></li>
-                    <li><a href="#">Минерална вода</a></li>
-                    <li><a href="#">Като за подарък</a></li>
-                    <li><a href="#">Предварителна поръчка</a></li>
-                    <li><a href="#">Промоции</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="payment-methods">
-            <h4>Начин на плащане</h4>
-            <div class="payment-icons">
-                <i class="fa">&#xf1f0;</i>
-                <i class="fa">&#xf1f1;</i>
-            </div>
-        </div>
-        <div class="copyright">
-            <p>© 2025 My Store. Всички права запазени.</p>
-        </div>
-    </footer>
-
-    <div class="chat-widget">
-        <div class="chat-icon">💬</div>
-        <span>СВЪРЖЕТЕ СЕ С НАС</span>
-    </div>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
 </body>
 </html>

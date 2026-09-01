@@ -8,20 +8,11 @@
 </head>
 <body>
     <div class="top-banner">
-        Безплатна доставка за поръчки над 150 лв. / 76.69 €
+        Безплатна доставка за поръчки над 150 €
     </div>
 
     <header class="header">
-        <div class="logo-section">
-            <a th:href="@{/}" style="text-decoration: none; color: inherit;">
-                <span class="logo-text">My Store</span>
-                <div class="logo-icon">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </a>
-        </div>
+        <div th:replace="~{fragments/header :: logo}"></div>
         <div class="header-utils" style="margin-left: auto;">
             <a class="icon-btn" th:href="@{/profile}" aria-label="Профил" 
                th:classappend="${session.userId != null ? 'logged-in' : ''}"
@@ -34,13 +25,7 @@
         </div>
     </header>
 
-    <nav class="nav-menu">
-        <ul>
-            <li><a th:href="@{/}">Начало</a></li>
-            <li><a th:href="@{/products}">Продукти</a></li>
-            <li><a th:href="@{/admin/orders}">Админ панел</a></li>
-        </ul>
-    </nav>
+    <nav th:replace="~{fragments/nav :: nav}"></nav>
 
     <main style="max-width: 800px; margin: 2rem auto; padding: 0 1rem;">
         <div style="display: flex; align-items: center; margin-bottom: 2rem;">
@@ -58,7 +43,8 @@
 
         <!-- Create Product Form -->
         <div style="background: white; padding: 2rem; border-radius: 8px; border: 1px solid #ddd;">
-            <form th:action="@{/products/create}" method="post" th:object="${createProductDto}">
+            <form th:action="@{/products/create}" method="post" th:object="${createProductDto}" enctype="multipart/form-data">
+                <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                 <div style="margin-bottom: 1.5rem;">
                     <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Име на продукт *</label>
                     <input type="text" th:field="*{name}" required 
@@ -79,7 +65,7 @@
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
                     <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Цена (лв.) *</label>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Цена (€) *</label>
                         <input type="number" th:field="*{price}" step="0.01" min="0" required 
                                style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
                         <div th:if="${#fields.hasErrors('price')}" style="color: #dc3545; margin-top: 0.5rem; font-size: 0.875rem;">
@@ -109,14 +95,12 @@
                 </div>
 
                 <div style="margin-bottom: 1.5rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">URL на изображение</label>
-                    <input type="url" th:field="*{imageUrl}" 
-                           placeholder="https://example.com/image.jpg"
-                           style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
-                    <div th:if="${#fields.hasErrors('imageUrl')}" style="color: #dc3545; margin-top: 0.5rem; font-size: 0.875rem;">
-                        <span th:errors="*{imageUrl}">Image URL error</span>
-                    </div>
-                    <small style="color: #666; font-size: 0.875rem;">Оставете празно за използване на изображение по подразбиране</small>
+                    <label for="imageFile" style="display: block; margin-bottom: 0.5rem; font-weight: bold;" th:text="#{product.image.label}">Снимка на продукт *</label>
+                    <input id="imageFile" type="file" name="imageFile"
+                           accept="image/jpeg,image/png,image/webp"
+                           required
+                           style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; background: #fff;">
+                    <small style="color: #666; font-size: 0.875rem;" th:text="#{product.image.hint}">JPG, PNG или WEBP, максимум 5 MB</small>
                 </div>
 
                 <div style="display: flex; gap: 1rem;">
@@ -133,9 +117,7 @@
         </div>
     </main>
 
-    <footer class="footer" style="margin-top: 4rem; padding: 2rem; background: #f8f9fa; text-align: center;">
-        <p>&copy; 2025 My Store. All rights reserved.</p>
-    </footer>
+    <footer th:replace="~{fragments/footer :: footer-simple}"></footer>
 </body>
 </html>
 
